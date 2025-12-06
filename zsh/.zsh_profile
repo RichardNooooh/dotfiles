@@ -1,0 +1,6 @@
+
+export GIT_EDITOR='nvim'
+export DOTFILES='~/.dotfiles'
+
+
+
