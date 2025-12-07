@@ -5,9 +5,14 @@ return {
           dependencies = { 'nvim-lua/plenary.nvim' }
     },
 
+--    {
+--        'nvim-treesitter/nvim-treesitter', lazy = false,
+--          branch = 'main', build = ':TSUpdate'
+--    },
     {
-        'nvim-treesitter/nvim-treesitter', lazy = false,
-          branch = 'main', build = ':TSUpdate'
+        "nvim-treesitter/nvim-treesitter", branch = 'master', 
+	 lazy = false, build = ":TSUpdate"
     },
+
 }
 
