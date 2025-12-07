@@ -2,7 +2,7 @@
 
 
 if [[ -z $STOW_FOLDERS ]]; then
-    STOW_FOLDERS='zsh,ghostty'
+    STOW_FOLDERS='zsh,ghostty,nvim'
 fi
 
 if [[ -z $DOTFILES ]]; then
