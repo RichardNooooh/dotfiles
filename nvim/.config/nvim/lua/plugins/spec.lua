@@ -13,6 +13,10 @@ return {
         "nvim-treesitter/nvim-treesitter", branch = 'master', 
 	 lazy = false, build = ":TSUpdate"
     },
-
+    {
+        "ThePrimeagen/harpoon",
+        branch = "harpoon2",
+        dependencies = { "nvim-lua/plenary.nvim", "nvim-telescope/telescope.nvim" }
+    }
 }
 
