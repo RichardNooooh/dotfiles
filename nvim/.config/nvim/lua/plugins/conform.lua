@@ -23,6 +23,6 @@ return {
 
 		vim.keymap.set("n", "<leader>f", function()
 			require("conform").format({ bufnr = 0 })
-		end)
+		end, { desc = "[F]ormat (conform)" })
 	end,
 }

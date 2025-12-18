@@ -6,18 +6,15 @@ return {
 		})
 
 		vim.keymap.set("n", "<leader>tt", function()
-			require("trouble").toggle(),
-            { desc = "[T]oggle [T]rouble" }
-		end)
+			require("trouble").toggle()
+		end, { desc = "[T]rouble [T]oggle" })
 
 		vim.keymap.set("n", "<leader>tn", function()
-			require("trouble").next({ skip_groups = true, jump = true }),
-            { desc = "[T]rouble [N]ext" }
-		end)
+			require("trouble").next({ skip_groups = true, jump = true })
+		end, { desc = "[T]rouble [N]ext" })
 
 		vim.keymap.set("n", "<leader>tp", function()
 			require("trouble").previous({ skip_groups = true, jump = true })
-            { desc = "[T]rouble [P]revious" }
-		end)
-	end
+		end, { desc = "[T]rouble [P]revious" })
+	end,
 }
