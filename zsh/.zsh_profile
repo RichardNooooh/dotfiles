@@ -2,7 +2,10 @@ export GIT_EDITOR='nvim'
 export DOTFILES='~/.dotfiles'
 export PATH="$PATH:/opt/nvim-linux-x86_64/bin"
 export PATH="$PATH:$HOME/.local/bin"
+export PATH="$PATH:/usr/local/go/bin"
+
 alias vim='nvim'
+alias v='nvim'
 
 export COLORTERM='truecolor'
 
