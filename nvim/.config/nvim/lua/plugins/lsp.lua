@@ -4,6 +4,7 @@ return {
 		"mason-org/mason.nvim",
 		"mason-org/mason-lspconfig.nvim",
 		"WhoIsSethDaniel/mason-tool-installer.nvim",
+		-- add cmp stuff
 	},
 	config = function()
 		require("mason").setup()
