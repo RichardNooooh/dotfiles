@@ -15,7 +15,7 @@ return {
 			floats = "transparent",
 			functions = {},
 		},
-		on_highlights = function(hl, c)
+		on_highlights = function(hl, _)
 			-- remove the highlights while keep the color
 			hl["@keyword"] = vim.tbl_extend("force", hl["@keyword"] or {}, { italic = false })
 		end,

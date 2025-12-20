@@ -1,8 +1,8 @@
 -- Copied from ThePrimeagen's set file
 
 -- Line numbers and relative line numbers
-vim.opt.nu = true
-vim.opt.relativenumber = true
+vim.o.number = true
+vim.o.relativenumber = true
 
 -- Indenting
 vim.opt.tabstop = 4
@@ -10,7 +10,15 @@ vim.opt.softtabstop = 4
 vim.opt.shiftwidth = 4
 vim.opt.expandtab = true
 
-vim.opt.smartindent = true
+-- vim.opt.smartindent = true
+-- vim.o.breakindent = true
+
+-- Mouse mode
+vim.o.mouse = "a"
+
+-- Case-insensitive searching
+vim.o.ignorecase = true
+vim.o.smartcase = true
 
 -- Line wrapping
 vim.opt.wrap = false
@@ -39,3 +47,9 @@ vim.opt.updatetime = 50
 -- Color column?
 -- vim.opt.colorcolumn = "80"
 
+vim.g.have_nerd_font = true
+
+-- Make clipboard the same as OS clipboard
+vim.schedule(function()
+	vim.o.clipboard = "unnamedplus"
+end)
