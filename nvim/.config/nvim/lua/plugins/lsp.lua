@@ -133,6 +133,12 @@ return {
 					},
 				},
 			},
+			ty = { -- https://docs.astral.sh/ty/reference/editor-settings/
+				settings = {
+					ty = {},
+				},
+			},
+			ruff = {},
 		}
 
 		local ensure_installed = vim.tbl_keys(servers or {})
