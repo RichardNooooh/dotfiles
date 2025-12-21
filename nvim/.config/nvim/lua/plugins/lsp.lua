@@ -12,6 +12,8 @@ return {
 
 		-- Allows extra capabilities provided by blink.cmp
 		"saghen/blink.cmp",
+
+		-- TODO add autocomplete
 	},
 	config = function()
 		vim.api.nvim_create_autocmd("LspAttach", {
@@ -22,7 +24,7 @@ return {
 					vim.keymap.set(mode, keys, func, { buffer = event.buf, desc = "LSP: " .. desc })
 				end
 
-				map("<leader>glr", vim.lsp.buf.rename, "[R]ename")
+				map("<leader>glrn", vim.lsp.buf.rename, "[R]e[N]ame")
 				map("<leader>gla", vim.lsp.buf.code_action, "[G]oto Code [A]ction", { "n", "x" })
 				map("<leader>glr", require("telescope.builtin").lsp_references, "[G]oto [R]eferences")
 				map("<leader>gli", require("telescope.builtin").lsp_implementations, "[G]oto [I]mplementation")
@@ -134,11 +136,17 @@ return {
 				},
 			},
 			ty = { -- https://docs.astral.sh/ty/reference/editor-settings/
-				settings = {
-					ty = {},
-				},
+				settings = { ty = {
+					diagnosticMode = "workspace",
+				} },
 			},
-			ruff = {},
+			ruff = {
+				init_options = { settings = {} },
+				on_attach = function(client, _)
+					client.server_capabilities.hoverProvider = false
+					client.server_capabilities.renameProvider = false
+				end,
+			},
 		}
 
 		local ensure_installed = vim.tbl_keys(servers or {})
