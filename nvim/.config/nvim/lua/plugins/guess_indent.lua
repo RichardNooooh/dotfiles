@@ -1,3 +1,3 @@
 return {
-	{ "NMAC427/guess-indent.nvim", opt = {} },
+  { 'NMAC427/guess-indent.nvim', opt = {} },
 }

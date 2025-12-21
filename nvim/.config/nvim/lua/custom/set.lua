@@ -10,11 +10,11 @@ vim.opt.softtabstop = 4
 vim.opt.shiftwidth = 4
 vim.opt.expandtab = true
 
--- vim.opt.smartindent = true
+vim.opt.smartindent = true
 -- vim.o.breakindent = true
 
 -- Mouse mode
-vim.o.mouse = "a"
+vim.o.mouse = 'a'
 
 -- Case-insensitive searching
 vim.o.ignorecase = true
@@ -26,7 +26,7 @@ vim.opt.wrap = false
 -- Perpetual history
 vim.opt.swapfile = false
 vim.opt.backup = false
-vim.opt.undodir = os.getenv("HOME") .. "/.vim/undodir"
+vim.opt.undodir = os.getenv 'HOME' .. '/.vim/undodir'
 vim.opt.undofile = true
 
 -- '/' searching
@@ -38,8 +38,8 @@ vim.opt.termguicolors = true
 
 -- Buffers top/bottom of screen with 'scrolloff' lines
 vim.opt.scrolloff = 8
-vim.opt.signcolumn = "yes"
-vim.opt.isfname:append("@-@")
+vim.opt.signcolumn = 'yes'
+vim.opt.isfname:append '@-@'
 
 -- Fast updates?
 vim.opt.updatetime = 50
@@ -51,5 +51,5 @@ vim.g.have_nerd_font = true
 
 -- Make clipboard the same as OS clipboard
 vim.schedule(function()
-	vim.o.clipboard = "unnamedplus"
+  vim.o.clipboard = 'unnamedplus'
 end)
