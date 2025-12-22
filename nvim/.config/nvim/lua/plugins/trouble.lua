@@ -2,9 +2,10 @@ return {
   'folke/trouble.nvim',
   config = function()
     require('trouble').setup {
-      icons = false, -- TODO consider turning on after getting nerd font?
+      icons = false, -- TODO: consider turning on after getting nerd font?
     }
 
+    -- TODO: Test Trouble plugin ("No mode specified" error)
     vim.keymap.set('n', '<leader>tt', function()
       require('trouble').toggle()
     end, { desc = '[T]rouble [T]oggle' })
