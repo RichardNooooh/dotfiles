@@ -11,6 +11,8 @@ vim.opt.shiftwidth = 4
 vim.opt.expandtab = true
 
 vim.opt.smartindent = true
+
+vim.o.showmode = false -- we have mini.statusline
 -- vim.o.breakindent = true
 
 -- Mouse mode
