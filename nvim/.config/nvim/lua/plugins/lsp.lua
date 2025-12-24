@@ -22,15 +22,15 @@ return {
           vim.keymap.set(mode, keys, func, { buffer = event.buf, desc = 'LSP: ' .. desc })
         end
 
-        map('<leader>glrn', vim.lsp.buf.rename, '[R]e[N]ame')
-        map('<leader>gla', vim.lsp.buf.code_action, '[G]oto Code [A]ction', { 'n', 'x' })
-        map('<leader>glr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
-        map('<leader>gli', require('telescope.builtin').lsp_implementations, '[G]oto [I]mplementation')
-        map('<leader>gld', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
-        map('<leader>glD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
-        map('<leader>gls', require('telescope.builtin').lsp_document_symbols, '[G]oto Document [S]ymbols')
-        map('<leader>glS', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[G]oto Workspace [S]ymbols')
-        map('<leader>glt', require('telescope.builtin').lsp_type_definitions, '[G]oto [T]ype Definition')
+        map('grn', vim.lsp.buf.rename, '[R]e[N]ame')
+        map('gra', vim.lsp.buf.code_action, '[G]oto Code [A]ction', { 'n', 'x' })
+        map('grr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
+        map('gri', require('telescope.builtin').lsp_implementations, '[G]oto [I]mplementation')
+        map('grd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
+        map('grD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
+        map('gO', require('telescope.builtin').lsp_document_symbols, '[G]oto Document [S]ymbols')
+        map('gW', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[G]oto Workspace [S]ymbols')
+        map('grt', require('telescope.builtin').lsp_type_definitions, '[G]oto [T]ype Definition')
 
         -- resolves difference between neovim v0.11 and v0.10
         ---@param client vim.lsp.Client
