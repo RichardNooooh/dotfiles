@@ -4,32 +4,32 @@ return {
   cmd = 'Trouble',
   keys = {
     {
-      '<leader>td',
+      '<leader>Td',
       '<cmd>Trouble diagnostics toggle<cr>',
       desc = 'Trouble: [T]oggle [D]iagnostics',
     },
     {
-      '<leader>tdb',
+      '<leader>Tdb',
       '<cmd>Trouble diagnostics toggle filter.buf=0<cr>',
       desc = 'Trouble: [T]oggle [D]iagnostics [B]uffer',
     },
     {
-      '<leader>ts',
+      '<leader>Ts',
       '<cmd>Trouble symbols toggle focus=false<cr>',
       desc = 'Trouble: [T]oggle [S]ymbol',
     },
     {
-      '<leader>tl',
+      '<leader>Tl',
       '<cmd>Trouble lsp toggle focus=false win.position=right<cr>',
       desc = 'Trouble: [T]oggle [L]SP Definitions / references / ...',
     },
     {
-      '<leader>tL',
+      '<leader>TL',
       '<cmd>Trouble loclist toggle<cr>',
       desc = 'Trouble: [T]oggle [L]ocation List',
     },
     {
-      '<leader>tq',
+      '<leader>Tq',
       '<cmd>Trouble qflist toggle<cr>',
       desc = 'Trouble: [T]oggle [Q]uickfix List',
     },
