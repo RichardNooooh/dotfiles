@@ -131,6 +131,7 @@ return {
           client.server_capabilities.renameProvider = false
         end,
       },
+      debugpy = {}, -- Required for Python DAP
     }
 
     local ensure_installed = vim.tbl_keys(servers or {})
