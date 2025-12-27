@@ -39,5 +39,9 @@ return {
     map('<leader>sr', builtin.resume, '[S]earch [R]esume')
     map('<leader>s.', builtin.oldfiles, '[S]earch Recent Files ("." for repeat)')
     map('<leader><leader>', builtin.buffers, '[ ] Find Existing Buffers')
+
+    map('<leader>sn', function()
+      builtin.find_files { cwd = vim.fn.stdpath 'config' }
+    end, { desc = '[S]earch [N]eovim files' })
   end,
 }

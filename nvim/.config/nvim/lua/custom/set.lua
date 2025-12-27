@@ -55,3 +55,6 @@ vim.g.have_nerd_font = true
 vim.schedule(function()
   vim.o.clipboard = 'unnamedplus'
 end)
+
+-- raise dialog asking to save instead of throwing errors
+vim.o.confirm = true

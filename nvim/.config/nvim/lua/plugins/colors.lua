@@ -21,6 +21,7 @@ return {
     on_highlights = function(hl, _)
       -- remove the highlights while keep the color
       hl['@keyword'] = vim.tbl_extend('force', hl['@keyword'] or {}, { italic = false })
+      hl.Keyword = vim.tbl_extend('force', hl.Keyword or {}, { italic = false })
     end,
   },
   config = function(_, opts)

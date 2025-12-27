@@ -32,6 +32,14 @@ return {
         map('gW', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[G]oto Workspace [S]ymbols')
         map('grt', require('telescope.builtin').lsp_type_definitions, '[G]oto [T]ype Definition')
 
+        -- Overrides default hover to add the rounded border
+        map('K', function()
+          vim.lsp.buf.hover { border = 'rounded' }
+        end, 'Hover')
+        map('<C-s>', function()
+          vim.lsp.buf.signature_help { border = 'rounded' }
+        end, 'Signature Help', 'i')
+
         -- resolves difference between neovim v0.11 and v0.10
         ---@param client vim.lsp.Client
         ---@param method vim.lsp.protocol.Method
