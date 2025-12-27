@@ -1,5 +1,6 @@
 return {
   'nvim-neotest/neotest',
+  event = 'VeryLazy',
   dependencies = {
     'nvim-neotest/nvim-nio',
     'nvim-lua/plenary.nvim',
@@ -11,6 +12,8 @@ return {
         vim.cmd ':TSUpdate go'
       end,
     },
+    'nvim-neotest/neotest-plenary',
+    'nvim-neotest/neotest-vim-test',
     -- 'nvim-neotest/neotest-python',
     {
       'fredrikaverpil/neotest-golang',
@@ -18,8 +21,10 @@ return {
       build = function()
         vim.system({ 'go', 'install', 'gotest.tools/gotestsum@latest' }):wait()
       end,
+      dependencies = {
+        'leoluz/nvim-dap-go',
+      },
     },
-    'leoluz/nvim-dap-go',
   },
   config = function()
     require('neotest').setup {
@@ -41,8 +46,8 @@ return {
 
     map('<leader>tr', function()
       require('neotest').run.run {
-        suite = false,
-        testify = true,
+        -- suite = false,
+        -- testify_enabled = true,
       }
     end, 'Nearest [T]est [R]un')
 
@@ -52,15 +57,15 @@ return {
 
     map('<leader>ts', function()
       require('neotest').run.run {
-        suite = true,
-        testify = true,
+        -- suite = true,
+        -- testify_enabled = true,
       }
     end, '[T]est [S]uite')
 
     map('<leader>td', function()
       require('neotest').run.run {
-        suite = false,
-        testify = true,
+        -- suite = false,
+        -- testify_enabled = true,
         strategy = 'dap',
       }
     end, 'Nearest [T]est [D]ebug')

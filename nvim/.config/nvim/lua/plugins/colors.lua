@@ -19,9 +19,15 @@ return {
       functions = {},
     },
     on_highlights = function(hl, _)
-      -- remove the highlights while keep the color
+      -- remove the italics while keep the color
       hl['@keyword'] = vim.tbl_extend('force', hl['@keyword'] or {}, { italic = false })
       hl.Keyword = vim.tbl_extend('force', hl.Keyword or {}, { italic = false })
+
+      local inactive_hl = '#202537'
+      hl.WinSeparator = vim.tbl_extend('force', hl.WinSeparator or {}, { fg = inactive_hl })
+      hl.NvimTreeWinSeparator = vim.tbl_extend('force', hl.NvimTreeWinSeparator or {}, { fg = inactive_hl })
+
+      hl.MiniStatuslineInactive = vim.tbl_extend('force', hl.MiniStatuslineInactive or {}, { bg = inactive_hl })
     end,
   },
   config = function(_, opts)
