@@ -49,5 +49,7 @@ return {
     dap.listeners.before.event_exited.dapui_config = function()
       ui.close()
     end
+
+    vim.fn.sign_define('DapBreakpoint', { text = '🛑', texthl = '', linehl = '', numhl = '' })
   end,
 }
