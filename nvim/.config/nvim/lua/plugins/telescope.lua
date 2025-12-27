@@ -42,6 +42,6 @@ return {
 
     map('<leader>sn', function()
       builtin.find_files { cwd = vim.fn.stdpath 'config' }
-    end, { desc = '[S]earch [N]eovim files' })
+    end, '[S]earch [N]eovim files')
   end,
 }
