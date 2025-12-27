@@ -10,3 +10,5 @@ alias v='nvim'
 
 export COLORTERM='truecolor'
 
+export CGO_ENABLED=1 # Golang setting for testing race conditions(?)
+
