@@ -514,15 +514,14 @@
   font-size: 14px;
   font-weight: bold;
   color: #cdd6f4;
-  padding: 0px 12px 2px 12px;
+  padding: 0px 8px 2px 8px;
 }
 
 .weather-widget .icon {
   font-family: "Segoe Fluent Icons";
   font-size: 20px;
-  padding-left: 8px;
-  padding-bottom: 0px;
-  padding-top: 6px;
+  padding: 0px 6px 0px 6px;
+  margin-right: 2px;
 }
 
 .weather-widget .icon.sunnyDay {
@@ -536,37 +535,37 @@
 .weather-widget .icon.cloudyDay,
 .weather-widget .icon.cloudyNight {
   color: #89dceb;
-  padding-bottom: 4px;
+  /* padding-bottom: 4px; */
 }
 
 .weather-widget .icon.rainyDay,
 .weather-widget .icon.rainyNight {
   color: #89b4fa;
-  font-size: 16px;
+  /* font-size: 16px; */
 }
 
 .weather-widget .icon.snowyIcyDay,
 .weather-widget .icon.snowyIcyNight {
   color: #cdd6f4;
-  padding-bottom: 4px;
+  /* padding-bottom: 4px; */
 }
 
 .weather-widget .icon.blizzardDay,
 .weather-widget .icon.blizzardNight {
   color: #74c7ec;
-  padding-bottom: 4px;
+  /* padding-bottom: 4px; */
 }
 
 .weather-widget .icon.foggyDay,
 .weather-widget .icon.foggyNight {
   color: #cdd6f4;
-  font-size: 16px;
+  /* font-size: 16px; */
 }
 
 .weather-widget .icon.thunderstormDay,
 .weather-widget .icon.thunderstormNight {
   color: #b4befe;
-  font-size: 16px;
+  /* font-size: 16px; */
 }
 
 .weather-widget .icon.default {
