@@ -14,7 +14,7 @@ return {
     },
     'nvim-neotest/neotest-plenary',
     'nvim-neotest/neotest-vim-test',
-    -- 'nvim-neotest/neotest-python',
+    'nvim-neotest/neotest-python',
     {
       'fredrikaverpil/neotest-golang',
       version = '*',
@@ -31,11 +31,12 @@ return {
       adapters = {
         require 'neotest-golang' {
           runner = 'gotestsum',
+          warn_test_name_dupes = false,
           -- dap = { justMyCode = false },
         },
-        -- require 'neotest-python' {
-        --   dap = { justMyCode = false },
-        -- },
+        require 'neotest-python' {
+          --   dap = { justMyCode = false },
+        },
       },
     }
 
@@ -46,7 +47,7 @@ return {
 
     map('<leader>tr', function()
       require('neotest').run.run {
-        -- suite = false,
+        suite = false,
         -- testify_enabled = true,
       }
     end, 'Nearest [T]est [R]un')
@@ -57,14 +58,14 @@ return {
 
     map('<leader>ts', function()
       require('neotest').run.run {
-        -- suite = true,
+        suite = true,
         -- testify_enabled = true,
       }
     end, '[T]est [S]uite')
 
     map('<leader>td', function()
       require('neotest').run.run {
-        -- suite = false,
+        suite = false,
         -- testify_enabled = true,
         strategy = 'dap',
       }

@@ -13,7 +13,46 @@ return {
     local dap = require 'dap'
     local ui = require 'dapui'
 
-    require('dapui').setup()
+    require('dapui').setup {
+      layouts = {
+        {
+          position = 'left',
+          size = 80,
+          elements = {
+            {
+              id = 'scopes',
+              size = 0.40,
+            },
+            {
+              id = 'breakpoints',
+              size = 0.20,
+            },
+            {
+              id = 'stacks',
+              size = 0.20,
+            },
+            {
+              id = 'watches',
+              size = 0.20,
+            },
+          },
+        },
+        {
+          position = 'bottom',
+          size = 20,
+          elements = {
+            {
+              id = 'repl',
+              size = 0.4,
+            },
+            {
+              id = 'console',
+              size = 0.6,
+            },
+          },
+        },
+      },
+    }
     require('dap-go').setup()
     require('dap-python').setup 'uv'
     require('nvim-dap-virtual-text').setup()
