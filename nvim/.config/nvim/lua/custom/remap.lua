@@ -15,6 +15,15 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   end,
 })
 
+-- modify page movement (thanks Prime)
+vim.keymap.set('n', '<C-d>', '<C-d>zz')
+vim.keymap.set('n', '<C-u>', '<C-u>zz')
+vim.keymap.set('n', 'n', 'nzzzv')
+vim.keymap.set('n', 'N', 'Nzzzv')
+
+-- "greatest remap ever" to keep my paste register
+vim.keymap.set('x', '<leader>p', [["_dP]])
+
 -- -- split navigation
 -- vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to left window' })
 -- vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to lower window' })
