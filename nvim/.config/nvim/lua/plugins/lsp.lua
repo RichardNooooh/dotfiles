@@ -141,6 +141,7 @@ return {
       },
       debugpy = {}, -- Required for Python DAP
       delve = {}, -- Required for Go DAP
+      gopls = {},
     }
 
     local ensure_installed = vim.tbl_keys(servers or {})

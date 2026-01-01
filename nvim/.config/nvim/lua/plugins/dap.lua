@@ -1,4 +1,4 @@
--- Adapted from tjdevries/config.nvim
+-- adapted from tjdevries/config.nvim
 return {
   'mfussenegger/nvim-dap',
   dependencies = {

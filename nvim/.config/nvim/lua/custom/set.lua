@@ -66,3 +66,8 @@ vim.api.nvim_create_autocmd('FileType', {
     pcall(vim.treesitter.start, args.buf)
   end,
 })
+
+-- put diagnostics on new virtual lines (v0.11 feature)
+vim.diagnostic.config {
+  virtual_lines = true,
+}
