@@ -1,0 +1,51 @@
+#!/usr/bin/env zsh
+
+if [[ ! -v DOTFILES ]]; then
+    DOTFILES="$HOME/.dotfiles"
+fi
+
+if [[ ! -f "$DOTFILES/.env" ]]; then
+    echo "ERROR: .env file doesn't exist!"
+    exit 1
+fi
+
+source $DOTFILES/.env;
+
+if [[ ! -v WINDOWS_CONFIG ]]; then
+    echo "ERROR: WINDOWS_CONFIG variable missing in .env!"
+    exit 1
+fi
+
+if [[ "$WINDOWS_CONFIG" == "/" || "$WINDOWS_CONFIG" == "." ]]; then
+  echo "ERROR: WINDOWS_CONFIG looks unsafe: '$WINDOWS_CONFIG'"
+  exit 1
+fi
+
+if [[ ! -d "$WINDOWS_CONFIG" ]]; then
+  echo "ERROR: WINDOWS_CONFIG is not a directory: '$WINDOWS_CONFIG'"
+  exit 1
+fi
+
+if [[ ! -v WINDOWS_STOW_FOLDERS ]]; then
+    WINDOWS_STOW_FOLDERS='windows_wm/glazewm,windows_wm/yasb'
+fi
+
+for STOW_FOLDER in $(echo $WINDOWS_STOW_FOLDERS | sed 's/,/ /g')
+do
+    SOURCE_FOLDER=$DOTFILES/$STOW_FOLDER
+    if [[ ! -d "$SOURCE_FOLDER" ]]; then
+        echo "WARNING: source folder, $SOURCE_FOLDER, missing"
+        continue
+    fi
+
+    BASE_FOLDERS=$(find $SOURCE_FOLDER -mindepth 1 -maxdepth 1 -type d -printf '%f\n')
+    for BASE_FOLDER in $BASE_FOLDERS
+    do
+        DEST_FOLDER=$WINDOWS_CONFIG/$BASE_FOLDER
+        echo "deleting $DEST_FOLDER"
+        rm -rfv $DEST_FOLDER
+
+        echo "copying $SOURCE_FOLDER/$BASE_FOLDER to $WINDOWS_CONFIG"
+        cp -rv $SOURCE_FOLDER/$BASE_FOLDER $WINDOWS_CONFIG
+    done
+done
