@@ -1,0 +1,46 @@
+#!/usr/bin/env zsh
+
+if [[ ! -v DOTFILES ]]; then
+    DOTFILES="$HOME/.dotfiles"
+fi
+
+if [[ ! -f "$DOTFILES/.env" ]]; then
+    echo "ERROR: .env file doesn't exist!"
+    exit 1
+fi
+
+source $DOTFILES/.env;
+
+if [[ ! -v WINDOWS_CONFIG ]]; then
+    echo "ERROR: WINDOWS_CONFIG variable missing in .env!"
+    exit 1
+fi
+
+if [[ "$WINDOWS_CONFIG" == "/" || "$WINDOWS_CONFIG" == "." ]]; then
+  echo "ERROR: WINDOWS_CONFIG looks unsafe: '$WINDOWS_CONFIG'"
+  exit 1
+fi
+
+if [[ ! -d "$WINDOWS_CONFIG" ]]; then
+  echo "ERROR: WINDOWS_CONFIG is not a directory: '$WINDOWS_CONFIG'"
+  exit 1
+fi
+
+if [[ ! -v STOW_FOLDER ]]; then
+    STOW_FOLDER='keyboard/qmk_firmware/keyboards/handwired/cubtyl'
+fi
+
+SOURCE_FOLDER=$DOTFILES/$STOW_FOLDER
+if [[ ! -d "$SOURCE_FOLDER" ]]; then
+    echo "WARNING: source folder, $SOURCE_FOLDER, missing"
+    continue
+fi
+
+DEST_FOLDER="$WINDOWS_CONFIG/qmk_firmware/keyboards/handwired"
+KEYBOARD_FOLDER="$DEST_FOLDER/cubtyl"
+echo "deleting $KEYBOARD_FOLDER"
+rm -rfv $KEYBOARD_FOLDER
+
+echo "copying $SOURCE_FOLDER to $DEST_FOLDER"
+cp -rv $SOURCE_FOLDER $DEST_FOLDER
+

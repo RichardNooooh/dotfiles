@@ -18,3 +18,6 @@ location of the user home directory in Windows like `/mnt/c/Users/{USER}`.
 ### kickstart nvim
 this one requires ripgrep and fd-find. not sure if I will need or really want them later on.
 
+## TODO
+
+1. clean up the `update_windows_keybaord` script and keyboard directory structure.
