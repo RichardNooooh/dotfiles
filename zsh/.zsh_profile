@@ -1,6 +1,7 @@
 export GIT_EDITOR='nvim'
 export DOTFILES="$HOME/.dotfiles"
 export PATH="$PATH:/opt/nvim-linux-x86_64/bin"
+export PATH="$PATH:/opt/dart-sass"
 export PATH="$PATH:$HOME/.local/bin"
 export PATH="$PATH:/usr/local/go/bin"
 source ~/.zshenv
