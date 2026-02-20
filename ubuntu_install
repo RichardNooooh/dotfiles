@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+# install zsh, stow
+sudo apt install -y zsh stow
+chsh -s $(which zsh)
+
+# Oh My Zsh
+sh -c "$(wget https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh -O -)"
+
+# Remove default zshrc (run ./stow_config after this)
+rm $HOME/.zshrc
+
