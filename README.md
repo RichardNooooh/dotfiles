@@ -21,3 +21,4 @@ this one requires ripgrep and fd-find. not sure if I will need or really want th
 ## TODO
 
 1. clean up the `update_windows_keybaord` script and keyboard directory structure.
+2. clean up bootstrapping scripts
