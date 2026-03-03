@@ -9,6 +9,7 @@
 #define _FNSYM 2
 #define _MEDIA 3
 #define _NUMPAD 4
+#define _GAME 5
 
 enum keycodes {
     KC_CYCLE_LAYERS = QK_USER,
@@ -92,7 +93,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_RGUI,   KC_RALT,  KC_RCTL,  KC_RSFT,
         KC_NO,     KC_DEL,   KC_BSPC
     ),
-    [_FNSYM] = LAYOUT( // TODO
+    [_FNSYM] = LAYOUT(
         // left hand
         KC_F1,     KC_F2,    KC_F3,    KC_F4,    KC_F5,    KC_F6,    _______,
         _______,   KC_1,     KC_2,     KC_3,     KC_4,     KC_5,     _______,
@@ -135,17 +136,17 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_NO,     KC_NO,    KC_NO,    KC_NO,    KC_NO,    KC_NO,    _______,
         KC_NO,     KC_NO,    KC_NO,    KC_NO,    KC_NO,    KC_NO,
                              KC_NO,    KC_NO,    KC_NO,
-                                       KC_NO,    KC_NO,    KC_NO,    KC_NO,
-                                                 KC_NO,    KC_NO,    KC_NO,
+                                       _______,  _______,  _______,  _______,
+                                                 _______,  _______,  _______,
         // right hand
         _______,   KC_NO,    KC_NUM,   KC_PSLS,  KC_PAST,  KC_PMNS,  KC_CALC,
         _______,   KC_NO,    KC_P7,    KC_P8,    KC_P9,    KC_PPLS,  KC_NO,
         _______,   KC_NO,    KC_P4,    KC_P5,    KC_P6,    KC_NO,    KC_NO,
                    KC_NO,    KC_P1,    KC_P2,    KC_P3,    KC_PENT,  KC_NO,
                              KC_P0,    KC_NO,    KC_PDOT,
-        KC_NO,     KC_NO,    KC_NO,    KC_NO,
-        KC_NO,     KC_NO,    KC_NO
-    )
+        _______,   _______,  _______,  _______,
+        _______,   _______,  _______
+    ) 
 };
 
 void keyboard_post_init_user(void) {
