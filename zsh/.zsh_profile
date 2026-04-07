@@ -1,4 +1,5 @@
 export GIT_EDITOR='nvim'
+export EDITOR='nvim'
 export DOTFILES="$HOME/.dotfiles"
 export PATH="$PATH:/opt/nvim-linux-x86_64/bin"
 export PATH="$PATH:/opt/dart-sass"
@@ -14,3 +15,39 @@ export COLORTERM='truecolor'
 
 export CGO_ENABLED=1 # Golang setting for testing race conditions(?)
 
+
+# copied from omarchy
+# create a tmux dev layout with editor, ai, and terminal
+# usage: tdl <c|cx|codex|other_ai> [<second_ai>]
+tdl() {
+  [[ -z $1 ]] && { echo "usage: tdl <c|cx|codex|other_ai> [<second_ai>]"; return 1; }
+  [[ -z $TMUX ]] && { echo "you must start tmux to use tdl."; return 1; }
+
+  local current_dir="${PWD}"
+  local editor_pane ai_pane ai2_pane
+  local ai="$1"
+  local ai2="$2"
+
+  editor_pane="$TMUX_PANE"
+
+  tmux rename-window -t "$editor_pane" "$(basename "$current_dir")"
+  tmux split-window -v -p 25 -t "$editor_pane" -c "$current_dir"
+
+  ai_pane=$(tmux split-window -h -p 30 -t "$editor_pane" -c "$current_dir" -PF '#{pane_id}')
+
+  if [[ -n $ai2 ]]; then
+    ai2_pane=$(tmux split-window -v -t "$ai_pane" -c "$current_dir" -PF '#{pane_id}')
+    tmux send-keys -t "$ai2_pane" "$ai2" C-m
+  fi
+
+  tmux send-keys -t "$ai_pane" "$ai" C-m
+  tmux send-keys -t "$editor_pane" "$EDITOR ." C-m
+  tmux select-pane -t "$editor_pane"
+}
+
+eval "$(mise activate zsh)"
+
+# Start ssh-agent if not running
+if [ -z "$SSH_AUTH_SOCK" ]; then
+    eval "$(ssh-agent -s)" > /dev/null
+fi
