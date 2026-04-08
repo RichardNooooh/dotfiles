@@ -682,7 +682,7 @@ main() {
     log_info "Running Ansible playbook..."
     if [ "$run_mode" = "local" ]; then
         log_info "Running on localhost..."
-        ansible-playbook -i "$inventory_path" "$playbook_path" --limit local
+        ansible-playbook -i "$inventory_path" "$playbook_path" --limit local --ask-become-pass
     else
         log_info "Running on remote hosts..."
         log_warn "Ensure you have configured ansible/inventory.ini with your remote hosts"
