@@ -5,8 +5,12 @@
   
   tasks:
     - name: Check if uv is available
-      ansible.builtin.command:
-        cmd: which uv
+      ansible.builtin.shell:
+        cmd: |
+          export PATH="/home/molecule/.local/bin:$PATH"
+          eval "$(mise activate bash)"
+          which uv
+        executable: /bin/bash
       register: uv_check
       changed_when: false
       ignore_errors: true
