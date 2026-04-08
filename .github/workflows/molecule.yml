@@ -51,6 +51,7 @@ jobs:
           pip install ansible ansible-lint yamllint
 
       - name: Run ansible-lint
+        working-directory: .
         run: |
           ansible-lint -c ansible/.ansible-lint ansible/
 
