@@ -6,6 +6,13 @@ Organized dotfiles inspired by ThePrimeagen. Note that the
 Ansible files were vibe-configured by Kimi K2.5 using OpenCode.
 Use at your own risk.
 
+## Why use Ansible for this?
+
+I began using VMs on my Proxmox cluster as my dev environment, and I wanted a very convenient
+way configuring my dotfiles on all of them. I really like the idea of spinning up a VM, easily configure 
+my dotfiles on there, then destroy it all whenever I want to. At the same time, I'm not willing
+to invest time on something like NixOS, which seems a bit *too much* for me.
+
 ## Quick Start (New Ansible Setup)
 
 Bootstrap your entire environment with one command:
