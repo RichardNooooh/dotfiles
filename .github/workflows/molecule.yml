@@ -125,11 +125,20 @@ jobs:
       - name: Run Molecule tests for ${{ matrix.role }} on ${{ matrix.platform }}
         working-directory: ansible/roles/${{ matrix.role }}
         run: |
-          molecule test
+          # Run molecule test sequence manually with platform filtering
+          molecule dependency
+          molecule cleanup
+          molecule destroy
+          molecule create --platform-name ${{ matrix.platform }}
+          molecule prepare
+          molecule converge
+          molecule idempotence
+          molecule verify
+          molecule cleanup
+          molecule destroy
         env:
           PY_COLORS: '1'
           ANSIBLE_FORCE_COLOR: '1'
-          MOLECULE_PLATFORM: ${{ matrix.platform }}
 
   # Full playbook integration test
   integration-test:

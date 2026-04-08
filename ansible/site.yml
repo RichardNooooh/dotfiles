@@ -5,8 +5,7 @@
   become: true
   become_user: root
   gather_facts: false
-  vars_files:
-    - group_vars/all.yml
+  # Note: group_vars/all.yml is automatically loaded by Ansible
 
   pre_tasks:
     - name: Gather facts as target user (before privilege escalation)
