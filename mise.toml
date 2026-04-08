@@ -12,6 +12,9 @@ fd = "latest"
 ripgrep = "latest"
 fzf = "latest"
 
+# CI/CD testing tools
+act = "latest"
+
 # Linting tools (installed via pipx since they're Python CLIs)
 "pipx:ansible/ansible-lint" = "latest"
 "pipx:yamllint" = "latest"

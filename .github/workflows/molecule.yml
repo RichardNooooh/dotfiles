@@ -125,17 +125,9 @@ jobs:
       - name: Run Molecule tests for ${{ matrix.role }} on ${{ matrix.platform }}
         working-directory: ansible/roles/${{ matrix.role }}
         run: |
-          # Run molecule test sequence manually with platform filtering
-          molecule dependency
-          molecule cleanup
-          molecule destroy
-          molecule create --platform-name ${{ matrix.platform }}
-          molecule prepare
-          molecule converge
-          molecule idempotence
-          molecule verify
-          molecule cleanup
-          molecule destroy
+          # Run full molecule test with platform filtering
+          # --platform-name only works with 'molecule test', not individual commands
+          molecule test --platform-name ${{ matrix.platform }}
         env:
           PY_COLORS: '1'
           ANSIBLE_FORCE_COLOR: '1'
@@ -184,14 +176,14 @@ jobs:
               ansible_python_interpreter: /usr/bin/python3
               dotfiles_user: runner
               dotfiles_home: /home/runner
-              dotfiles_repo: ${{ github.workspace }}
           EOF
           
           # Run syntax check
           ansible-playbook -i test_inventory.yml site.yml --syntax-check
           
-          # Run full playbook
-          ansible-playbook -i test_inventory.yml site.yml -v
+          # Run full playbook with dotfiles_repo as extra var (highest priority)
+          # This overrides group_vars/all.yml which defines dotfiles_repo: "{{ dotfiles_home }}/.dotfiles"
+          ansible-playbook -i test_inventory.yml site.yml -v -e "dotfiles_repo=${{ github.workspace }}"
 
   # Summary job
   test-summary:

@@ -6,5 +6,10 @@
 # Use ansible_facts instead of deprecated top-level fact variables
 dotfiles_user: "{{ ansible_facts['user_id'] }}"
 dotfiles_home: "{{ ansible_facts['user_dir'] }}"
+
+# IMPORTANT: dotfiles_repo assumes the dotfiles are cloned to ~/.dotfiles
+# This is the default for local development with: git clone <repo> ~/.dotfiles
+# For CI/CD or non-standard paths, override with extra vars: -e "dotfiles_repo=/path/to/dotfiles"
 dotfiles_repo: "{{ dotfiles_home }}/.dotfiles"
+
 dotfiles_github_user: "RichardNooooh"
