@@ -1,0 +1,42 @@
+---
+# Global Molecule configuration
+# This file provides default settings for all Molecule scenarios in the project
+# Location: .config/molecule/config.yml (project root)
+# Reference: https://ansible.readthedocs.io/projects/molecule/configuration/
+
+provisioner:
+  name: ansible
+  config_options:
+    defaults:
+      # Use MOLECULE_PROJECT_DIRECTORY to construct absolute path to roles directory
+      # MOLECULE_PROJECT_DIRECTORY points to the role being tested (e.g., ansible/roles/common)
+      # Going up 1 level from role directory reaches the roles/ directory
+      roles_path: "${MOLECULE_PROJECT_DIRECTORY}/../"
+      result_format: yaml
+      bin_ansible_callbacks: true
+      # Disable deprecated facts injection (will be default in Ansible 2.24)
+      inject_facts_as_vars: false
+
+dependency:
+  name: galaxy
+  options:
+    requirements-file: requirements.yml
+
+driver:
+  name: docker
+
+verifier:
+  name: ansible
+
+scenario:
+  test_sequence:
+    - dependency
+    - cleanup
+    - destroy
+    - create
+    - prepare
+    - converge
+    - idempotence
+    - verify
+    - cleanup
+    - destroy
