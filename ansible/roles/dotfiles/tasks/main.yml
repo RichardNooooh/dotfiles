@@ -51,6 +51,7 @@
 - name: dotfiles | Check which stow targets need updating
   ansible.builtin.shell:
     cmd: |
+      set -o pipefail
       cd {{ dotfiles_repo }}
       needs_stow="false"
       for folder in $(echo {{ dotfiles_stow_folders }} | sed 's/,/ /g'); do
@@ -71,6 +72,7 @@
 - name: dotfiles | Unstow existing configurations
   ansible.builtin.shell:
     cmd: |
+      set -o pipefail
       for folder in $(echo {{ dotfiles_stow_folders }} | sed 's/,/ /g'); do
         if [ -d "{{ dotfiles_repo }}/$folder" ]; then
           stow -D "$folder" -d "{{ dotfiles_repo }}" -t "{{ dotfiles_home }}" 2>/dev/null || true
@@ -84,6 +86,7 @@
 - name: dotfiles | Stow dotfiles configurations
   ansible.builtin.shell:
     cmd: |
+      set -o pipefail
       cd {{ dotfiles_repo }}
       for folder in $(echo {{ dotfiles_stow_folders }} | sed 's/,/ /g'); do
         if [ -d "$folder" ]; then

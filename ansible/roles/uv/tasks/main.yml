@@ -12,7 +12,9 @@
 
 - name: uv | Install uv via standalone installer
   ansible.builtin.shell:
-    cmd: curl -LsSf {{ uv_installer_url }} | sh
+    cmd: |
+      set -o pipefail
+      curl -LsSf {{ uv_installer_url }} | sh
     executable: /bin/bash
   args:
     creates: "{{ dotfiles_home }}/.local/bin/uv"

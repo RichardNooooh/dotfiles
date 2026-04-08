@@ -56,7 +56,9 @@
 
 - name: fonts | Verify font installation
   ansible.builtin.shell:
-    cmd: fc-list | grep -i jetbrains | head -5
+    cmd: |
+      set -o pipefail
+      fc-list | grep -i jetbrains | head -5
     executable: /bin/bash
   register: fonts_list
   changed_when: false
