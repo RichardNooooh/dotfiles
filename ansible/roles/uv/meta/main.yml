@@ -27,17 +27,5 @@ galaxy_info:
     - name: ArchLinux
       versions:
         - all
-    - name: Alpine
-      versions:
-        - all
-    - name: opensuse
-      versions:
-        - all
-  galaxy_tags:
-    - dotfiles
-    - uv
-    - python
-    - packages
-
 dependencies:
   - role: mise

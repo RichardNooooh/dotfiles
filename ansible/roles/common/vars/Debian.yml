@@ -1,0 +1,23 @@
+---
+# Debian/Ubuntu specific package list
+# Uses python3 naming convention
+
+common_packages:
+  - zsh
+  - stow
+  - curl
+  - wget
+  - git
+  - unzip
+  - zip
+  - tar
+  - make
+  - gcc
+  - g++
+  - build-essential
+  - python3
+  - python3-pip
+  - python3-venv
+  - ripgrep
+  - fd-find
+  - tmux

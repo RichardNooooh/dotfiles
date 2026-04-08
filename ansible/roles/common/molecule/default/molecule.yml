@@ -41,9 +41,9 @@ provisioner:
   inventory:
     group_vars:
       all:
-        dotfiles_user: "molecule"
-        dotfiles_home: "/home/molecule"
-        dotfiles_repo: "/home/molecule/.dotfiles"
+        # Test that role defaults work correctly with actual user facts
+        # The role should resolve dotfiles_user from ansible_facts['user_id']
+        # and dotfiles_home from ansible_facts['user_dir'] when running as molecule user
 
 verifier:
   name: ansible

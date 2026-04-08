@@ -1,0 +1,22 @@
+---
+# RedHat/Fedora specific package list
+# Uses python3 naming convention
+# gcc-c++ instead of g++
+
+common_packages:
+  - zsh
+  - stow
+  - curl
+  - wget
+  - git
+  - unzip
+  - zip
+  - tar
+  - make
+  - gcc
+  - gcc-c++
+  - python3
+  - python3-pip
+  - ripgrep
+  - fd-find
+  - tmux

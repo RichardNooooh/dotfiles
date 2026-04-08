@@ -2,24 +2,27 @@
 - name: Converge
   hosts: all
   become: true
-  
+
+  vars:
+    dotfiles_user: "molecule"
+    dotfiles_home: "/home/molecule"
+    dotfiles_repo: "/home/molecule/.dotfiles"
+
   pre_tasks:
-    - name: Update package cache (Debian/Ubuntu)
-      ansible.builtin.apt:
-        update_cache: true
-      when: ansible_facts['os_family'] == "Debian"
-      changed_when: false
+    - name: Create test user
+      ansible.builtin.user:
+        name: molecule
+        shell: /bin/bash
+        home: /home/molecule
+        create_home: true
 
-    - name: Update package cache (Arch)
-      ansible.builtin.pacman:
-        update_cache: true
-      when: ansible_facts['os_family'] == "Archlinux"
-      changed_when: false
-
-    - name: Update package cache (RedHat)
-      ansible.builtin.dnf:
-        update_cache: true
-      when: ansible_facts['os_family'] == "RedHat"
+    - name: Change ownership of home directory
+      ansible.builtin.file:
+        path: /home/molecule
+        state: directory
+        recurse: true
+        owner: molecule
+        group: molecule
       changed_when: false
 
   roles:
