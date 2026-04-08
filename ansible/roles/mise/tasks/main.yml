@@ -5,6 +5,13 @@
     path: "{{ dotfiles_home }}/.local/bin/mise"
   register: mise_installed
 
+- name: mise | Ensure curl is installed (required for mise install script)
+  ansible.builtin.package:
+    name: curl
+    state: present
+  become: true
+  when: not mise_installed.stat.exists
+
 - name: mise | Ensure .local/bin directory exists
   ansible.builtin.file:
     path: "{{ dotfiles_home }}/.local/bin"
