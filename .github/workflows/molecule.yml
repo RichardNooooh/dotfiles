@@ -89,7 +89,7 @@ jobs:
       fail-fast: false
       matrix:
         role: ${{ fromJson(needs.generate-matrix.outputs.roles) }}
-        platform: [ubuntu-instance, fedora-instance]
+        platform: [ubuntu-instance]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4

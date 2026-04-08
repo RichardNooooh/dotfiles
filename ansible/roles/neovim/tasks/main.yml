@@ -21,7 +21,6 @@
 - name: neovim | Check if Neovim is in PATH
   ansible.builtin.shell:
     cmd: |
-      set -o pipefail
       export PATH="{{ dotfiles_home }}/.local/bin:$PATH"
       eval "$(mise activate bash)"
       which nvim
@@ -53,7 +52,6 @@
 - name: neovim | Verify required tools are available
   ansible.builtin.shell:
     cmd: |
-      set -o pipefail
       export PATH="{{ dotfiles_home }}/.local/bin:$PATH"
       eval "$(mise activate bash)"
       echo "Checking required tools..."

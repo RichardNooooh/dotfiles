@@ -3,7 +3,6 @@
 - name: uv | Check if uv is installed
   ansible.builtin.shell:
     cmd: |
-      set -o pipefail
       export PATH="{{ dotfiles_home }}/.local/bin:$PATH"
       which uv
     executable: /bin/bash
@@ -13,9 +12,7 @@
 
 - name: uv | Install uv via standalone installer
   ansible.builtin.shell:
-    cmd: |
-      set -o pipefail
-      curl -LsSf {{ uv_installer_url }} | sh
+    cmd: curl -LsSf {{ uv_installer_url }} | sh
     executable: /bin/bash
   args:
     creates: "{{ dotfiles_home }}/.local/bin/uv"
@@ -29,7 +26,6 @@
 - name: uv | Re-check uv installation after standalone install
   ansible.builtin.shell:
     cmd: |
-      set -o pipefail
       export PATH="{{ dotfiles_home }}/.local/bin:$PATH"
       which uv
     executable: /bin/bash
@@ -43,7 +39,6 @@
 - name: uv | Install Python packages via uv (mise method)
   ansible.builtin.shell:
     cmd: |
-      set -o pipefail
       export PATH="{{ dotfiles_home }}/.local/bin:$PATH"
       eval "$(mise activate bash)"
       uv tool install {{ item }}
@@ -58,7 +53,6 @@
 - name: uv | Install Python packages via uv (standalone method)
   ansible.builtin.shell:
     cmd: |
-      set -o pipefail
       export PATH="{{ dotfiles_home }}/.local/bin:$PATH"
       uv tool install {{ item }}
     executable: /bin/bash
@@ -72,7 +66,6 @@
 - name: uv | Verify uv tool installations
   ansible.builtin.shell:
     cmd: |
-      set -o pipefail
       export PATH="{{ dotfiles_home }}/.local/bin:$PATH"
       uv tool list
     executable: /bin/bash

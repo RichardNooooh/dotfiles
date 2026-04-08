@@ -37,9 +37,7 @@
 
 - name: fonts | Copy font files to fonts directory
   ansible.builtin.shell:
-    cmd: |
-      set -o pipefail
-      find /tmp/jetbrains_fonts -name "*.ttf" -exec cp {} "{{ fonts_install_dir }}/" \;
+    cmd: find /tmp/jetbrains_fonts -name "*.ttf" -exec cp {} "{{ fonts_install_dir }}/" \;
     executable: /bin/bash
   when: fonts_files.matched == 0
   register: fonts_copy_result
@@ -58,9 +56,7 @@
 
 - name: fonts | Verify font installation
   ansible.builtin.shell:
-    cmd: |
-      set -o pipefail
-      fc-list | grep -i jetbrains | head -5
+    cmd: fc-list | grep -i jetbrains | head -5
     executable: /bin/bash
   register: fonts_list
   changed_when: false
