@@ -5,7 +5,7 @@
     path: "{{ dotfiles_repo }}"
   register: dotfiles_exists
 
-- name: dotfiles | Test
+- name: dotfiles | Display repository and user information
   ansible.builtin.debug:
     msg: "repo: {{ dotfiles_repo }}; user: {{ dotfiles_user }}"
 

@@ -5,13 +5,21 @@
     path: "{{ dotfiles_home }}/.local/bin/mise"
   register: mise_installed
 
+- name: mise | Ensure .local/bin directory exists
+  ansible.builtin.file:
+    path: "{{ dotfiles_home }}/.local/bin"
+    state: directory
+    mode: "0755"
+
 - name: mise | Download and install mise
   ansible.builtin.shell:
     cmd: |
+      set -e
       curl -fsSL https://mise.run | MISE_INSTALL_PATH={{ dotfiles_home }}/.local/bin/mise sh
   register: mise_install_result
   when: not mise_installed.stat.exists
   changed_when: mise_install_result.rc == 0
+  failed_when: mise_install_result.rc != 0
 
 - name: mise | Ensure mise is in PATH
   ansible.builtin.lineinfile:
@@ -39,39 +47,49 @@
     path: "{{ dotfiles_repo }}/mise.toml"
   register: mise_config_exists
 
+- name: mise | Fail if mise.toml not found
+  ansible.builtin.fail:
+    msg: "mise.toml not found at {{ dotfiles_repo }}/mise.toml - cannot install tools"
+  when:
+    - not mise_config_exists.stat.exists | default(false)
+
+- name: mise | Ensure mise config directory exists
+  ansible.builtin.file:
+    path: "{{ dotfiles_home }}/.config/mise"
+    state: directory
+    mode: "0755"
+
 - name: mise | Link mise.toml to home if it doesn't exist
   ansible.builtin.file:
     src: "{{ dotfiles_repo }}/mise.toml"
     dest: "{{ dotfiles_home }}/.config/mise/config.toml"
     state: link
     force: false
-  when:
-    - mise_config_exists.stat is defined
-    - mise_config_exists.stat.exists | default(false)
 
 - name: mise | Trust mise configuration
   ansible.builtin.shell:
     cmd: |
+      export HOME="{{ dotfiles_home }}"
       export PATH="{{ dotfiles_home }}/.local/bin:$PATH"
       {{ dotfiles_home }}/.local/bin/mise trust {{ dotfiles_repo }}/mise.toml
-  when:
-    - mise_config_exists.stat is defined
-    - mise_config_exists.stat.exists | default(false)
   register: mise_trust
   changed_when: false
 
 - name: mise | Install tools via mise
   ansible.builtin.shell:
     cmd: |
+      set -e
+      export HOME="{{ dotfiles_home }}"
       export PATH="{{ dotfiles_home }}/.local/bin:$PATH"
       eval "$(mise activate bash)"
       cd {{ dotfiles_repo }}
-      mise install
+      mise install 2>&1
   args:
     executable: /bin/bash
   register: mise_install
-  changed_when: "'Installed' in mise_install.stdout or 'Installing' in mise_install.stdout"
-  timeout: 300
+  changed_when: mise_install.stdout is search('Installed|Installing|updated')
+  failed_when: mise_install.rc != 0
+  timeout: 600
 
 - name: mise | Verify mise installation
   ansible.builtin.shell:
@@ -85,21 +103,17 @@
   ansible.builtin.debug:
     msg: "mise version: {{ mise_version.stdout }}"
 
-- name: mise | Verify installed tools
+- name: mise | Verify neovim is installed (if configured in mise.toml)
   ansible.builtin.shell:
     cmd: |
+      set -e
+      export HOME="{{ dotfiles_home }}"
       export PATH="{{ dotfiles_home }}/.local/bin:$PATH"
       eval "$(mise activate bash)"
-      echo "Neovim: $(nvim --version | head -1)"
-      echo "Python: $(python --version)"
-      echo "Go: $(go version)"
-      echo "Node: $(node --version)"
-      echo "uv: $(uv --version)"
+      which nvim
+      nvim --version | head -1
   args:
     executable: /bin/bash
-  register: tool_versions
+  register: nvim_version
   changed_when: false
-
-- name: mise | Display installed tool versions
-  ansible.builtin.debug:
-    msg: "{{ tool_versions.stdout_lines }}"
+  failed_when: false

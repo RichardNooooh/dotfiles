@@ -43,15 +43,7 @@
   register: font_copy_result
   changed_when: font_copy_result.rc == 0
   failed_when: font_copy_result.rc != 0
-
-- name: fonts | Refresh font cache
-  ansible.builtin.command:
-    cmd: fc-cache -fv
-  when:
-    - font_files.matched == 0
-    - font_copy_result is succeeded
-  failed_when: false
-  changed_when: true
+  notify: "refresh font cache"
 
 - name: fonts | Clean up temporary files
   ansible.builtin.file:
