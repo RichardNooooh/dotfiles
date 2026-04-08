@@ -112,3 +112,4 @@ export NVM_DIR="$HOME/.nvm"
 
 # opencode
 export PATH=/home/noh/.opencode/bin:$PATH
+eval "$(mise activate zsh)"
