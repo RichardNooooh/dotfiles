@@ -1,5 +1,7 @@
 # Dotfiles
 
+[![Molecule Tests](https://img.shields.io/github/actions/workflow/status/RichardNooooh/dotfiles/molecule.yml?branch=main&label=molecule%20tests&logo=github)](https://github.com/RichardNooooh/dotfiles/actions)
+
 Organized dotfiles inspired by ThePrimeagen
 
 ## Quick Start (New Ansible Setup)

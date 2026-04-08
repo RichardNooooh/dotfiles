@@ -39,6 +39,7 @@
 - name: shell | Verify shell change
   ansible.builtin.shell:
     cmd: "set -o pipefail && getent passwd {{ dotfiles_user }} | cut -d: -f7"
+    executable: /bin/bash
   register: shell_current
   changed_when: false
 

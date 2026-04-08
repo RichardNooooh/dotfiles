@@ -6,6 +6,7 @@
       set -o pipefail
       export PATH="{{ dotfiles_home }}/.local/bin:$PATH"
       which uv
+    executable: /bin/bash
   register: uv_check
   changed_when: false
   failed_when: false
@@ -15,6 +16,7 @@
     cmd: |
       set -o pipefail
       curl -LsSf {{ uv_installer_url }} | sh
+    executable: /bin/bash
   args:
     creates: "{{ dotfiles_home }}/.local/bin/uv"
   when:
@@ -30,6 +32,7 @@
       set -o pipefail
       export PATH="{{ dotfiles_home }}/.local/bin:$PATH"
       which uv
+    executable: /bin/bash
   register: uv_check_after_install
   changed_when: false
   failed_when: false
@@ -44,6 +47,7 @@
       export PATH="{{ dotfiles_home }}/.local/bin:$PATH"
       eval "$(mise activate bash)"
       uv tool install {{ item }}
+    executable: /bin/bash
   loop: "{{ uv_tools }}"
   when:
     - uv_install_method == "mise"
@@ -57,6 +61,7 @@
       set -o pipefail
       export PATH="{{ dotfiles_home }}/.local/bin:$PATH"
       uv tool install {{ item }}
+    executable: /bin/bash
   loop: "{{ uv_tools }}"
   when:
     - uv_install_method == "standalone"
@@ -70,6 +75,7 @@
       set -o pipefail
       export PATH="{{ dotfiles_home }}/.local/bin:$PATH"
       uv tool list
+    executable: /bin/bash
   register: uv_tools_list
   changed_when: false
   failed_when: false

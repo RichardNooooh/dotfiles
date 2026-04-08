@@ -16,6 +16,7 @@
     cmd: |
       set -o pipefail
       curl -fsSL https://mise.run | MISE_INSTALL_PATH={{ dotfiles_home }}/.local/bin/mise sh
+    executable: /bin/bash
   register: mise_install_result
   when: not mise_installed.stat.exists
   changed_when: mise_install_result.rc == 0
