@@ -39,6 +39,7 @@
           [tools]
           python = "latest"
           node = "latest"
+          uv = "latest"
         dest: /home/molecule/.dotfiles/mise.toml
 
     - name: Create .config/mise directory
