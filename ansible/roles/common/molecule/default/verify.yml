@@ -3,6 +3,10 @@
   hosts: all
   gather_facts: true
 
+  vars:
+    test_user: "molecule"
+    test_home: "/home/molecule"
+
   tasks:
     - name: Check if required packages are installed
       ansible.builtin.package:
@@ -19,12 +23,12 @@
       changed_when: false
       failed_when: pkg_check is failed
 
-    - name: Verify directories exist
+    - name: Verify directories exist for test user
       ansible.builtin.stat:
-        path: "{{ item }}"
+        path: "{{ test_home }}/{{ item }}"
       loop:
-        - /home/molecule/.local/bin
-        - /home/molecule/.local/share/fonts
+        - .local/bin
+        - .local/share/fonts
       register: dir_check
 
     - name: Assert directories were created
@@ -32,8 +36,20 @@
         that:
           - item.stat.exists
           - item.stat.isdir
-        fail_msg: "Directory {{ item.item }} was not created"
+        fail_msg: "Directory {{ item.item }} was not created at {{ test_home }}/{{ item.item }}"
       loop: "{{ dir_check.results }}"
+
+    - name: Verify directory ownership
+      ansible.builtin.shell:
+        cmd: stat -c '%U' "{{ test_home }}/.local/bin"
+      register: dir_owner
+      changed_when: false
+
+    - name: Assert directories are owned by test user (not root)
+      ansible.builtin.assert:
+        that:
+          - dir_owner.stdout == test_user
+        fail_msg: "Directory {{ test_home }}/.local/bin is owned by {{ dir_owner.stdout }}, not {{ test_user }} - privilege escalation issue detected"
 
     - name: Verify ripgrep is installed
       ansible.builtin.command:
@@ -58,4 +74,9 @@
 
     - name: Display verification results
       ansible.builtin.debug:
-        msg: "Common role verification passed on {{ ansible_facts['distribution'] }}"
+        msg:
+          - "Common role verification passed on {{ ansible_facts['distribution'] }}"
+          - "Test user: {{ test_user }}"
+          - "Directories owned by: {{ dir_owner.stdout }}"
+          - "Packages installed: OK"
+          - "Search tools: ripgrep={{ 'OK' if rg_check.rc == 0 else 'MISSING' }}, fd={{ 'OK' if fd_check.rc == 0 else 'MISSING' }}"

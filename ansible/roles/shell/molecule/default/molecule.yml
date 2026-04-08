@@ -20,8 +20,7 @@ provisioner:
   inventory:
     group_vars:
       all:
-        dotfiles_user: "molecule"
-        dotfiles_home: "/home/molecule"
+        # Test that role defaults work correctly - dotfiles_user should resolve from ansible_facts
         shell_oh_my_zsh_repo: "https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh"
         shell_default_shell: /usr/bin/zsh
 

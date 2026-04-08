@@ -40,6 +40,77 @@
           - zshenv_file.stat.exists
         fail_msg: ".zshenv was not created at {{ dotfiles_home }}/.zshenv"
 
+    - name: Check if .zshrc exists with mise activation
+      ansible.builtin.stat:
+        path: "{{ dotfiles_home }}/.zshrc"
+      register: zshrc_file
+
+    - name: Assert .zshrc exists
+      ansible.builtin.assert:
+        that:
+          - zshrc_file.stat.exists
+        fail_msg: ".zshrc was not created at {{ dotfiles_home }}/.zshrc"
+
+    - name: Verify mise activation in .zshrc
+      ansible.builtin.shell:
+        cmd: grep -q 'mise activate zsh' {{ dotfiles_home }}/.zshrc
+      register: zshrc_activation
+      changed_when: false
+
+    - name: Assert mise is activated in .zshrc
+      ansible.builtin.assert:
+        that:
+          - zshrc_activation.rc == 0
+        fail_msg: "mise activation not found in .zshrc"
+
+    - name: Check if .bashrc exists with mise activation
+      ansible.builtin.stat:
+        path: "{{ dotfiles_home }}/.bashrc"
+      register: bashrc_file
+
+    - name: Assert .bashrc exists
+      ansible.builtin.assert:
+        that:
+          - bashrc_file.stat.exists
+        fail_msg: ".bashrc was not created at {{ dotfiles_home }}/.bashrc"
+
+    - name: Verify mise activation in .bashrc
+      ansible.builtin.shell:
+        cmd: grep -q 'mise activate bash' {{ dotfiles_home }}/.bashrc
+      register: bashrc_activation
+      changed_when: false
+
+    - name: Assert mise is activated in .bashrc
+      ansible.builtin.assert:
+        that:
+          - bashrc_activation.rc == 0
+        fail_msg: "mise activation not found in .bashrc"
+
+    - name: Verify installed tools are accessible via mise
+      ansible.builtin.shell:
+        cmd: |
+          export PATH="{{ dotfiles_home }}/.local/bin:$PATH"
+          eval "$(mise activate bash)"
+          echo "Python: $(python --version 2>&1)"
+          echo "Node: $(node --version)"
+      args:
+        executable: /bin/bash
+      register: tool_check
+      changed_when: false
+
+    - name: Assert tools are accessible
+      ansible.builtin.assert:
+        that:
+          - tool_check.rc == 0
+          - "'Python' in tool_check.stdout"
+          - "'Node' in tool_check.stdout"
+        fail_msg: "Installed tools not accessible via mise activation - shell integration may be broken"
+
     - name: Display verification results
       ansible.builtin.debug:
-        msg: "Mise role verification passed - binary installed at {{ dotfiles_home }}/.local/bin/mise, .zshenv configured"
+        msg:
+          - "Mise role verification passed"
+          - "Binary: {{ dotfiles_home }}/.local/bin/mise"
+          - "Version: {{ mise_version.stdout }}"
+          - "Shell activation: zshrc={{ zshrc_activation.rc == 0 }}, bashrc={{ bashrc_activation.rc == 0 }}"
+          - "Tools accessible: {{ 'Yes' if tool_check.rc == 0 else 'No' }}"

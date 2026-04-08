@@ -2,11 +2,14 @@
 - name: Verify
   hosts: all
   gather_facts: false
-  
+
+  vars:
+    dotfiles_home: "/home/molecule"
+
   tasks:
     - name: Check if neovim data directory exists
       ansible.builtin.stat:
-        path: /home/molecule/.local/share/nvim
+        path: "{{ dotfiles_home }}/.local/share/nvim"
       register: nvim_data
 
     - name: Assert neovim data directory exists
@@ -18,7 +21,7 @@
 
     - name: Check if neovim state directory exists
       ansible.builtin.stat:
-        path: /home/molecule/.local/state/nvim
+        path: "{{ dotfiles_home }}/.local/state/nvim"
       register: nvim_state
 
     - name: Assert neovim state directory exists
@@ -29,7 +32,7 @@
 
     - name: Check if neovim cache directory exists
       ansible.builtin.stat:
-        path: /home/molecule/.cache/nvim
+        path: "{{ dotfiles_home }}/.cache/nvim"
       register: nvim_cache
 
     - name: Assert neovim cache directory exists
@@ -38,12 +41,54 @@
           - nvim_cache.stat.exists
         fail_msg: "Neovim cache directory not created"
 
-    - name: Verify nvim is in PATH
-      ansible.builtin.command:
-        cmd: which nvim
-      register: nvim_path
+    - name: Verify mise is installed
+      ansible.builtin.stat:
+        path: "{{ dotfiles_home }}/.local/bin/mise"
+      register: mise_binary
+
+    - name: Assert mise is installed
+      ansible.builtin.assert:
+        that:
+          - mise_binary.stat.exists
+        fail_msg: "mise not installed - required for neovim"
+
+    - name: Verify nvim is accessible via mise activation
+      ansible.builtin.shell:
+        cmd: |
+          export HOME="{{ dotfiles_home }}"
+          export PATH="{{ dotfiles_home }}/.local/bin:$PATH"
+          eval "$(mise activate bash)"
+          which nvim
+      args:
+        executable: /bin/bash
+      register: nvim_check
+      changed_when: false
+      failed_when: false
+      retries: 3
+      delay: 10
+      until: nvim_check.rc == 0
+
+    - name: Assert nvim is in PATH via mise
+      ansible.builtin.assert:
+        that:
+          - nvim_check.rc == 0
+        fail_msg: "nvim not found in PATH after retries - mise activation may not be working correctly"
+
+    - name: Get nvim version via mise
+      ansible.builtin.shell:
+        cmd: |
+          export PATH="{{ dotfiles_home }}/.local/bin:$PATH"
+          eval "$(mise activate bash)"
+          nvim --version | head -1
+      args:
+        executable: /bin/bash
+      register: nvim_version
       changed_when: false
 
     - name: Display verification results
       ansible.builtin.debug:
-        msg: "Neovim role verification passed - directories created, nvim available"
+        msg:
+          - "Neovim role verification passed"
+          - "Data directory: {{ nvim_data.stat.exists }}"
+          - "Nvim path: {{ nvim_check.stdout }}"
+          - "Version: {{ nvim_version.stdout }}"

@@ -3,11 +3,25 @@
   hosts: all
   become: true
 
+  vars:
+    dotfiles_user: "molecule"
+    dotfiles_home: "/home/molecule"
+    dotfiles_repo: "/home/molecule/.dotfiles"
+
   pre_tasks:
     - name: Update apt cache
       ansible.builtin.apt:
         update_cache: true
         cache_valid_time: 3600
+      when: ansible_facts['os_family'] == "Debian"
+
+    - name: Install required packages for mise
+      ansible.builtin.apt:
+        name:
+          - curl
+          - git
+          - ca-certificates
+        state: present
       when: ansible_facts['os_family'] == "Debian"
 
     - name: Create test user
@@ -17,11 +31,27 @@
         home: /home/molecule
         create_home: true
 
-    - name: Install neovim
-      ansible.builtin.apt:
-        name: neovim
-        state: present
-      when: ansible_facts['os_family'] == "Debian"
+    - name: Ensure dotfiles directories exist
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        owner: molecule
+        group: molecule
+        mode: "0755"
+      loop:
+        - "{{ dotfiles_home }}"
+        - "{{ dotfiles_home }}/.dotfiles"
+        - "{{ dotfiles_home }}/.config/mise"
+
+    - name: Create test mise.toml with neovim
+      ansible.builtin.copy:
+        content: |
+          [tools]
+          neovim = "latest"
+        dest: "{{ dotfiles_repo }}/mise.toml"
+        owner: molecule
+        group: molecule
+        mode: "0644"
 
     - name: Change ownership
       ansible.builtin.file:
@@ -33,5 +63,8 @@
       changed_when: false
 
   roles:
+    - role: mise
+      become: false
+
     - role: neovim
       become: false

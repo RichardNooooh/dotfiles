@@ -3,6 +3,10 @@
   hosts: all
   become: true
 
+  vars:
+    dotfiles_user: "molecule"
+    dotfiles_home: "/home/molecule"
+
   pre_tasks:
     - name: Update apt cache
       ansible.builtin.apt:
@@ -10,9 +14,12 @@
         cache_valid_time: 3600
       when: ansible_facts['os_family'] == "Debian"
 
-    - name: Install zsh
+    - name: Install zsh, curl, and git
       ansible.builtin.apt:
-        name: zsh
+        name:
+          - zsh
+          - curl
+          - git
         state: present
       when: ansible_facts['os_family'] == "Debian"
 
@@ -23,13 +30,19 @@
         home: /home/molecule
         create_home: true
 
-    - name: Change ownership
+    - name: Ensure home directory has correct ownership
       ansible.builtin.file:
         path: /home/molecule
         state: directory
-        recurse: true
         owner: molecule
         group: molecule
+        mode: "0755"
+      changed_when: false
+
+    - name: Remove any existing Oh My Zsh installation (prevents conflicts)
+      ansible.builtin.file:
+        path: /root/.oh-my-zsh
+        state: absent
       changed_when: false
 
   roles:

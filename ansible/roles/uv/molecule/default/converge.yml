@@ -3,6 +3,10 @@
   hosts: all
   become: true
 
+  vars:
+    dotfiles_user: "molecule"
+    dotfiles_home: "/home/molecule"
+
   pre_tasks:
     - name: Update apt cache
       ansible.builtin.apt:

@@ -4,12 +4,13 @@
   gather_facts: false
 
   vars:
-    dotfiles_home: "/home/molecule"
+    test_user: "molecule"
+    test_home: "/home/molecule"
 
   tasks:
     - name: Check if Oh My Zsh is installed
       ansible.builtin.stat:
-        path: "{{ dotfiles_home }}/.oh-my-zsh"
+        path: "{{ test_home }}/.oh-my-zsh"
       register: oh_my_zsh_dir
 
     - name: Assert Oh My Zsh is installed
@@ -17,11 +18,35 @@
         that:
           - oh_my_zsh_dir.stat.exists
           - oh_my_zsh_dir.stat.isdir
-        fail_msg: "Oh My Zsh directory not found at {{ dotfiles_home }}/.oh-my-zsh"
+        fail_msg: "Oh My Zsh directory not found at {{ test_home }}/.oh-my-zsh"
+
+    - name: Check Oh My Zsh ownership (critical: must NOT be root)
+      ansible.builtin.shell:
+        cmd: stat -c '%U' "{{ test_home }}/.oh-my-zsh"
+      register: oh_my_zsh_owner
+      changed_when: false
+
+    - name: Assert Oh My Zsh is owned by user (not root)
+      ansible.builtin.assert:
+        that:
+          - oh_my_zsh_owner.stdout == test_user
+        fail_msg: "CRITICAL: Oh My Zsh is owned by {{ oh_my_zsh_owner.stdout }}, not {{ test_user }}. This indicates Oh My Zsh was installed as root due to missing 'become: false' on installation task."
+
+    - name: Check .zshenv ownership
+      ansible.builtin.shell:
+        cmd: stat -c '%U' "{{ test_home }}/.zshenv"
+      register: zshenv_owner
+      changed_when: false
+
+    - name: Assert .zshenv is owned by user
+      ansible.builtin.assert:
+        that:
+          - zshenv_owner.stdout == test_user
+        fail_msg: ".zshenv is owned by {{ zshenv_owner.stdout }}, not {{ test_user }}"
 
     - name: Check current shell
       ansible.builtin.command:
-        cmd: getent passwd molecule
+        cmd: getent passwd {{ test_user }}
       register: passwd_entry
       changed_when: false
 
@@ -29,19 +54,24 @@
       ansible.builtin.assert:
         that:
           - "'/zsh' in passwd_entry.stdout"
-        fail_msg: "Default shell is not zsh"
+        fail_msg: "Default shell is not zsh for user {{ test_user }}"
 
     - name: Check if .zshenv exists
       ansible.builtin.stat:
-        path: "{{ dotfiles_home }}/.zshenv"
+        path: "{{ test_home }}/.zshenv"
       register: zshenv_file
 
     - name: Assert .zshenv exists
       ansible.builtin.assert:
         that:
           - zshenv_file.stat.exists
-        fail_msg: ".zshenv not created at {{ dotfiles_home }}/.zshenv"
+        fail_msg: ".zshenv not created at {{ test_home }}/.zshenv"
 
     - name: Display verification results
       ansible.builtin.debug:
-        msg: "Shell role verification passed - Oh My Zsh installed, zsh is default shell"
+        msg:
+          - "Shell role verification passed"
+          - "Oh My Zsh: installed at {{ test_home }}/.oh-my-zsh"
+          - "Ownership: {{ oh_my_zsh_owner.stdout }} (verified not root)"
+          - "Shell: {{ passwd_entry.stdout.split(':')[-1] }}"
+          - "zshenv: {{ 'exists' if zshenv_file.stat.exists else 'missing' }}"
