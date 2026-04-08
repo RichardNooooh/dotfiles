@@ -2,6 +2,7 @@
 - name: Converge
   hosts: all
   become: true
+  gather_facts: true
 
   vars:
     dotfiles_user: "molecule"

@@ -6,12 +6,37 @@
   register: shell_omz_installed
   become: false
 
+- name: shell | Download Oh My Zsh install script
+  ansible.builtin.get_url:
+    url: "{{ shell_oh_my_zsh_repo }}"
+    dest: /tmp/oh-my-zsh-install.sh
+    mode: "0755"
+  when: not shell_omz_installed.stat.exists
+  become: false
+
 - name: shell | Install Oh My Zsh
   ansible.builtin.shell:
     cmd: |
-      sh -c "$(curl -fsSL {{ shell_oh_my_zsh_repo }})" "" --unattended
-  args:
+      sh /tmp/oh-my-zsh-install.sh --unattended
     creates: "{{ dotfiles_home }}/.oh-my-zsh"
+  environment:
+    HOME: "{{ dotfiles_home }}"
+  when: not shell_omz_installed.stat.exists
+  become: false
+
+- name: shell | Ensure Oh My Zsh is owned by user
+  ansible.builtin.file:
+    path: "{{ dotfiles_home }}/.oh-my-zsh"
+    owner: "{{ dotfiles_user }}"
+    group: "{{ dotfiles_user }}"
+    recurse: true
+  when: not shell_omz_installed.stat.exists
+  become: true
+
+- name: shell | Clean up Oh My Zsh install script
+  ansible.builtin.file:
+    path: /tmp/oh-my-zsh-install.sh
+    state: absent
   when: not shell_omz_installed.stat.exists
   become: false
 
@@ -23,18 +48,20 @@
 
 - name: shell | Backup existing .zshrc if not a symlink
   ansible.builtin.command:
-    cmd: "mv {{ dotfiles_home }}/.zshrc {{ dotfiles_home }}/.zshrc.backup.{{ ansible_date_time.date }}"
+    cmd: "mv {{ dotfiles_home }}/.zshrc {{ dotfiles_home }}/.zshrc.backup"
   when:
     - shell_zshrc_exists.stat.exists
     - not shell_zshrc_exists.stat.islnk
   become: false
   changed_when: true
+  failed_when: false
 
 - name: shell | Change default shell to zsh
   ansible.builtin.user:
     name: "{{ dotfiles_user }}"
     shell: "{{ shell_default_shell }}"
   become: true
+  become_user: root
 
 - name: shell | Verify shell change
   ansible.builtin.shell:
@@ -52,5 +79,6 @@
     path: "{{ dotfiles_home }}/.zshenv"
     state: touch
     mode: "0644"
-  become: false
-  changed_when: false
+    owner: "{{ dotfiles_user }}"
+    group: "{{ dotfiles_user }}"
+  become: true

@@ -20,7 +20,7 @@
           - oh_my_zsh_dir.stat.isdir
         fail_msg: "Oh My Zsh directory not found at {{ test_home }}/.oh-my-zsh"
 
-    - name: Check Oh My Zsh ownership (critical: must NOT be root)
+    - name: "Check Oh My Zsh ownership (critical: must NOT be root)"
       ansible.builtin.shell:
         cmd: stat -c '%U' "{{ test_home }}/.oh-my-zsh"
       register: oh_my_zsh_owner
