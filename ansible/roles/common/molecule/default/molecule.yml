@@ -16,7 +16,7 @@ platforms:
     cgroupns_mode: host
     privileged: true
     pre_build_image: true
-    
+
   - name: arch-instance
     image: archlinux/archlinux:latest
     command: /usr/lib/systemd/systemd
@@ -26,7 +26,7 @@ platforms:
     privileged: true
     pre_build_image: false
     dockerfile: Dockerfile.arch
-    
+
   - name: fedora-instance
     image: geerlingguy/docker-fedora40-ansible:latest
     command: /lib/systemd/systemd
@@ -41,9 +41,9 @@ provisioner:
   inventory:
     group_vars:
       all:
-        # Test that role defaults work correctly with actual user facts
-        # The role should resolve dotfiles_user from ansible_facts['user_id']
-        # and dotfiles_home from ansible_facts['user_dir'] when running as molecule user
+      # Test that role defaults work correctly with actual user facts
+      # The role should resolve dotfiles_user from ansible_facts['user_id']
+      # and dotfiles_home from ansible_facts['user_dir'] when running as molecule user
 
 verifier:
   name: ansible
