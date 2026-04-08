@@ -27,6 +27,13 @@
     - role: common
       tags: ['common', 'base']
 
+    - role: dotfiles
+      tags: ['dotfiles', 'stow']
+      become: false
+
+    - role: shell
+      tags: ['shell', 'zsh']
+
     - role: fonts
       tags: ['fonts']
 
@@ -36,13 +43,6 @@
 
     - role: uv
       tags: ['uv', 'python']
-      become: false
-
-    - role: shell
-      tags: ['shell', 'zsh']
-
-    - role: dotfiles
-      tags: ['dotfiles', 'stow']
       become: false
 
     - role: neovim

@@ -23,17 +23,6 @@
         home: /home/molecule
         create_home: true
 
-    - name: Create dotfiles structure
-      ansible.builtin.file:
-        path: "{{ item }}"
-        state: directory
-        mode: "0755"
-      loop:
-        - /home/molecule/.dotfiles
-        - /home/molecule/.dotfiles/zsh
-        - /home/molecule/.dotfiles/tmux
-        - /home/molecule/.config/mise
-
     - name: Create test config files
       ansible.builtin.copy:
         content: "# Test config"
@@ -42,15 +31,6 @@
       loop:
         - /home/molecule/.dotfiles/zsh/.zshrc
         - /home/molecule/.dotfiles/tmux/.tmux.conf
-
-    - name: Create mock mise.toml
-      ansible.builtin.copy:
-        content: |
-          [tools]
-          python = "latest"
-          node = "latest"
-        dest: "/home/molecule/.dotfiles/mise.toml"
-        mode: "0644"
 
     - name: Change ownership
       ansible.builtin.file:
@@ -63,14 +43,14 @@
 
   roles:
     - role: common
+    - role: dotfiles
+      become: false
+    - role: shell
     - role: fonts
       become: false
     - role: mise
       become: false
     - role: uv
-      become: false
-    - role: shell
-    - role: dotfiles
       become: false
     - role: neovim
       become: false
