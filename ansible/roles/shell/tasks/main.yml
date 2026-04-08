@@ -17,7 +17,7 @@
 - name: shell | Install Oh My Zsh
   ansible.builtin.shell:
     cmd: |
-      sh /tmp/oh-my-zsh-install.sh --unattended
+      KEEP_ZSHRC=yes sh /tmp/oh-my-zsh-install.sh --unattended
     creates: "{{ dotfiles_home }}/.oh-my-zsh"
   environment:
     HOME: "{{ dotfiles_home }}"

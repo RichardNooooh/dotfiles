@@ -203,10 +203,6 @@ See `ansible/README.md` for detailed testing documentation.
 
 The Ansible playbook supports:
 - Debian/Ubuntu
-- Arch Linux
-- Fedora/RHEL/CentOS
-- Alpine Linux
-- openSUSE
 
 ## Troubleshooting
 
