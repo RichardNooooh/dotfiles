@@ -12,6 +12,14 @@
   become: true
   when: not mise_installed.stat.exists
 
+- name: mise | Ensure GPG tools are installed (required for mise tool verification)
+  ansible.builtin.package:
+    name:
+      - gnupg
+      - gpg-agent
+    state: present
+  become: true
+
 - name: mise | Ensure .local/bin directory exists
   ansible.builtin.file:
     path: "{{ dotfiles_home }}/.local/bin"

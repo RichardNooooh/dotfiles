@@ -31,6 +31,7 @@ provisioner:
       all:
         dotfiles_user: "molecule"
         dotfiles_home: "/home/molecule"
+        dotfiles_repo: "/home/molecule/.dotfiles"
 
 verifier:
   name: ansible

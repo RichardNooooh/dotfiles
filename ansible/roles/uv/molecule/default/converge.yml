@@ -21,6 +21,32 @@
         home: /home/molecule
         create_home: true
 
+    - name: Ensure .local/bin directory exists
+      ansible.builtin.file:
+        path: /home/molecule/.local/bin
+        state: directory
+        mode: "0755"
+
+    - name: Create dotfiles directory
+      ansible.builtin.file:
+        path: /home/molecule/.dotfiles
+        state: directory
+        mode: "0755"
+
+    - name: Create mock mise.toml for testing
+      ansible.builtin.copy:
+        content: |
+          [tools]
+          python = "latest"
+          node = "latest"
+        dest: /home/molecule/.dotfiles/mise.toml
+
+    - name: Create .config/mise directory
+      ansible.builtin.file:
+        path: /home/molecule/.config/mise
+        state: directory
+        mode: "0755"
+
     - name: Change ownership
       ansible.builtin.file:
         path: /home/molecule
