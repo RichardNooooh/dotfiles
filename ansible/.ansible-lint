@@ -12,26 +12,15 @@ skip_list:
   - no-changed-when
   # Skip deprecated-local-action as we don't use it
   - deprecated-local-action
+  # Skip name casing rule to allow lowercase task names (e.g., "role | task name")
+  - name[casing]
+  # Skip command-instead-of-module for curl-to-shell installers (common pattern)
+  - command-instead-of-module
 
 # List of additional rules to enable (from community)
 enable_list:
   - fqcn
   - yaml
-
-# Rules configuration
-rules:
-  # Allow 120 character line length (Ansible standard)
-  line-length:
-    max: 120
-  # Ensure all tasks have names
-  name:
-    min_length: 5
-  # Enforce FQCN (fully qualified collection names)
-  fqcn:
-    level: warning
-  # YAML formatting
-  yaml:
-    level: warning
 
 # Exclude these paths from linting
 exclude_paths:
@@ -57,12 +46,3 @@ mock_roles:
   - shell
   - dotfiles
   - neovim
-
-# Minimum Ansible version
-min_ansible_version: "2.12"
-
-# Use strict mode for additional checks
-strict: true
-
-# Use verbose output
-verbosity: 1

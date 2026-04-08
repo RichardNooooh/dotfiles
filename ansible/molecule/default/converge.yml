@@ -38,6 +38,7 @@
       ansible.builtin.copy:
         content: "# Test config"
         dest: "{{ item }}"
+        mode: "0644"
       loop:
         - /home/molecule/.dotfiles/zsh/.zshrc
         - /home/molecule/.dotfiles/tmux/.tmux.conf
@@ -49,6 +50,7 @@
           python = "latest"
           node = "latest"
         dest: "/home/molecule/.dotfiles/mise.toml"
+        mode: "0644"
 
     - name: Change ownership
       ansible.builtin.file:

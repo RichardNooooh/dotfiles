@@ -11,14 +11,14 @@
   ansible.builtin.find:
     paths: "{{ fonts_install_dir }}"
     patterns: "JetBrainsMono*.ttf"
-  register: font_files
+  register: fonts_files
 
 - name: fonts | Download JetBrainsMono archive
   ansible.builtin.get_url:
     url: "{{ fonts_url }}"
     dest: "/tmp/JetBrainsMono.zip"
     mode: "0644"
-  when: font_files.matched == 0
+  when: fonts_files.matched == 0
   become: false
 
 - name: fonts | Create temporary extraction directory
@@ -26,23 +26,24 @@
     path: "/tmp/jetbrains_fonts"
     state: directory
     mode: "0755"
-  when: font_files.matched == 0
+  when: fonts_files.matched == 0
 
 - name: fonts | Extract font archive
   ansible.builtin.unarchive:
     src: "/tmp/JetBrainsMono.zip"
     dest: "/tmp/jetbrains_fonts"
     remote_src: true
-  when: font_files.matched == 0
+  when: fonts_files.matched == 0
 
 - name: fonts | Copy font files to fonts directory
   ansible.builtin.shell:
     cmd: |
+      set -o pipefail
       find /tmp/jetbrains_fonts -name "*.ttf" -exec cp {} "{{ fonts_install_dir }}/" \;
-  when: font_files.matched == 0
-  register: font_copy_result
-  changed_when: font_copy_result.rc == 0
-  failed_when: font_copy_result.rc != 0
+  when: fonts_files.matched == 0
+  register: fonts_copy_result
+  changed_when: fonts_copy_result.rc == 0
+  failed_when: fonts_copy_result.rc != 0
   notify: "refresh font cache"
 
 - name: fonts | Clean up temporary files
@@ -52,15 +53,17 @@
   loop:
     - "/tmp/JetBrainsMono.zip"
     - "/tmp/jetbrains_fonts"
-  when: font_files.matched == 0
+  when: fonts_files.matched == 0
 
 - name: fonts | Verify font installation
   ansible.builtin.shell:
-    cmd: fc-list | grep -i jetbrains | head -5
-  register: font_list
+    cmd: |
+      set -o pipefail
+      fc-list | grep -i jetbrains | head -5
+  register: fonts_list
   changed_when: false
   failed_when: false
 
 - name: fonts | Display installed fonts
   ansible.builtin.debug:
-    msg: "{{ font_list.stdout_lines | default(['Font verification skipped or failed']) }}"
+    msg: "{{ fonts_list.stdout_lines | default(['Font verification skipped or failed']) }}"

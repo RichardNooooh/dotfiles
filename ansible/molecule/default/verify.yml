@@ -2,7 +2,7 @@
 - name: Verify
   hosts: all
   gather_facts: false
-  
+
   tasks:
     - name: Check all required packages
       ansible.builtin.package:

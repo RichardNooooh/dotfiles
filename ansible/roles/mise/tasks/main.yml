@@ -14,7 +14,7 @@
 - name: mise | Download and install mise
   ansible.builtin.shell:
     cmd: |
-      set -e
+      set -o pipefail
       curl -fsSL https://mise.run | MISE_INSTALL_PATH={{ dotfiles_home }}/.local/bin/mise sh
   register: mise_install_result
   when: not mise_installed.stat.exists
@@ -106,14 +106,15 @@
 - name: mise | Verify neovim is installed (if configured in mise.toml)
   ansible.builtin.shell:
     cmd: |
+      set -o pipefail
       set -e
       export HOME="{{ dotfiles_home }}"
       export PATH="{{ dotfiles_home }}/.local/bin:$PATH"
       eval "$(mise activate bash)"
       which nvim
       nvim --version | head -1
-  args:
-    executable: /bin/bash
-  register: nvim_version
+    args:
+      executable: /bin/bash
+  register: mise_neovim_check
   changed_when: false
   failed_when: false

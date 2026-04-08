@@ -1,0 +1,56 @@
+---
+# Yamllint configuration for Ansible project
+# This configuration extends the default yamllint rules for Ansible content
+
+rules:
+  braces:
+    min-spaces-inside: 0
+    max-spaces-inside: 0
+  brackets:
+    min-spaces-inside: 0
+    max-spaces-inside: 0
+  colons:
+    max-spaces-before: 0
+    max-spaces-after: 1
+  commas:
+    max-spaces-before: 0
+    min-spaces-after: 1
+    max-spaces-after: 1
+  comments:
+    min-spaces-from-content: 1
+    require-starting-space: true
+  comments-indentation: enable
+  document-end: disable
+  document-start:
+    present: true
+  empty-lines:
+    max: 2
+  empty-values: disable
+  indentation:
+    spaces: 2
+    indent-sequences: whatever
+  key-duplicates: enable
+  key-ordering: disable
+  line-length:
+    max: 120
+    allow-non-breakable-words: true
+    allow-non-breakable-inline-mappings: true
+  new-line-at-end-of-file: enable
+  new-lines:
+    type: unix
+  octal-values: disable
+  quoted-strings: disable
+  trailing-spaces: enable
+  truthy:
+    allowed-values: ['true', 'false', 'yes', 'no', 'on', 'off']
+
+# Files to ignore
+ignore: |
+  .cache/
+  .git/
+  .github/
+  .molecule/
+  .tox/
+  venv/
+  **/molecule/**/converge.yml
+  **/molecule/**/verify.yml

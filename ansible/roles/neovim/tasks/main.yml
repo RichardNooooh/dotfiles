@@ -21,16 +21,17 @@
 - name: neovim | Check if Neovim is in PATH
   ansible.builtin.shell:
     cmd: |
+      set -o pipefail
       export PATH="{{ dotfiles_home }}/.local/bin:$PATH"
       eval "$(mise activate bash)"
       which nvim
-  register: nvim_check
+  register: neovim_check
   changed_when: false
   failed_when: false
 
 - name: neovim | Display Neovim path
   ansible.builtin.debug:
-    msg: "Neovim found at: {{ nvim_check.stdout | default('Not found') }}"
+    msg: "Neovim found at: {{ neovim_check.stdout | default('Not found') }}"
 
 - name: neovim | Note about treesitter parsers
   ansible.builtin.debug:
@@ -51,6 +52,7 @@
 - name: neovim | Verify required tools are available
   ansible.builtin.shell:
     cmd: |
+      set -o pipefail
       export PATH="{{ dotfiles_home }}/.local/bin:$PATH"
       eval "$(mise activate bash)"
       echo "Checking required tools..."
@@ -63,13 +65,13 @@
       which go || echo "WARNING: go not found"
       which stylua || echo "INFO: stylua not found (optional, will be installed via mise if in mise.toml)"
       echo "All basic requirements checked"
-  register: tool_check
+  register: neovim_tools
   changed_when: false
   failed_when: false
 
 - name: neovim | Display tool check results
   ansible.builtin.debug:
-    msg: "{{ tool_check.stdout_lines }}"
+    msg: "{{ neovim_tools.stdout_lines }}"
 
 - name: neovim | Remind about Neovim first run
   ansible.builtin.debug:

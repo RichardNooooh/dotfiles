@@ -3,7 +3,7 @@
 - name: shell | Check if Oh My Zsh is installed
   ansible.builtin.stat:
     path: "{{ dotfiles_home }}/.oh-my-zsh"
-  register: oh_my_zsh_installed
+  register: shell_omz_installed
   become: false
 
 - name: shell | Install Oh My Zsh
@@ -12,21 +12,21 @@
       sh -c "$(curl -fsSL {{ shell_oh_my_zsh_repo }})" "" --unattended
   args:
     creates: "{{ dotfiles_home }}/.oh-my-zsh"
-  when: not oh_my_zsh_installed.stat.exists
+  when: not shell_omz_installed.stat.exists
   become: false
 
 - name: shell | Check if .zshrc exists
   ansible.builtin.stat:
     path: "{{ dotfiles_home }}/.zshrc"
-  register: zshrc_exists
+  register: shell_zshrc_exists
   become: false
 
 - name: shell | Backup existing .zshrc if not a symlink
   ansible.builtin.command:
     cmd: "mv {{ dotfiles_home }}/.zshrc {{ dotfiles_home }}/.zshrc.backup.{{ ansible_date_time.date }}"
   when:
-    - zshrc_exists.stat.exists
-    - not zshrc_exists.stat.islnk
+    - shell_zshrc_exists.stat.exists
+    - not shell_zshrc_exists.stat.islnk
   become: false
   changed_when: true
 
@@ -38,13 +38,13 @@
 
 - name: shell | Verify shell change
   ansible.builtin.shell:
-    cmd: "getent passwd {{ dotfiles_user }} | cut -d: -f7"
-  register: current_shell
+    cmd: "set -o pipefail && getent passwd {{ dotfiles_user }} | cut -d: -f7"
+  register: shell_current
   changed_when: false
 
 - name: shell | Display current shell
   ansible.builtin.debug:
-    msg: "Default shell is now: {{ current_shell.stdout }}"
+    msg: "Default shell is now: {{ shell_current.stdout }}"
 
 - name: shell | Create .zshenv if it doesn't exist
   ansible.builtin.file:
