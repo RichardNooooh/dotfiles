@@ -1,0 +1,68 @@
+---
+- name: Converge
+  hosts: all
+  become: true
+
+  vars:
+    dotfiles_repo: "/home/molecule/.dotfiles"
+
+  pre_tasks:
+    - name: Update apt cache
+      ansible.builtin.apt:
+        update_cache: true
+        cache_valid_time: 3600
+      when: ansible_facts['os_family'] == "Debian"
+
+    - name: Install required packages
+      ansible.builtin.apt:
+        name:
+          - curl
+          - git
+          - ca-certificates
+          - gnupg
+          - gpg-agent
+        state: present
+      when: ansible_facts['os_family'] == "Debian"
+
+    - name: Create test user
+      ansible.builtin.user:
+        name: molecule
+        shell: /bin/bash
+        home: /home/molecule
+        create_home: true
+
+    - name: Ensure directories exist
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        mode: "0755"
+      loop:
+        - /home/molecule/.local/bin
+        - /home/molecule/.dotfiles
+
+    - name: Create mock mise.toml
+      ansible.builtin.copy:
+        content: |
+          [tools]
+          python = "latest"
+          node = "latest"
+        dest: /home/molecule/.dotfiles/mise.toml
+
+    - name: Create .config/mise directory
+      ansible.builtin.file:
+        path: /home/molecule/.config/mise
+        state: directory
+        mode: "0755"
+
+    - name: Change ownership
+      ansible.builtin.file:
+        path: /home/molecule
+        state: directory
+        recurse: true
+        owner: molecule
+        group: molecule
+      changed_when: false
+
+  roles:
+    - role: mise
+      become: false

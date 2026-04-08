@@ -1,0 +1,45 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: false
+
+  vars:
+    ansible_remote_tmp: /tmp
+    dotfiles_home: "/home/molecule"
+
+  tasks:
+    - name: Check if mise is installed
+      ansible.builtin.stat:
+        path: "{{ dotfiles_home }}/.local/bin/mise"
+      register: mise_binary
+
+    - name: Assert mise is installed
+      ansible.builtin.assert:
+        that:
+          - mise_binary.stat.exists
+        fail_msg: "mise binary not found at {{ dotfiles_home }}/.local/bin/mise"
+
+    - name: Verify mise is executable
+      ansible.builtin.command:
+        cmd: "{{ dotfiles_home }}/.local/bin/mise --version"
+      register: mise_version
+      changed_when: false
+
+    - name: Display mise version
+      ansible.builtin.debug:
+        msg: "mise version: {{ mise_version.stdout }}"
+
+    - name: Check if .zshenv was created
+      ansible.builtin.stat:
+        path: "{{ dotfiles_home }}/.zshenv"
+      register: zshenv_file
+
+    - name: Assert .zshenv exists
+      ansible.builtin.assert:
+        that:
+          - zshenv_file.stat.exists
+        fail_msg: ".zshenv was not created at {{ dotfiles_home }}/.zshenv"
+
+    - name: Display verification results
+      ansible.builtin.debug:
+        msg: "Mise role verification passed - binary installed at {{ dotfiles_home }}/.local/bin/mise, .zshenv configured"

@@ -1,0 +1,9 @@
+---
+# Mise role default variables
+
+mise_python_version: "3.14"
+mise_go_version: "1.26"
+mise_node_version: "24"
+# Use ansible_facts instead of deprecated top-level fact variables
+mise_install_path: "{{ dotfiles_home | default(ansible_facts['user_dir']) }}/.local/bin/mise"
+mise_config_dir: "{{ dotfiles_home | default(ansible_facts['user_dir']) }}/.config/mise"

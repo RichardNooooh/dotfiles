@@ -1,0 +1,73 @@
+---
+# UV role - install Python packages via uv
+- name: uv | Check if uv is installed
+  ansible.builtin.shell:
+    cmd: |
+      export PATH="{{ dotfiles_home }}/.local/bin:$PATH"
+      which uv
+  register: uv_check
+  changed_when: false
+  failed_when: false
+
+- name: uv | Install uv via standalone installer
+  ansible.builtin.shell:
+    cmd: |
+      curl -LsSf {{ uv_installer_url }} | sh
+  args:
+    creates: "{{ dotfiles_home }}/.local/bin/uv"
+  when:
+    - uv_install_method == "standalone"
+    - uv_check.rc != 0
+  register: uv_standalone_install
+  changed_when: uv_standalone_install.rc == 0
+  become: false
+
+- name: uv | Re-check uv installation after standalone install
+  ansible.builtin.shell:
+    cmd: |
+      export PATH="{{ dotfiles_home }}/.local/bin:$PATH"
+      which uv
+  register: uv_check_after_install
+  changed_when: false
+  failed_when: false
+  when:
+    - uv_install_method == "standalone"
+    - uv_standalone_install is succeeded
+
+- name: uv | Install Python packages via uv (mise method)
+  ansible.builtin.shell:
+    cmd: |
+      export PATH="{{ dotfiles_home }}/.local/bin:$PATH"
+      eval "$(mise activate bash)"
+      uv tool install {{ item }}
+  loop: "{{ tools }}"
+  when:
+    - uv_install_method == "mise"
+    - uv_check.rc == 0
+  register: uv_install_mise
+  changed_when: "'Installed' in uv_install_mise.stdout or 'Updated' in uv_install_mise.stdout"
+
+- name: uv | Install Python packages via uv (standalone method)
+  ansible.builtin.shell:
+    cmd: |
+      export PATH="{{ dotfiles_home }}/.local/bin:$PATH"
+      uv tool install {{ item }}
+  loop: "{{ tools }}"
+  when:
+    - uv_install_method == "standalone"
+    - (uv_check.rc == 0) or (uv_check_after_install.rc | default(1) == 0)
+  register: uv_install_standalone
+  changed_when: "'Installed' in uv_install_standalone.stdout or 'Updated' in uv_install_standalone.stdout"
+
+- name: uv | Verify uv tool installations
+  ansible.builtin.shell:
+    cmd: |
+      export PATH="{{ dotfiles_home }}/.local/bin:$PATH"
+      uv tool list
+  register: uv_tools
+  changed_when: false
+  failed_when: false
+
+- name: uv | Display uv installed tools
+  ansible.builtin.debug:
+    msg: "{{ uv_tools.stdout_lines | default(['uv tools not available']) }}"

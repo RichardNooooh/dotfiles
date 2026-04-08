@@ -1,0 +1,54 @@
+---
+# Shell role - Oh My Zsh and zsh configuration
+- name: shell | Check if Oh My Zsh is installed
+  ansible.builtin.stat:
+    path: "{{ dotfiles_home }}/.oh-my-zsh"
+  register: oh_my_zsh_installed
+  become: false
+
+- name: shell | Install Oh My Zsh
+  ansible.builtin.shell:
+    cmd: |
+      sh -c "$(curl -fsSL {{ shell_oh_my_zsh_repo }})" "" --unattended
+  args:
+    creates: "{{ dotfiles_home }}/.oh-my-zsh"
+  when: not oh_my_zsh_installed.stat.exists
+  become: false
+
+- name: shell | Check if .zshrc exists
+  ansible.builtin.stat:
+    path: "{{ dotfiles_home }}/.zshrc"
+  register: zshrc_exists
+  become: false
+
+- name: shell | Backup existing .zshrc if not a symlink
+  ansible.builtin.command:
+    cmd: "mv {{ dotfiles_home }}/.zshrc {{ dotfiles_home }}/.zshrc.backup.{{ ansible_date_time.date }}"
+  when:
+    - zshrc_exists.stat.exists
+    - not zshrc_exists.stat.islnk
+  become: false
+
+- name: shell | Change default shell to zsh
+  ansible.builtin.user:
+    name: "{{ dotfiles_user }}"
+    shell: "{{ shell_default_shell }}"
+  become: true
+
+- name: shell | Verify shell change
+  ansible.builtin.shell:
+    cmd: "getent passwd {{ dotfiles_user }} | cut -d: -f7"
+  register: current_shell
+  changed_when: false
+
+- name: shell | Display current shell
+  ansible.builtin.debug:
+    msg: "Default shell is now: {{ current_shell.stdout }}"
+
+- name: shell | Create .zshenv if it doesn't exist
+  ansible.builtin.file:
+    path: "{{ dotfiles_home }}/.zshenv"
+    state: touch
+    mode: "0644"
+  become: false
+  changed_when: false

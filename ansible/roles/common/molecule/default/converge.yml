@@ -1,0 +1,26 @@
+---
+- name: Converge
+  hosts: all
+  become: true
+  
+  pre_tasks:
+    - name: Update package cache (Debian/Ubuntu)
+      ansible.builtin.apt:
+        update_cache: true
+      when: ansible_facts['os_family'] == "Debian"
+      changed_when: false
+
+    - name: Update package cache (Arch)
+      ansible.builtin.pacman:
+        update_cache: true
+      when: ansible_facts['os_family'] == "Archlinux"
+      changed_when: false
+
+    - name: Update package cache (RedHat)
+      ansible.builtin.dnf:
+        update_cache: true
+      when: ansible_facts['os_family'] == "RedHat"
+      changed_when: false
+
+  roles:
+    - role: common

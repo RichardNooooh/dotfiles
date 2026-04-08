@@ -1,0 +1,202 @@
+name: Molecule Tests
+
+on:
+  push:
+    branches:
+      - main
+      - master
+    paths:
+      - 'ansible/**'
+      - '.github/workflows/molecule.yml'
+  pull_request:
+    branches:
+      - main
+      - master
+    paths:
+      - 'ansible/**'
+  workflow_dispatch:
+    inputs:
+      role:
+        description: 'Specific role to test (leave empty for all)'
+        required: false
+        default: ''
+
+jobs:
+  # Lint Ansible code
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Cache pip dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: pip-${{ runner.os }}-${{ hashFiles('**/requirements*.txt') }}
+          restore-keys: |
+            pip-${{ runner.os }}-
+
+      - name: Install linting tools
+        run: |
+          python -m pip install --upgrade pip
+          pip install ansible ansible-lint yamllint
+
+      - name: Run ansible-lint
+        run: |
+          ansible-lint -c ansible/.ansible-lint ansible/
+
+      - name: Run yamllint
+        run: |
+          yamllint -c ansible/.yamllint ansible/
+
+  # Generate matrix of roles
+  generate-matrix:
+    runs-on: ubuntu-latest
+    needs: lint
+    outputs:
+      roles: ${{ steps.set-matrix.outputs.roles }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Find roles with molecule tests
+        id: set-matrix
+        run: |
+          if [ -n "${{ github.event.inputs.role }}" ]; then
+            # Use specific role from workflow dispatch
+            roles='["${{ github.event.inputs.role }}"]'
+          else
+            # Find all roles with molecule tests
+            roles=$(find ansible/roles -name "molecule" -type d | sed 's|ansible/roles/||; s|/molecule||' | jq -R . | jq -s .)
+          fi
+          echo "roles=$roles" >> $GITHUB_OUTPUT
+          echo "Testing roles: $roles"
+
+  # Test each role
+  test-role:
+    needs: [generate-matrix, lint]
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        role: ${{ fromJson(needs.generate-matrix.outputs.roles) }}
+        platform: [ubuntu-instance, fedora-instance]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Cache pip dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: pip-${{ runner.os }}-${{ hashFiles('**/requirements*.txt') }}-${{ matrix.platform }}
+          restore-keys: |
+            pip-${{ runner.os }}-
+
+      - name: Cache Docker layers
+        uses: actions/cache@v4
+        with:
+          path: /var/lib/docker
+          key: docker-${{ runner.os }}-${{ matrix.platform }}-${{ github.sha }}
+          restore-keys: |
+            docker-${{ runner.os }}-${{ matrix.platform }}-
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install ansible molecule molecule-plugins[docker] docker
+          ansible-galaxy collection install community.general
+
+      - name: Run Molecule tests for ${{ matrix.role }} on ${{ matrix.platform }}
+        working-directory: ansible/roles/${{ matrix.role }}
+        run: |
+          molecule test
+        env:
+          PY_COLORS: '1'
+          ANSIBLE_FORCE_COLOR: '1'
+          MOLECULE_PLATFORM: ${{ matrix.platform }}
+
+  # Full playbook integration test
+  integration-test:
+    runs-on: ubuntu-latest
+    needs: lint
+    if: github.event_name == 'pull_request' || github.event_name == 'push'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Cache pip dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: pip-${{ runner.os }}-${{ hashFiles('**/requirements*.txt') }}
+          restore-keys: |
+            pip-${{ runner.os }}-
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install ansible molecule molecule-plugins[docker] docker
+          ansible-galaxy collection install community.general
+
+      - name: Run full playbook test
+        working-directory: ansible
+        run: |
+          # Create test inventory for Docker
+          cat > test_inventory.yml << 'EOF'
+          all:
+            hosts:
+              test-instance:
+                ansible_connection: local
+            vars:
+              ansible_python_interpreter: /usr/bin/python3
+              dotfiles_user: runner
+              dotfiles_home: /home/runner
+              dotfiles_repo: ${{ github.workspace }}
+          EOF
+          
+          # Run syntax check
+          ansible-playbook -i test_inventory.yml site.yml --syntax-check
+          
+          # Run full playbook
+          ansible-playbook -i test_inventory.yml site.yml -v
+
+  # Summary job
+  test-summary:
+    needs: [test-role, integration-test]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Test Results
+        run: |
+          echo "## Molecule Test Results" >> $GITHUB_STEP_SUMMARY
+          echo "| Job | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|-----|--------|" >> $GITHUB_STEP_SUMMARY
+          
+          if [ "${{ needs.test-role.result }}" == "success" ]; then
+            echo "| Role Tests | ✅ Passed |" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "| Role Tests | ❌ Failed |" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          if [ "${{ needs.integration-test.result }}" == "success" ]; then
+            echo "| Integration | ✅ Passed |" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "| Integration | ❌ Failed |" >> $GITHUB_STEP_SUMMARY
+          fi

@@ -1,0 +1,74 @@
+---
+# Fonts role - install JetBrainsMono font
+- name: fonts | Ensure font directory exists
+  ansible.builtin.file:
+    path: "{{ fonts_install_dir }}"
+    state: directory
+    mode: "0755"
+  become: false
+
+- name: fonts | Check if JetBrainsMono is installed
+  ansible.builtin.find:
+    paths: "{{ fonts_install_dir }}"
+    patterns: "JetBrainsMono*.ttf"
+  register: font_files
+
+- name: fonts | Download JetBrainsMono archive
+  ansible.builtin.get_url:
+    url: "{{ fonts_url }}"
+    dest: "/tmp/JetBrainsMono.zip"
+    mode: "0644"
+  when: font_files.matched == 0
+  become: false
+
+- name: fonts | Create temporary extraction directory
+  ansible.builtin.file:
+    path: "/tmp/jetbrains_fonts"
+    state: directory
+    mode: "0755"
+  when: font_files.matched == 0
+
+- name: fonts | Extract font archive
+  ansible.builtin.unarchive:
+    src: "/tmp/JetBrainsMono.zip"
+    dest: "/tmp/jetbrains_fonts"
+    remote_src: true
+  when: font_files.matched == 0
+
+- name: fonts | Copy font files to fonts directory
+  ansible.builtin.shell:
+    cmd: |
+      find /tmp/jetbrains_fonts -name "*.ttf" -exec cp {} "{{ fonts_install_dir }}/" \;
+  when: font_files.matched == 0
+  register: font_copy_result
+  changed_when: font_copy_result.rc == 0
+  failed_when: font_copy_result.rc != 0
+
+- name: fonts | Refresh font cache
+  ansible.builtin.command:
+    cmd: fc-cache -fv
+  when:
+    - font_files.matched == 0
+    - font_copy_result is succeeded
+  failed_when: false
+  changed_when: true
+
+- name: fonts | Clean up temporary files
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - "/tmp/JetBrainsMono.zip"
+    - "/tmp/jetbrains_fonts"
+  when: font_files.matched == 0
+
+- name: fonts | Verify font installation
+  ansible.builtin.shell:
+    cmd: fc-list | grep -i jetbrains | head -5
+  register: font_list
+  changed_when: false
+  failed_when: false
+
+- name: fonts | Display installed fonts
+  ansible.builtin.debug:
+    msg: "{{ font_list.stdout_lines | default(['Font verification skipped or failed']) }}"

@@ -1,0 +1,74 @@
+---
+- name: Converge
+  hosts: all
+  become: true
+
+  vars:
+    dotfiles_repo: "/home/molecule/.dotfiles"
+    fonts_url: "https://github.com/JetBrains/JetBrainsMono/releases/download/v2.304/JetBrainsMono-2.304.zip"
+    fonts_install_dir: "/home/molecule/.local/share/fonts"
+    dotfiles_stow_folders: "zsh,tmux"
+
+  pre_tasks:
+    - name: Update apt cache
+      ansible.builtin.apt:
+        update_cache: true
+        cache_valid_time: 3600
+      when: ansible_facts['os_family'] == "Debian"
+
+    - name: Create test user
+      ansible.builtin.user:
+        name: molecule
+        shell: /bin/bash
+        home: /home/molecule
+        create_home: true
+
+    - name: Create dotfiles structure
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        mode: "0755"
+      loop:
+        - /home/molecule/.dotfiles
+        - /home/molecule/.dotfiles/zsh
+        - /home/molecule/.dotfiles/tmux
+        - /home/molecule/.config/mise
+
+    - name: Create test config files
+      ansible.builtin.copy:
+        content: "# Test config"
+        dest: "{{ item }}"
+      loop:
+        - /home/molecule/.dotfiles/zsh/.zshrc
+        - /home/molecule/.dotfiles/tmux/.tmux.conf
+
+    - name: Create mock mise.toml
+      ansible.builtin.copy:
+        content: |
+          [tools]
+          python = "latest"
+          node = "latest"
+        dest: "/home/molecule/.dotfiles/mise.toml"
+
+    - name: Change ownership
+      ansible.builtin.file:
+        path: /home/molecule
+        state: directory
+        recurse: true
+        owner: molecule
+        group: molecule
+      changed_when: false
+
+  roles:
+    - role: common
+    - role: fonts
+      become: false
+    - role: mise
+      become: false
+    - role: uv
+      become: false
+    - role: shell
+    - role: dotfiles
+      become: false
+    - role: neovim
+      become: false

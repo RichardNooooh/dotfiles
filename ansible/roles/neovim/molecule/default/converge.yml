@@ -1,0 +1,37 @@
+---
+- name: Converge
+  hosts: all
+  become: true
+
+  pre_tasks:
+    - name: Update apt cache
+      ansible.builtin.apt:
+        update_cache: true
+        cache_valid_time: 3600
+      when: ansible_facts['os_family'] == "Debian"
+
+    - name: Create test user
+      ansible.builtin.user:
+        name: molecule
+        shell: /bin/bash
+        home: /home/molecule
+        create_home: true
+
+    - name: Install neovim
+      ansible.builtin.apt:
+        name: neovim
+        state: present
+      when: ansible_facts['os_family'] == "Debian"
+
+    - name: Change ownership
+      ansible.builtin.file:
+        path: /home/molecule
+        state: directory
+        recurse: true
+        owner: molecule
+        group: molecule
+      changed_when: false
+
+  roles:
+    - role: neovim
+      become: false

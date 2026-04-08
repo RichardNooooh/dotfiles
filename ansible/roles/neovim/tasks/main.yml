@@ -1,0 +1,83 @@
+---
+# Neovim role - additional Neovim setup
+- name: neovim | Ensure Neovim data directory exists
+  ansible.builtin.file:
+    path: "{{ dotfiles_home }}/.local/share/nvim"
+    state: directory
+    mode: "0755"
+
+- name: neovim | Ensure Neovim state directory exists
+  ansible.builtin.file:
+    path: "{{ dotfiles_home }}/.local/state/nvim"
+    state: directory
+    mode: "0755"
+
+- name: neovim | Ensure Neovim cache directory exists
+  ansible.builtin.file:
+    path: "{{ dotfiles_home }}/.cache/nvim"
+    state: directory
+    mode: "0755"
+
+- name: neovim | Check if Neovim is in PATH
+  ansible.builtin.shell:
+    cmd: |
+      export PATH="{{ dotfiles_home }}/.local/bin:$PATH"
+      eval "$(mise activate bash)"
+      which nvim
+  register: nvim_check
+  changed_when: false
+  failed_when: false
+
+- name: neovim | Display Neovim path
+  ansible.builtin.debug:
+    msg: "Neovim found at: {{ nvim_check.stdout | default('Not found') }}"
+
+- name: neovim | Note about treesitter parsers
+  ansible.builtin.debug:
+    msg: |
+      Treesitter parsers will be automatically installed by Neovim on first run.
+      The following languages are configured in your treesitter.lua:
+      - bash, c, diff, python, go, lua, luadoc, markdown, markdown_inline, query, terraform, vim, vimdoc
+
+- name: neovim | Note about Mason tools
+  ansible.builtin.debug:
+    msg: |
+      Mason LSP tools will be automatically installed by Neovim.
+      Ensure you have a C compiler (gcc) installed for native extensions.
+      The following tools are configured in your lsp.lua:
+      LSPs: lua_ls, ty, ruff, debugpy, delve, gopls
+      Tools: stylua
+
+- name: neovim | Verify required tools are available
+  ansible.builtin.shell:
+    cmd: |
+      export PATH="{{ dotfiles_home }}/.local/bin:$PATH"
+      eval "$(mise activate bash)"
+      echo "Checking required tools..."
+      which nvim || echo "WARNING: nvim not found - may need to restart shell or source ~/.bashrc"
+      which git || echo "WARNING: git not found"
+      which gcc || echo "WARNING: gcc not found (needed for treesitter)"
+      which make || echo "WARNING: make not found"
+      which python || echo "WARNING: python not found"
+      which node || echo "WARNING: node not found"
+      which go || echo "WARNING: go not found"
+      which stylua || echo "INFO: stylua not found (optional, will be installed via mise if in mise.toml)"
+      echo "All basic requirements checked"
+  register: tool_check
+  changed_when: false
+  failed_when: false
+
+- name: neovim | Display tool check results
+  ansible.builtin.debug:
+    msg: "{{ tool_check.stdout_lines }}"
+
+- name: neovim | Remind about Neovim first run
+  ansible.builtin.debug:
+    msg: |
+      IMPORTANT: On first run, Neovim will:
+      1. Install lazy.nvim plugin manager
+      2. Download all configured plugins
+      3. Install Mason LSP servers (requires internet)
+      4. Compile treesitter parsers
+
+      Run 'nvim' and wait for the installation to complete.

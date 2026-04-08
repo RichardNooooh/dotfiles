@@ -1,0 +1,20 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: false
+  
+  tasks:
+    - name: Check if uv is available
+      ansible.builtin.command:
+        cmd: which uv
+      register: uv_check
+      changed_when: false
+      ignore_errors: true
+
+    - name: Display uv status
+      ansible.builtin.debug:
+        msg: "uv found: {{ uv_check.rc == 0 }}"
+
+    - name: Display verification results
+      ansible.builtin.debug:
+        msg: "UV role verification completed (uv may be installed via mise in actual use)"

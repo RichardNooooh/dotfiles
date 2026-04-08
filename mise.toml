@@ -1,0 +1,26 @@
+[tools]
+# Core development tools
+python = "3.14"
+go = "1.26"
+node = "24"
+neovim = "latest"
+uv = "latest"
+
+# Additional useful tools
+stylua = "latest"
+fd = "latest"
+ripgrep = "latest"
+fzf = "latest"
+
+# Linting tools (installed via pipx since they're Python CLIs)
+"pipx:ansible/ansible-lint" = "latest"
+"pipx:yamllint" = "latest"
+
+[settings]
+# Enable experimental features if needed
+experimental = false
+
+# Plugin settings
+[settings.python]
+# Use uv for Python package management
+uv_venv_auto = true

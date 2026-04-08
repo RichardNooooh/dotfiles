@@ -1,0 +1,10 @@
+---
+# Group variables for all hosts
+# Role-specific variables are defined in each role's defaults/main.yml
+
+# User configuration (shared across multiple roles)
+# Use ansible_facts instead of deprecated top-level fact variables
+dotfiles_user: "{{ ansible_facts['user_id'] }}"
+dotfiles_home: "{{ ansible_facts['user_dir'] }}"
+dotfiles_repo: "{{ dotfiles_home }}/.dotfiles"
+dotfiles_github_user: "RichardNooooh"

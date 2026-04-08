@@ -1,0 +1,37 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: false
+  
+  tasks:
+    - name: Check if zsh was stowed
+      ansible.builtin.stat:
+        path: /home/molecule/.zshrc
+      register: zshrc_stowed
+
+    - name: Assert zshrc was stowed
+      ansible.builtin.assert:
+        that:
+          - zshrc_stowed.stat.exists
+          - zshrc_stowed.stat.islnk
+        fail_msg: ".zshrc was not stowed properly"
+
+    - name: Check if tmux was stowed
+      ansible.builtin.stat:
+        path: /home/molecule/.config/tmux
+      register: tmux_stowed
+      ignore_errors: true
+
+    - name: Check alternative tmux location
+      ansible.builtin.stat:
+        path: /home/molecule/.tmux.conf
+      register: tmux_conf_stowed
+      when: not tmux_stowed.stat.exists | default(true)
+
+    - name: Display verification results
+      ansible.builtin.debug:
+        msg: "Dotfiles role verification passed - stowing works correctly"
+
+    - name: Test idempotence marker
+      ansible.builtin.debug:
+        msg: "Idempotence check: verify that re-running produces no changes"

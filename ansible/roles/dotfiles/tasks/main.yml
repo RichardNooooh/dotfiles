@@ -1,0 +1,114 @@
+---
+# Dotfiles role - clone and stow dotfiles
+- name: dotfiles | Check if dotfiles directory exists
+  ansible.builtin.stat:
+    path: "{{ dotfiles_repo }}"
+  register: dotfiles_exists
+
+- name: dotfiles | Test
+  ansible.builtin.debug:
+    msg: "repo: {{ dotfiles_repo }}; user: {{ dotfiles_user }}"
+
+- name: dotfiles | Clone dotfiles repository (if running remotely)
+  ansible.builtin.git:
+    repo: "https://github.com/{{ dotfiles_github_user }}/dotfiles.git"
+    dest: "{{ dotfiles_repo }}"
+    version: master
+  when:
+    - inventory_hostname != "localhost"
+    - not dotfiles_exists.stat.exists
+  register: git_clone_result
+  failed_when: false
+  changed_when: git_clone_result is succeeded
+
+- name: dotfiles | Verify dotfiles repository exists
+  ansible.builtin.stat:
+    path: "{{ dotfiles_repo }}"
+  register: dotfiles_check
+
+- name: dotfiles | Fail if dotfiles not found
+  ansible.builtin.fail:
+    msg: "Dotfiles repository not found at {{ dotfiles_repo }}"
+  when: not dotfiles_check.stat.exists
+
+- name: dotfiles | Create .config directory
+  ansible.builtin.file:
+    path: "{{ dotfiles_home }}/.config"
+    state: directory
+    mode: "0755"
+
+- name: dotfiles | Create .config subdirectories for stow
+  ansible.builtin.file:
+    path: "{{ dotfiles_home }}/.config/{{ item }}"
+    state: directory
+    mode: "0755"
+  loop:
+    - ghostty
+    - nvim
+    - zellij
+    - tmux
+
+- name: dotfiles | Check which stow targets need updating
+  ansible.builtin.shell:
+    cmd: |
+      cd {{ dotfiles_repo }}
+      needs_stow="false"
+      for folder in $(echo {{ dotfiles_stow_folders }} | sed 's/,/ /g'); do
+        if [ -d "$folder" ]; then
+          if [ ! -L "{{ dotfiles_home }}/.config/$folder" ] && [ ! -L "{{ dotfiles_home }}/.$folder" ]; then
+            needs_stow="true"
+            echo "NEEDS_STOW: $folder"
+          fi
+        fi
+      done
+      if [ "$needs_stow" = "false" ]; then
+        echo "ALL_STOWED"
+      fi
+    executable: /bin/bash
+  register: stow_check
+  changed_when: false
+
+- name: dotfiles | Unstow existing configurations
+  ansible.builtin.shell:
+    cmd: |
+      for folder in $(echo {{ dotfiles_stow_folders }} | sed 's/,/ /g'); do
+        if [ -d "{{ dotfiles_repo }}/$folder" ]; then
+          stow -D "$folder" -d "{{ dotfiles_repo }}" -t "{{ dotfiles_home }}" 2>/dev/null || true
+        fi
+      done
+    executable: /bin/bash
+  when: "'NEEDS_STOW' in stow_check.stdout"
+  changed_when: false
+  failed_when: false
+
+- name: dotfiles | Stow dotfiles configurations
+  ansible.builtin.shell:
+    cmd: |
+      cd {{ dotfiles_repo }}
+      for folder in $(echo {{ dotfiles_stow_folders }} | sed 's/,/ /g'); do
+        if [ -d "$folder" ]; then
+          echo "Stowing $folder..."
+          stow -D "$folder" 2>/dev/null || true
+          stow "$folder"
+        fi
+      done
+    executable: /bin/bash
+  when: "'NEEDS_STOW' in stow_check.stdout"
+  register: stow_output
+  changed_when: stow_output.stdout | length > 0
+
+- name: dotfiles | Display stow output
+  ansible.builtin.debug:
+    msg: "{{ stow_output.stdout | default('All dotfiles already stowed') }}"
+
+- name: dotfiles | Verify stowed configurations
+  ansible.builtin.shell:
+    cmd: |
+      ls -la {{ dotfiles_home }}/.config/
+  register: config_check
+  changed_when: false
+  failed_when: false
+
+- name: dotfiles | Display stowed config directories
+  ansible.builtin.debug:
+    msg: "{{ config_check.stdout_lines }}"

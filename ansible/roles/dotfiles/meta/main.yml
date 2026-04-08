@@ -1,0 +1,43 @@
+---
+# Role metadata for Dotfiles role
+galaxy_info:
+  author: dotfiles
+  description: Clone and stow dotfiles repository
+  company: ""
+  license: MIT
+  min_ansible_version: "2.12"
+  platforms:
+    - name: Ubuntu
+      versions:
+        - focal
+        - jammy
+        - noble
+    - name: Debian
+      versions:
+        - bullseye
+        - bookworm
+    - name: Fedora
+      versions:
+        - "40"
+        - "41"
+    - name: EL
+      versions:
+        - "8"
+        - "9"
+    - name: ArchLinux
+      versions:
+        - all
+    - name: Alpine
+      versions:
+        - all
+    - name: opensuse
+      versions:
+        - all
+  galaxy_tags:
+    - dotfiles
+    - stow
+    - git
+    - configuration
+
+dependencies:
+  - role: common

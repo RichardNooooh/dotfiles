@@ -1,0 +1,49 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: false
+  
+  tasks:
+    - name: Check if neovim data directory exists
+      ansible.builtin.stat:
+        path: /home/molecule/.local/share/nvim
+      register: nvim_data
+
+    - name: Assert neovim data directory exists
+      ansible.builtin.assert:
+        that:
+          - nvim_data.stat.exists
+          - nvim_data.stat.isdir
+        fail_msg: "Neovim data directory not created"
+
+    - name: Check if neovim state directory exists
+      ansible.builtin.stat:
+        path: /home/molecule/.local/state/nvim
+      register: nvim_state
+
+    - name: Assert neovim state directory exists
+      ansible.builtin.assert:
+        that:
+          - nvim_state.stat.exists
+        fail_msg: "Neovim state directory not created"
+
+    - name: Check if neovim cache directory exists
+      ansible.builtin.stat:
+        path: /home/molecule/.cache/nvim
+      register: nvim_cache
+
+    - name: Assert neovim cache directory exists
+      ansible.builtin.assert:
+        that:
+          - nvim_cache.stat.exists
+        fail_msg: "Neovim cache directory not created"
+
+    - name: Verify nvim is in PATH
+      ansible.builtin.command:
+        cmd: which nvim
+      register: nvim_path
+      changed_when: false
+
+    - name: Display verification results
+      ansible.builtin.debug:
+        msg: "Neovim role verification passed - directories created, nvim available"

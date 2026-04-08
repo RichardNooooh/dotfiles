@@ -1,0 +1,51 @@
+---
+# Main playbook for dotfiles setup
+- name: Dotfiles bootstrap
+  hosts: all
+  become: true
+  become_user: root
+  gather_facts: false
+  vars_files:
+    - group_vars/all.yml
+
+  pre_tasks:
+    - name: Gather facts as target user (before privilege escalation)
+      ansible.builtin.setup:
+        gather_subset:
+          - distribution
+      become: false
+
+    - name: Display target information
+      ansible.builtin.debug:
+        msg:
+          - "Target host: {{ inventory_hostname }}"
+          - "User: {{ ansible_facts['user_id'] }}"
+          - "Home: {{ ansible_facts['user_dir'] }}"
+          - "OS family: {{ ansible_facts['os_family'] }}"
+          - "Distribution: {{ ansible_facts['distribution'] }}"
+
+  roles:
+    - role: common
+      tags: ['common', 'base']
+
+    - role: fonts
+      tags: ['fonts']
+
+    - role: mise
+      tags: ['mise', 'tools']
+      become: false
+
+    - role: uv
+      tags: ['uv', 'python']
+      become: false
+
+    - role: shell
+      tags: ['shell', 'zsh']
+
+    - role: dotfiles
+      tags: ['dotfiles', 'stow']
+      become: false
+
+    - role: neovim
+      tags: ['neovim', 'nvim']
+      become: false

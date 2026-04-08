@@ -1,0 +1,12 @@
+FROM archlinux/archlinux:latest
+
+# Install systemd, sudo, and ansible requirements
+RUN pacman -Sy --noconfirm systemd systemd-sysvcompat sudo python python-pip git base-devel && \
+    pacman -Scc --noconfirm
+
+# Create molecule user
+RUN useradd -m -s /bin/bash molecule && \
+    echo 'molecule ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/molecule
+
+# Enable systemd
+CMD ["/usr/lib/systemd/systemd"]

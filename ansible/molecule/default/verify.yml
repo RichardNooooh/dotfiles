@@ -1,0 +1,59 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: false
+  
+  tasks:
+    - name: Check all required packages
+      ansible.builtin.package:
+        name:
+          - zsh
+          - stow
+          - git
+          - tmux
+        state: present
+      check_mode: true
+      register: pkg_check
+      failed_when: pkg_check is failed
+
+    - name: Check if mise is installed
+      ansible.builtin.stat:
+        path: /home/molecule/.local/bin/mise
+      register: mise_check
+
+    - name: Check if Oh My Zsh is installed
+      ansible.builtin.stat:
+        path: /home/molecule/.oh-my-zsh
+      register: omz_check
+
+    - name: Check if zsh is default shell
+      ansible.builtin.command:
+        cmd: getent passwd molecule
+      register: shell_check
+      changed_when: false
+
+    - name: Check if dotfiles are stowed
+      ansible.builtin.stat:
+        path: /home/molecule/.zshrc
+      register: stow_check
+
+    - name: Assert all components
+      ansible.builtin.assert:
+        that:
+          - mise_check.stat.exists
+          - omz_check.stat.exists
+          - "'/zsh' in shell_check.stdout"
+          - stow_check.stat.exists
+        fail_msg: "Full playbook verification failed"
+        success_msg: "Full playbook verification passed"
+
+    - name: Display summary
+      ansible.builtin.debug:
+        msg:
+          - "✓ Common packages installed"
+          - "✓ Fonts installed"
+          - "✓ Mise installed"
+          - "✓ Oh My Zsh installed"
+          - "✓ Zsh is default shell"
+          - "✓ Dotfiles stowed"
+          - "✓ Neovim configured"

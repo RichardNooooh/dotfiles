@@ -1,0 +1,46 @@
+---
+# Role metadata for Mise role
+galaxy_info:
+  author: dotfiles
+  description: Install mise-en-place (mise) version manager and development tools
+  company: ""
+  license: MIT
+  min_ansible_version: "2.12"
+  platforms:
+    - name: Ubuntu
+      versions:
+        - focal
+        - jammy
+        - noble
+    - name: Debian
+      versions:
+        - bullseye
+        - bookworm
+    - name: Fedora
+      versions:
+        - "40"
+        - "41"
+    - name: EL
+      versions:
+        - "8"
+        - "9"
+    - name: ArchLinux
+      versions:
+        - all
+    - name: Alpine
+      versions:
+        - all
+    - name: opensuse
+      versions:
+        - all
+  galaxy_tags:
+    - dotfiles
+    - mise
+    - version-manager
+    - tools
+    - node
+    - python
+    - go
+    - neovim
+
+dependencies: []

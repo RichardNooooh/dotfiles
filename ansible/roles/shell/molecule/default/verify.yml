@@ -1,0 +1,47 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: false
+
+  vars:
+    dotfiles_home: "/home/molecule"
+
+  tasks:
+    - name: Check if Oh My Zsh is installed
+      ansible.builtin.stat:
+        path: "{{ dotfiles_home }}/.oh-my-zsh"
+      register: oh_my_zsh_dir
+
+    - name: Assert Oh My Zsh is installed
+      ansible.builtin.assert:
+        that:
+          - oh_my_zsh_dir.stat.exists
+          - oh_my_zsh_dir.stat.isdir
+        fail_msg: "Oh My Zsh directory not found at {{ dotfiles_home }}/.oh-my-zsh"
+
+    - name: Check current shell
+      ansible.builtin.command:
+        cmd: getent passwd molecule
+      register: passwd_entry
+      changed_when: false
+
+    - name: Assert shell is zsh
+      ansible.builtin.assert:
+        that:
+          - "'/zsh' in passwd_entry.stdout"
+        fail_msg: "Default shell is not zsh"
+
+    - name: Check if .zshenv exists
+      ansible.builtin.stat:
+        path: "{{ dotfiles_home }}/.zshenv"
+      register: zshenv_file
+
+    - name: Assert .zshenv exists
+      ansible.builtin.assert:
+        that:
+          - zshenv_file.stat.exists
+        fail_msg: ".zshenv not created at {{ dotfiles_home }}/.zshenv"
+
+    - name: Display verification results
+      ansible.builtin.debug:
+        msg: "Shell role verification passed - Oh My Zsh installed, zsh is default shell"

@@ -1,0 +1,44 @@
+---
+# Role metadata for Neovim role
+galaxy_info:
+  author: dotfiles
+  description: Configure Neovim editor (installed via mise)
+  company: ""
+  license: MIT
+  min_ansible_version: "2.12"
+  platforms:
+    - name: Ubuntu
+      versions:
+        - focal
+        - jammy
+        - noble
+    - name: Debian
+      versions:
+        - bullseye
+        - bookworm
+    - name: Fedora
+      versions:
+        - "40"
+        - "41"
+    - name: EL
+      versions:
+        - "8"
+        - "9"
+    - name: ArchLinux
+      versions:
+        - all
+    - name: Alpine
+      versions:
+        - all
+    - name: opensuse
+      versions:
+        - all
+  galaxy_tags:
+    - dotfiles
+    - neovim
+    - nvim
+    - editor
+    - vim
+
+dependencies:
+  - role: mise

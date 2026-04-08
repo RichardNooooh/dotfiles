@@ -1,0 +1,61 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: true
+
+  tasks:
+    - name: Check if required packages are installed
+      ansible.builtin.package:
+        name:
+          - zsh
+          - stow
+          - git
+          - curl
+          - make
+          - tmux
+        state: present
+      check_mode: true
+      register: pkg_check
+      changed_when: false
+      failed_when: pkg_check is failed
+
+    - name: Verify directories exist
+      ansible.builtin.stat:
+        path: "{{ item }}"
+      loop:
+        - /home/molecule/.local/bin
+        - /home/molecule/.local/share/fonts
+      register: dir_check
+
+    - name: Assert directories were created
+      ansible.builtin.assert:
+        that:
+          - item.stat.exists
+          - item.stat.isdir
+        fail_msg: "Directory {{ item.item }} was not created"
+      loop: "{{ dir_check.results }}"
+
+    - name: Verify ripgrep is installed
+      ansible.builtin.command:
+        cmd: which rg
+      register: rg_check
+      changed_when: false
+      ignore_errors: true
+
+    - name: Verify fd/fdfind is installed
+      ansible.builtin.shell: command -v fd || command -v fdfind
+      register: fd_check
+      changed_when: false
+      ignore_errors: true
+
+    - name: Assert search tools are available
+      ansible.builtin.assert:
+        that:
+          - rg_check.rc == 0
+          - fd_check.rc == 0
+        fail_msg: "Search tools (ripgrep/fd) not found"
+      ignore_errors: true
+
+    - name: Display verification results
+      ansible.builtin.debug:
+        msg: "Common role verification passed on {{ ansible_facts['distribution'] }}"

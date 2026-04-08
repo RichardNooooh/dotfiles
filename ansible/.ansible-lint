@@ -1,0 +1,68 @@
+---
+# Ansible-lint configuration for dotfiles project
+# Based on Ansible best practices and Red Hat COP standards
+
+# List of rules to skip
+skip_list:
+  # Skip command-instead-of-module for complex shell operations
+  - command-instead-of-shell
+  # Skip risky-shell-perm as we use proper permissions
+  - risky-shell-perm
+  # Skip no-changed-when for shell tasks that are idempotent by nature
+  - no-changed-when
+  # Skip deprecated-local-action as we don't use it
+  - deprecated-local-action
+
+# List of additional rules to enable (from community)
+enable_list:
+  - fqcn
+  - yaml
+
+# Rules configuration
+rules:
+  # Allow 120 character line length (Ansible standard)
+  line-length:
+    max: 120
+  # Ensure all tasks have names
+  name:
+    min_length: 5
+  # Enforce FQCN (fully qualified collection names)
+  fqcn:
+    level: warning
+  # YAML formatting
+  yaml:
+    level: warning
+
+# Exclude these paths from linting
+exclude_paths:
+  - .cache/
+  - .git/
+  - .github/
+  - .molecule/
+  - .tox/
+  - venv/
+  - ansible/roles/*/molecule/
+
+# Mock modules to avoid false positives for custom modules
+mock_modules:
+  - community.general.zypper
+  - community.general.zypper_repository
+
+# Mock roles for dependency checking
+mock_roles:
+  - common
+  - fonts
+  - mise
+  - uv
+  - shell
+  - dotfiles
+  - neovim
+
+# Minimum Ansible version
+min_ansible_version: "2.12"
+
+# Use strict mode for additional checks
+strict: true
+
+# Use verbose output
+verbosity: 1

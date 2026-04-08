@@ -1,0 +1,7 @@
+---
+# Fonts role default variables
+
+fonts_name: "JetBrainsMono"
+fonts_url: "https://github.com/JetBrains/JetBrainsMono/releases/download/v2.304/JetBrainsMono-2.304.zip"
+# Use ansible_facts instead of deprecated top-level fact variables
+fonts_install_dir: "{{ dotfiles_home | default(ansible_facts['user_dir']) }}/.local/share/fonts"

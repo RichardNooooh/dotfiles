@@ -1,0 +1,40 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: false
+
+  vars:
+    dotfiles_home: "/home/molecule"
+
+  tasks:
+    - name: Check if fonts directory exists
+      ansible.builtin.stat:
+        path: "{{ dotfiles_home }}/.local/share/fonts"
+      register: fonts_dir
+
+    - name: Assert fonts directory exists
+      ansible.builtin.assert:
+        that:
+          - fonts_dir.stat.exists
+          - fonts_dir.stat.isdir
+        fail_msg: "Fonts directory not created at {{ dotfiles_home }}/.local/share/fonts"
+
+    - name: Check for JetBrainsMono fonts
+      ansible.builtin.find:
+        paths: "{{ dotfiles_home }}/.local/share/fonts"
+        patterns: "JetBrainsMono*.ttf"
+      register: font_files
+
+    - name: Assert fonts were installed
+      ansible.builtin.assert:
+        that:
+          - font_files.matched > 0
+        fail_msg: "JetBrainsMono fonts not found in {{ dotfiles_home }}/.local/share/fonts"
+
+    - name: Display installed fonts
+      ansible.builtin.debug:
+        msg: "Found {{ font_files.matched }} JetBrainsMono font files"
+
+    - name: Display verification results
+      ansible.builtin.debug:
+        msg: "Fonts role verification passed - JetBrainsMono installed"
