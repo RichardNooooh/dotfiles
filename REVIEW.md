@@ -97,6 +97,41 @@ This is a **well-architected dotfiles repository** with Ansible-based bootstrapp
 
 ---
 
+## 🧪 Molecule Test Quality Evaluation
+
+**Note**: Tests exist for all 7 roles, but coverage quality varies significantly.
+
+### 🟢 Well-Tested Roles
+
+| Role | Coverage | What They Actually Test |
+|------|----------|------------------------|
+| `common` | ⭐⭐⭐⭐⭐ | Packages installed (zsh, stow, git, curl, make, tmux, ripgrep, fd), directories created with correct ownership, ownership is NOT root |
+| `shell` | ⭐⭐⭐⭐⭐ | Oh My Zsh installed, **critical**: ownership not root, shell changed in /etc/passwd, .zshenv created |
+| `mise` | ⭐⭐⭐⭐ | Binary exists, activation lines in .zshrc/.bashrc, tools (Python, Node) accessible via mise activation |
+
+### 🟡 Adequate Testing
+
+| Role | Coverage | What They Actually Test | Missing |
+|------|----------|------------------------|---------|
+| `fonts` | ⭐⭐⭐ | Fonts directory exists, font files present | Font cache refresh, fonts actually usable |
+| `neovim` | ⭐⭐⭐ | Data/state/cache directories created, nvim accessible via mise | Mason tools, actual Neovim functionality |
+
+### 🔴 Weak Testing
+
+| Role | Coverage | What They Actually Test | Missing |
+|------|----------|------------------------|---------|
+| `dotfiles` | ⭐⭐ | Symlink existence only | Stow/unstow logic, all configurations, actual stow functionality |
+| `uv` | ⭐ | Binary presence (`which uv`) | Python tools installation (debugpy, ruff, ty), tool functionality |
+
+### Key Findings
+
+- **Good**: 3 roles have comprehensive, meaningful tests that catch real bugs (e.g., `shell` role ownership check)
+- **Average**: 2 roles test infrastructure but not functionality
+- **Poor**: 2 roles have minimal tests that don't verify the role's actual purpose
+- **Gap**: `dotfiles` and `uv` roles need significant test improvements
+
+---
+
 ## 📋 Recommended Action Plan
 
 ### Phase 1: Critical Security (Immediate)
