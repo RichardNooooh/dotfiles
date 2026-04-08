@@ -4,7 +4,7 @@
 
 Organized dotfiles inspired by ThePrimeagen. Note that the
 Ansible files were vibe-configured by Kimi K2.5 using OpenCode.
-Use at your own risk.
+Use at your own risk. The Molecule tests are not that good either...
 
 ## Why use Ansible for this?
 
