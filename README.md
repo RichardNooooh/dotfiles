@@ -1,6 +1,6 @@
 # Dotfiles
 
-[![Molecule Tests](https://img.shields.io/github/actions/workflow/status/RichardNooooh/dotfiles/molecule.yml?branch=main&label=molecule%20tests&logo=github)](https://github.com/RichardNooooh/dotfiles/actions)
+[![Molecule Tests](https://github.com/RichardNooooh/dotfiles/actions/workflows/molecule.yml/badge.svg)](https://github.com/RichardNooooh/dotfiles/actions/workflows/molecule.yml)
 
 Organized dotfiles inspired by ThePrimeagen. Note that the
 Ansible files were vibe-configured by Kimi K2.5 using OpenCode.
