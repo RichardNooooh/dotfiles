@@ -40,6 +40,7 @@
     cmd: |
       set -o pipefail
       find /tmp/jetbrains_fonts -name "*.ttf" -exec cp {} "{{ fonts_install_dir }}/" \;
+    executable: /bin/bash
   when: fonts_files.matched == 0
   register: fonts_copy_result
   changed_when: fonts_copy_result.rc == 0

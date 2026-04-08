@@ -25,6 +25,9 @@ jobs:
   # Lint Ansible code
   lint:
     runs-on: ubuntu-latest
+    env:
+      PY_COLORS: '1'
+      ANSIBLE_FORCE_COLOR: '1'
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -73,7 +76,7 @@ jobs:
             roles='["${{ github.event.inputs.role }}"]'
           else
             # Find all roles with molecule tests
-            roles=$(find ansible/roles -name "molecule" -type d | sed 's|ansible/roles/||; s|/molecule||' | jq -R . | jq -s .)
+            roles=$(find ansible/roles -name "molecule" -type d | sed 's|ansible/roles/||; s|/molecule||' | jq -R . | jq -sc .)
           fi
           echo "roles=$roles" >> $GITHUB_OUTPUT
           echo "Testing roles: $roles"
@@ -132,6 +135,9 @@ jobs:
     runs-on: ubuntu-latest
     needs: lint
     if: github.event_name == 'pull_request' || github.event_name == 'push'
+    env:
+      PY_COLORS: '1'
+      ANSIBLE_FORCE_COLOR: '1'
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
