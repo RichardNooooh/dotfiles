@@ -31,9 +31,9 @@ tdl() {
   editor_pane="$TMUX_PANE"
 
   tmux rename-window -t "$editor_pane" "$(basename "$current_dir")"
-  tmux split-window -v -p 25 -t "$editor_pane" -c "$current_dir"
+  tmux split-window -v -l 25% -t "$editor_pane" -c "$current_dir"
 
-  ai_pane=$(tmux split-window -h -p 30 -t "$editor_pane" -c "$current_dir" -PF '#{pane_id}')
+  ai_pane=$(tmux split-window -h -l 30% -t "$editor_pane" -c "$current_dir" -PF '#{pane_id}')
 
   if [[ -n $ai2 ]]; then
     ai2_pane=$(tmux split-window -v -t "$ai_pane" -c "$current_dir" -PF '#{pane_id}')
