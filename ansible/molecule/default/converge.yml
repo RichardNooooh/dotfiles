@@ -69,7 +69,8 @@
       become: false
     - role: mise
       become: false
-    - role: uv
+
+    - role: neovim
       become: false
     - role: neovim
       become: false

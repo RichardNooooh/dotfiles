@@ -75,7 +75,7 @@ yamllint -c ansible/.yamllint ansible/
 
 - **Roles**: 7 Ansible roles in `ansible/roles/`, each with `molecule/default/`
 - **Idempotency**: All roles must be idempotent (0 changes on second run)
-- **Privilege escalation**: Most roles run as root; `mise`, `uv`, `dotfiles`, `neovim` run as user
+- **Privilege escalation**: Most roles run as root; `mise`, `dotfiles`, `neovim` run as user
 - **Dotfile management**: Uses GNU stow; unstows before restowing for clean state
 - **Tool management**: mise handles all dev tools; uv handles Python packages
 
@@ -83,13 +83,10 @@ yamllint -c ansible/.yamllint ansible/
 
 ```bash
 # Run specific tags only
-ansible-playbook -i ansible/inventory.ini ansible/site.yml --tags mise,uv
+ansible-playbook -i ansible/inventory.ini ansible/site.yml --tags mise
 
 # Update tools after changing mise/.config/mise/config.toml
 mise upgrade
-
-# Install Python tools (after uv setup)
-uv tool install debugpy ruff ty
 ```
 
 ## Constraints
