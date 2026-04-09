@@ -45,7 +45,7 @@ All Ansible roles have Molecule tests. **Never skip testing when modifying roles
 
 Roles: `common`, `mise`, `uv`, `shell`, `dotfiles`, `neovim`, `fonts`
 
-Test platforms: Ubuntu 24.04, Arch Linux, Fedora 40 (Docker containers)
+Test platforms: Ubuntu 24.04, Fedora 40 (Docker containers)
 
 ## Linting & Quality
 
@@ -94,7 +94,7 @@ uv tool install debugpy ruff ty
 
 ## Constraints
 
-- **OS support**: Debian/Ubuntu, Arch, Fedora, Alpine, openSUSE
+- **OS support**: Debian/Ubuntu, Fedora/RHEL
 - **No root**: Playbooks warn if run as root (use `--limit local` instead)
 - **CI/CD**: GitHub Actions runs Molecule tests + integration tests on PR/push
 - **WSL**: Windows config path in `.env` (`WINDOWS_CONFIG='/mnt/c/Users/{USER}'`)

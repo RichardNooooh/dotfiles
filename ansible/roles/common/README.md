@@ -4,7 +4,7 @@ Installs base system packages across multiple Linux distributions.
 
 ## Requirements
 
-- Supported OS: Debian/Ubuntu, Arch Linux, Fedora/RHEL, Alpine, openSUSE
+- Supported OS: Debian/Ubuntu, Fedora/RHEL
 - Privilege escalation required for package installation
 
 ## Role Variables
