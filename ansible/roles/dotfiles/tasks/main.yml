@@ -47,6 +47,7 @@
     - nvim
     - zellij
     - tmux
+    - mise
 
 - name: dotfiles | Check which stow targets need updating
   ansible.builtin.shell:

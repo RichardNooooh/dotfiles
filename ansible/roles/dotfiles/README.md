@@ -15,7 +15,7 @@ Manages dotfiles repository and stows configurations.
 | dotfiles_user | `{{ ansible_facts['user_id'] }}` | System username |
 | dotfiles_github_user | `RichardNooooh` | GitHub username for repo cloning |
 | dotfiles_repo | `{{ dotfiles_home }}/.dotfiles` | Local repository path |
-| dotfiles_stow_folders | `zsh,nvim,tmux,zellij,ghostty` | Directories to stow |
+| dotfiles_stow_folders | `zsh,nvim,tmux,zellij,ghostty,mise` | Directories to stow |
 
 ## Dependencies
 

@@ -43,12 +43,18 @@
         - "{{ dotfiles_home }}/.dotfiles"
         - "{{ dotfiles_home }}/.config/mise"
 
+    - name: Create test mise config directory structure
+      ansible.builtin.file:
+        path: "{{ dotfiles_repo }}/mise/.config/mise"
+        state: directory
+        mode: "0755"
+
     - name: Create test mise.toml with neovim
       ansible.builtin.copy:
         content: |
           [tools]
           neovim = "latest"
-        dest: "{{ dotfiles_repo }}/mise.toml"
+        dest: "{{ dotfiles_repo }}/mise/.config/mise/config.toml"
         owner: molecule
         group: molecule
         mode: "0644"

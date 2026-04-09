@@ -64,7 +64,7 @@ yamllint -c ansible/.yamllint ansible/
 
 | File | Purpose |
 |------|---------|
-| `mise.toml` | Tool versions (Python 3.14, Go 1.26, Node 24, Neovim latest) |
+| `mise/.config/mise/config.toml` | Tool versions (Python 3.14, Go 1.26, Node 24, Neovim latest) |
 | `ansible/inventory.ini` | Host inventory (local + remote) |
 | `ansible/site.yml` | Main playbook orchestrating all roles |
 | `ansible/group_vars/all.yml` | Role variables (stow_folders, paths) |
@@ -85,7 +85,7 @@ yamllint -c ansible/.yamllint ansible/
 # Run specific tags only
 ansible-playbook -i ansible/inventory.ini ansible/site.yml --tags mise,uv
 
-# Update tools after changing mise.toml
+# Update tools after changing mise/.config/mise/config.toml
 mise upgrade
 
 # Install Python tools (after uv setup)

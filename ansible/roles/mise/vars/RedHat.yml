@@ -1,0 +1,7 @@
+---
+# RedHat/Fedora specific dependencies for mise
+# gpg-agent is included in gnupg2 package on Fedora/RHEL
+
+mise_dependencies:
+  - curl
+  - gnupg2

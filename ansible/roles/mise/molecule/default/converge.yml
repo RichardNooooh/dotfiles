@@ -26,6 +26,16 @@
         state: present
       when: ansible_facts['os_family'] == "Debian"
 
+    - name: Install required packages (Fedora)
+      ansible.builtin.dnf:
+        name:
+          - curl
+          - git
+          - ca-certificates
+          - gnupg2
+        state: present
+      when: ansible_facts['os_family'] == "RedHat"
+
     - name: Create test user
       ansible.builtin.user:
         name: molecule
@@ -42,13 +52,19 @@
         - /home/molecule/.local/bin
         - /home/molecule/.dotfiles
 
+    - name: Create mock mise config directory structure
+      ansible.builtin.file:
+        path: /home/molecule/.dotfiles/mise/.config/mise
+        state: directory
+        mode: "0755"
+
     - name: Create mock mise.toml
       ansible.builtin.copy:
         content: |
           [tools]
           python = "latest"
           node = "latest"
-        dest: /home/molecule/.dotfiles/mise.toml
+        dest: /home/molecule/.dotfiles/mise/.config/mise/config.toml
 
     - name: Create .config/mise directory
       ansible.builtin.file:
