@@ -18,7 +18,7 @@ ripgrep = "latest"
 fzf = "latest"
 
 # CI/CD testing tools
-act = "latest"
+# act = "latest"
 
 # AI
 opencode = "latest"
