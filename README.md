@@ -187,7 +187,7 @@ The Ansible setup includes comprehensive Molecule tests for all roles:
 ./bootstrap.sh --test-destroy           # Clean up test containers
 ```
 
-Tests run in Docker containers (Ubuntu, Arch, Fedora) to verify:
+Tests run in Docker containers (Ubuntu, Fedora) to verify:
 - Role functionality
 - **Idempotency** (no changes on second run)
 - Cross-platform compatibility

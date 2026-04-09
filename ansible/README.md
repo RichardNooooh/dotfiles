@@ -5,7 +5,7 @@ This directory contains Ansible playbooks for bootstrapping your dotfiles enviro
 ## Overview
 
 The Ansible setup provides:
-- **OS-agnostic** package installation (Debian/Ubuntu, Arch, Fedora, Alpine, openSUSE)
+- **OS-agnostic** package installation (Debian/Ubuntu, Fedora/RHEL)
 - **Local or remote** deployment options
 - **mise** for managing all development tools (Python, Go, Node.js, Neovim, uv)
 - **uv** for Python package management
@@ -358,13 +358,10 @@ Each role has a `molecule/default/` directory containing:
 | `molecule.yml` | Platform definitions (Docker containers) |
 | `converge.yml` | Playbook to apply the role |
 | `verify.yml` | Assertions to verify the role worked |
-| `Dockerfile.arch` | Custom Arch Linux image (systemd support) |
-
 ### Tested Platforms
 
 Tests run on Docker containers for:
 - **Ubuntu 24.04** (LTS)
-- **Arch Linux** (rolling)
 - **Fedora 40**
 
 ### CI/CD (GitHub Actions)

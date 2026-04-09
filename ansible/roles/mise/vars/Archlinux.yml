@@ -1,7 +1,0 @@
----
-# Arch Linux specific dependencies for mise
-# gpg-agent is included in gnupg package on Arch
-
-mise_dependencies:
-  - curl
-  - gnupg

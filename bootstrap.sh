@@ -38,8 +38,6 @@ detect_os() {
         echo "$ID"
     elif command -v lsb_release >/dev/null 2>&1; then
         lsb_release -is | tr '[:upper:]' '[:lower:]'
-    elif [ -f /etc/arch-release ]; then
-        echo "arch"
     elif [ -f /etc/debian_version ]; then
         echo "debian"
     else
@@ -59,28 +57,10 @@ install_ansible_debian() {
     sudo apt-get install -y ansible
 }
 
-install_ansible_arch() {
-    log_info "Detected Arch Linux system"
-    log_info "Installing Ansible..."
-    sudo pacman -Sy --noconfirm ansible
-}
-
 install_ansible_fedora() {
     log_info "Detected Fedora/RHEL system"
     log_info "Installing Ansible..."
     sudo dnf install -y ansible
-}
-
-install_ansible_alpine() {
-    log_info "Detected Alpine Linux system"
-    log_info "Installing Ansible..."
-    sudo apk add ansible
-}
-
-install_ansible_opensuse() {
-    log_info "Detected openSUSE system"
-    log_info "Installing Ansible..."
-    sudo zypper install -y ansible
 }
 
 install_ansible_pip() {
@@ -104,17 +84,8 @@ install_ansible() {
         debian|ubuntu|pop|elementary|linuxmint)
             install_ansible_debian
             ;;
-        arch|manjaro|endeavouros)
-            install_ansible_arch
-            ;;
         fedora|rhel|centos|rocky|almalinux)
             install_ansible_fedora
-            ;;
-        alpine)
-            install_ansible_alpine
-            ;;
-        opensuse*)
-            install_ansible_opensuse
             ;;
         *)
             log_warn "Unknown OS: $os"
@@ -170,7 +141,7 @@ EXAMPLES:
 
 LOCAL TESTING:
     The --test-local and --test-debug options are designed for development:
-    - Tests run on all three platforms (Ubuntu, Arch, Fedora)
+    - Tests run on two platforms (Ubuntu, Fedora)
     - Containers are kept alive for inspection
     - Verbose Ansible output (-vv) is enabled
     - Use --test-debug to automatically enter the container after testing
@@ -280,7 +251,7 @@ run_molecule_local() {
     fi
     
     log_info "Running local Molecule tests for role: $test_role"
-    log_info "Platforms: Ubuntu 24.04, Arch Linux, Fedora 40"
+    log_info "Platforms: Ubuntu 24.04, Fedora 40"
     log_info "Container will be kept alive for inspection"
     log_info "Ansible verbose mode enabled (-vv)"
     echo ""
@@ -337,7 +308,7 @@ run_molecule_debug() {
     fi
     
     log_info "Running debug Molecule tests for role: $test_role"
-    log_info "Platforms: Ubuntu 24.04, Arch Linux, Fedora 40"
+    log_info "Platforms: Ubuntu 24.04, Fedora 40"
     echo ""
     
     cd "$roles_dir/$test_role"
@@ -444,8 +415,6 @@ run_molecule_parallel() {
         log_warn "GNU parallel not found. Attempting to install..."
         if command -v apt-get >/dev/null 2>&1; then
             sudo apt-get update && sudo apt-get install -y parallel
-        elif command -v pacman >/dev/null 2>&1; then
-            sudo pacman -Sy --noconfirm parallel
         elif command -v dnf >/dev/null 2>&1; then
             sudo dnf install -y parallel
         else
