@@ -57,7 +57,7 @@
         recurse: true
         owner: molecule
         group: molecule
-        follow: no
+        follow: false
       changed_when: false
 
   roles:

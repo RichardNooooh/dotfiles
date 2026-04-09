@@ -116,8 +116,8 @@
     - debugpy
     - ruff
     - ty
-  register: uv_tools_install
-  changed_when: "'Installed' in uv_tools_install.stdout or 'Updated' in uv_tools_install.stdout"
+  register: mise_uv_tools_install
+  changed_when: "'Installed' in mise_uv_tools_install.stdout or 'Updated' in mise_uv_tools_install.stdout"
 
 - name: mise | Verify neovim is installed (if configured in mise.toml)
   ansible.builtin.shell:
