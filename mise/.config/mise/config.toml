@@ -6,6 +6,11 @@ node = "24"
 neovim = "latest"
 uv = "latest"
 
+# Python
+"pipx:debugpy" = "latest"
+"pipx:ruff" = "latest"
+"pipx:ty" = "latest"
+
 # Additional useful tools
 stylua = "latest"
 fd = "latest"
