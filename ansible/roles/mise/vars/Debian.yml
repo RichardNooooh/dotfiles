@@ -1,0 +1,8 @@
+---
+# Debian/Ubuntu specific dependencies for mise
+# gpg-agent is a separate package on Debian/Ubuntu
+
+mise_dependencies:
+  - curl
+  - gnupg
+  - gpg-agent

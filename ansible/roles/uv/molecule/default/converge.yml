@@ -33,6 +33,12 @@
         state: directory
         mode: "0755"
 
+    - name: Create mock mise config directory structure
+      ansible.builtin.file:
+        path: /home/molecule/.dotfiles/mise/.config/mise
+        state: directory
+        mode: "0755"
+
     - name: Create mock mise.toml for testing
       ansible.builtin.copy:
         content: |
@@ -40,7 +46,7 @@
           python = "latest"
           node = "latest"
           uv = "latest"
-        dest: /home/molecule/.dotfiles/mise.toml
+        dest: /home/molecule/.dotfiles/mise/.config/mise/config.toml
 
     - name: Create .config/mise directory
       ansible.builtin.file:

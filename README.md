@@ -82,7 +82,7 @@ WINDOW_CONFIG='/mnt/c/Users/{USER}'
 ├── ghostty/              # Ghostty terminal config
 ├── fonts/                # JetBrainsMono font files
 ├── keyboard/             # QMK keyboard firmware
-├── mise.toml             # mise configuration (tool versions)
+├── mise/                 # mise configuration (tool versions)
 └── README.md             # This file
 ```
 

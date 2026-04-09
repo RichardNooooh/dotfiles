@@ -1,22 +1,16 @@
 ---
 # Mise role - install mise and development tools
+- name: mise | Include OS-specific variables
+  ansible.builtin.include_vars: "{{ ansible_facts['os_family'] }}.yml"
+
 - name: mise | Check if mise is already installed
   ansible.builtin.stat:
     path: "{{ dotfiles_home }}/.local/bin/mise"
   register: mise_installed
 
-- name: mise | Ensure curl is installed (required for mise install script)
+- name: mise | Ensure mise dependencies are installed
   ansible.builtin.package:
-    name: curl
-    state: present
-  become: true
-  when: not mise_installed.stat.exists
-
-- name: mise | Ensure GPG tools are installed (required for mise tool verification)
-  ansible.builtin.package:
-    name:
-      - gnupg
-      - gpg-agent
+    name: "{{ mise_dependencies }}"
     state: present
   become: true
 
@@ -63,36 +57,23 @@
     create: true
     mode: "0644"
 
-- name: mise | Check for mise.toml in dotfiles
+- name: mise | Check for mise config in dotfiles
   ansible.builtin.stat:
-    path: "{{ dotfiles_repo }}/mise.toml"
+    path: "{{ dotfiles_repo }}/mise/.config/mise/config.toml"
   register: mise_config_exists
 
-- name: mise | Fail if mise.toml not found
+- name: mise | Fail if mise config not found
   ansible.builtin.fail:
-    msg: "mise.toml not found at {{ dotfiles_repo }}/mise.toml - cannot install tools"
+    msg: "mise config not found at {{ dotfiles_repo }}/mise/.config/mise/config.toml - cannot install tools"
   when:
     - not mise_config_exists.stat.exists | default(false)
-
-- name: mise | Ensure mise config directory exists
-  ansible.builtin.file:
-    path: "{{ dotfiles_home }}/.config/mise"
-    state: directory
-    mode: "0755"
-
-- name: mise | Link mise.toml to home if it doesn't exist
-  ansible.builtin.file:
-    src: "{{ dotfiles_repo }}/mise.toml"
-    dest: "{{ dotfiles_home }}/.config/mise/config.toml"
-    state: link
-    force: false
 
 - name: mise | Trust mise configuration
   ansible.builtin.shell:
     cmd: |
       export HOME="{{ dotfiles_home }}"
       export PATH="{{ dotfiles_home }}/.local/bin:$PATH"
-      {{ dotfiles_home }}/.local/bin/mise trust {{ dotfiles_repo }}/mise.toml
+      {{ dotfiles_home }}/.local/bin/mise trust {{ dotfiles_home }}/.config/mise/config.toml
   register: mise_trust
   changed_when: false
 

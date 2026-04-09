@@ -110,7 +110,7 @@ ansible-playbook -i inventory.ini site.yml --tags mise,uv
 
 ### mise
 - Downloads and installs mise
-- Installs all tools from `mise.toml`:
+- Installs all tools from `mise/.config/mise/config.toml`:
   - Python 3.14, Go 1.26, Node.js 24
   - Neovim latest, uv latest
   - Additional: stylua, fd, ripgrep, fzf
@@ -201,7 +201,7 @@ fc-list | grep -i jetbrains
 ## Configuration
 
 ### Tool Versions
-Edit `mise.toml` in the dotfiles root to change versions, then re-run:
+Edit `mise/.config/mise/config.toml` to change versions, then re-run:
 ```bash
 cd ansible && ansible-playbook -i inventory.ini site.yml --tags mise
 ```
@@ -212,7 +212,7 @@ Edit `ansible/inventory.ini` to add/modify hosts.
 ### Variables
 Edit `ansible/group_vars/all.yml` to change:
 - stow_folders
-- Tool versions (though mise.toml is authoritative)
+- Tool versions (though mise config is authoritative)
 - Font URL
 - Shell paths
 
