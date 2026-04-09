@@ -79,6 +79,8 @@
         recurse: true
         owner: molecule
         group: molecule
+        follow: no # creates recursion error without this
+        # https://stackoverflow.com/questions/72126897/-
       changed_when: false
 
   roles:
