@@ -87,7 +87,7 @@ ansible-playbook -i inventory.ini site.yml --limit local
 ansible-playbook -i inventory.ini site.yml --limit remote
 
 # Run specific tags
-ansible-playbook -i inventory.ini site.yml --tags mise,uv
+ansible-playbook -i inventory.ini site.yml --tags mise
 ```
 
 ## Available Tags
@@ -95,8 +95,7 @@ ansible-playbook -i inventory.ini site.yml --tags mise,uv
 | Tag | Description |
 |-----|-------------|
 | `common` | Base system packages |
-| `mise` | Install mise and development tools |
-| `uv` | Install Python packages via uv |
+| `mise` | Install mise, development tools, and Python packages |
 | `shell` | Oh My Zsh and zsh configuration |
 | `dotfiles` | Clone and stow dotfiles |
 | `neovim` | Neovim setup and verification |
@@ -114,8 +113,6 @@ ansible-playbook -i inventory.ini site.yml --tags mise,uv
   - Python 3.14, Go 1.26, Node.js 24
   - Neovim latest, uv latest
   - Additional: stylua, fd, ripgrep, fzf
-
-### uv
 - Installs Python packages via `uv tool install`:
   - `debugpy` - Python debugger for Neovim DAP
   - `ruff` - Python linter/formatter
@@ -244,9 +241,6 @@ mise upgrade
 
 To re-run specific parts:
 ```bash
-# Update only Python packages
-ansible-playbook -i inventory.ini site.yml --tags uv
-
 # Re-stow dotfiles
 ansible-playbook -i inventory.ini site.yml --tags dotfiles
 ```

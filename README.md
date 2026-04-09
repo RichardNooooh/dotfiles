@@ -165,7 +165,7 @@ mise upgrade
 Re-run specific Ansible roles:
 ```bash
 cd ansible
-ansible-playbook -i inventory.ini site.yml --tags mise,uv
+ansible-playbook -i inventory.ini site.yml --tags mise
 ```
 
 ## Testing
@@ -216,4 +216,3 @@ The Ansible playbook supports:
 
 1. Clean up the `update_windows_keyboard` script and keyboard directory structure.
 2. ~~Clean up bootstrapping scripts~~ ✅ Now uses Ansible with Molecule testing
-3. Fix test-role (uv) in CI (some weird inability to verify `uv` being available there...)

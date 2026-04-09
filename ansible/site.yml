@@ -41,10 +41,6 @@
       tags: ['mise', 'tools']
       become: false
 
-    - role: uv
-      tags: ['uv', 'python']
-      become: false
-
     - role: neovim
       tags: ['neovim', 'nvim']
       become: false
