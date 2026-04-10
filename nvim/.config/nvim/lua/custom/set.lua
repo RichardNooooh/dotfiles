@@ -71,3 +71,32 @@ vim.api.nvim_create_autocmd('FileType', {
 vim.diagnostic.config {
   virtual_lines = false,
 }
+
+-- Ansible filetype detection
+vim.api.nvim_create_autocmd({ 'BufNewFile', 'BufRead' }, {
+  pattern = {
+    '*/playbooks/*.yml',
+    '*/playbooks/*.yaml',
+    '*/roles/*/tasks/*.yml',
+    '*/roles/*/tasks/*.yaml',
+    '*/roles/*/handlers/*.yml',
+    '*/roles/*/handlers/*.yaml',
+    '*/roles/*/defaults/*.yml',
+    '*/roles/*/defaults/*.yaml',
+    '*/roles/*/vars/*.yml',
+    '*/roles/*/vars/*.yaml',
+    '*/roles/*/meta/*.yml',
+    '*/roles/*/meta/*.yaml',
+    '*/group_vars/*.yml',
+    '*/group_vars/*.yaml',
+    '*/host_vars/*.yml',
+    '*/host_vars/*.yaml',
+    '*/inventory/*.yml',
+    '*/inventory/*.yaml',
+    'site.yml',
+    'site.yaml',
+  },
+  callback = function()
+    vim.bo.filetype = 'yaml.ansible'
+  end,
+})

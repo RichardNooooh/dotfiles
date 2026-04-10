@@ -142,11 +142,42 @@ return {
       debugpy = {}, -- Required for Python DAP
       delve = {}, -- Required for Go DAP
       gopls = {},
+      ansiblels = {
+        settings = {
+          ansible = {
+            python = {
+              interpreterPath = 'python3',
+            },
+            ansible = {
+              path = 'ansible',
+              useFullyQualifiedCollectionNames = true,
+            },
+            executionEnvironment = {
+              enabled = false,
+            },
+            validation = {
+              enabled = true,
+              lint = {
+                enabled = vim.fn.executable 'ansible-lint' == 1,
+                path = 'ansible-lint',
+              },
+            },
+            completion = {
+              provideRedirectModules = true,
+              provideModuleOptionAliases = true,
+            },
+          },
+        },
+        filetypes = { 'yaml.ansible' },
+        root_dir = require('lspconfig').util.root_pattern('roles', 'playbooks'),
+        -- single_file_support = true,
+      },
     }
 
     local ensure_installed = vim.tbl_keys(servers or {})
     vim.list_extend(ensure_installed, {
       'stylua',
+      'yamlfmt',
     })
     require('mason-tool-installer').setup { ensure_installed = ensure_installed }
     require('mason-lspconfig').setup {

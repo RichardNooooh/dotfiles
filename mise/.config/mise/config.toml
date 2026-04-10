@@ -16,16 +16,23 @@ stylua = "latest"
 fd = "latest"
 ripgrep = "latest"
 fzf = "latest"
+tree-sitter = "latest"
 
 # CI/CD testing tools
 # act = "latest"
 
 # AI
 opencode = "latest"
+claude-code = "latest"
 
 # Linting tools (installed via pipx since they're Python CLIs)
-"pipx:ansible/ansible-lint" = "latest"
-"pipx:yamllint" = "latest"
+# "pipx:ansible/ansible-lint" = "latest"
+# "pipx:yamllint" = "latest"
+
+# Misc tools
+tlrc = "latest"
+jq = "latest"
+yq = "latest"
 
 [settings]
 # Enable experimental features if needed
