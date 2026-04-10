@@ -2,7 +2,7 @@
 # Core development tools
 python = "3.14"
 go = "1.26"
-node = "24"
+node = "25"
 neovim = "latest"
 uv = "latest"
 

@@ -1,4 +1,4 @@
-# ---
+---
 name: caveman
 license: MIT License Copyright (c) 2026 Julius Brussee (https://github.com/JuliusBrussee/caveman)
 description: >
