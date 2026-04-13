@@ -29,8 +29,9 @@ return {
       lua = { 'stylua' },
       go = { 'gofmt' },
       python = { 'ruff_fix', 'ruff_format', 'ruff_organize_imports' },
-      yaml = { 'yamlfmt' },
-      ['yaml.ansible'] = vim.fn.executable('ansible-lint') == 1 and { 'ansible_lint' } or {},
+      -- yaml = { 'yamlfmt' },
+      ['yaml.ansible'] = vim.fn.executable 'ansible-lint' == 1 and { 'ansible_lint' } or {},
+      markdown = { 'prettier' },
     },
     formatters = {
       ansible_lint = {
@@ -38,7 +39,7 @@ return {
         args = { '--fix', '$FILENAME' },
         stdin = false,
         condition = function()
-          return vim.fn.executable('ansible-lint') == 1
+          return vim.fn.executable 'ansible-lint' == 1
         end,
       },
     },

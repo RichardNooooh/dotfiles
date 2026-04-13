@@ -41,7 +41,11 @@ return {
     map('<leader><leader>', builtin.buffers, '[ ] Find Existing Buffers')
 
     map('<leader>sn', function()
-      builtin.find_files { cwd = vim.fn.stdpath 'config' }
+      builtin.find_files {
+        cwd = vim.fn.stdpath 'config',
+        follow = true,
+        hidden = true,
+      }
     end, '[S]earch [N]eovim files')
   end,
 }
