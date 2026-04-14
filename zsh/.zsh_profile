@@ -10,6 +10,7 @@ source ~/.zshenv
 
 alias vim='nvim'
 alias v='nvim'
+alias lg='lazygit'
 
 export COLORTERM='truecolor'
 

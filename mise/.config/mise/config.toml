@@ -17,6 +17,7 @@ fd = "latest"
 ripgrep = "latest"
 fzf = "latest"
 tree-sitter = "latest"
+"pipx:pre-commit" = "latest"
 
 # CI/CD testing tools
 # act = "latest"
@@ -33,6 +34,7 @@ claude-code = "latest"
 tlrc = "latest"
 jq = "latest"
 yq = "latest"
+lazygit = "latest"
 
 [settings]
 # Enable experimental features if needed
