@@ -24,7 +24,6 @@ tree-sitter = "latest"
 
 # AI
 opencode = "latest"
-claude-code = "latest"
 
 # Linting tools (installed via pipx since they're Python CLIs)
 # "pipx:ansible/ansible-lint" = "latest"
@@ -37,6 +36,7 @@ yq = "latest"
 lazygit = "latest"
 
 [settings]
+minimum_release_age = "7d"
 # Enable experimental features if needed
 experimental = false
 
