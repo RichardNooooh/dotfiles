@@ -116,6 +116,7 @@ ansible-playbook -i inventory.ini site.yml --tags mise
 - Installs Python packages via `uv tool install`:
   - `debugpy` - Python debugger for Neovim DAP
   - `ruff` - Python linter/formatter
+  - `sqlfluff` - SQL linter/formatter
   - `ty` - Python type checker
 
 ### shell

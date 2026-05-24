@@ -20,7 +20,7 @@ return {
         return nil
       else
         return {
-          timeout_ms = 500,
+          timeout_ms = vim.bo[bufnr].filetype == 'sql' and 2000 or 500,
           lsp_format = 'fallback',
         }
       end
@@ -29,6 +29,7 @@ return {
       lua = { 'stylua' },
       go = { 'gofmt' },
       python = { 'ruff_fix', 'ruff_format', 'ruff_organize_imports' },
+      sql = { 'sqlfluff' },
       -- yaml = { 'yamlfmt' },
       ['yaml.ansible'] = vim.fn.executable 'ansible-lint' == 1 and { 'ansible_lint' } or {},
       markdown = { 'prettier' },

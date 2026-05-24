@@ -9,6 +9,7 @@ uv = "latest"
 # Python
 "pipx:debugpy" = "latest"
 "pipx:ruff" = "latest"
+"pipx:sqlfluff" = "latest"
 "pipx:ty" = "latest"
 
 # Additional useful tools

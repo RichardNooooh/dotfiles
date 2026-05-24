@@ -107,7 +107,7 @@ sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/too
 ./stow_config
 
 # 6. Install Python packages via uv
-uv tool install debugpy ruff ty
+uv tool install debugpy ruff sqlfluff ty
 ```
 
 ## Neovim Dependencies
@@ -127,6 +127,7 @@ Your Neovim config uses Mason for LSP/DAP tools. On first run, it will auto-inst
 **Formatters**:
 - `stylua` - Lua formatter
 - `gofmt` - Go formatter (built-in)
+- `sqlfluff` - SQL formatter
 
 **Treesitter Parsers**:
 - bash, c, diff, python, go, lua, markdown, terraform, vim
