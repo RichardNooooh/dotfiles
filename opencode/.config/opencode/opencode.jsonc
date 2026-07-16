@@ -12,19 +12,20 @@
     "task": {
       "*": "deny",
       "worker": "allow",
+      "researcher": "allow",
       "explorer": "allow"
     }
   },
 
   // Helps control long-session tool-output accumulation.
   "compaction": {
-    "auto": true,
-    "prune": true
+    "auto": false,
+    "prune": false
   },
 
   "agent": {
     "worker": {
-      "description": "Use for implementation, refactoring, tests, and validation.",
+      "description": "Use for implementation, refactoring, tests, and validation, along with other non-specialized work.",
       "mode": "subagent",
       "model": "openai/gpt-5.6-terra",
       "reasoningEffort": "medium",
@@ -36,21 +37,85 @@
         "glob": "allow",
         "grep": "allow",
         "list": "allow",
-        "bash": "allow",
+        "bash": {
+          "*": "allow",
+          "git commit*": "ask",
+          "git push*": "ask",
+          "git reset --hard*": "deny",
+          "git clean*": "ask",
+          "rm -rf*": "ask",
+          "sudo*": "deny"
+        },
         "lsp": "allow",
         "skill": "allow",
 
         "task": "deny",
+        "webfetch": "deny",
+        "websearch": "deny",
+        "question": "deny"
+      }
+    },
+
+    "researcher": {
+      "description": "Use for complex external documentation, dependency, and architectural research, along with complex, independent planning.",
+      "mode": "subagent",
+      "model": "openai/gpt-5.6-sol",
+      "reasoningEffort": "high",
+      "textVerbosity": "medium",
+
+      "permission": {
+        "read": "allow",
+        "edit": "deny",
+        "glob": "allow",
+        "grep": "allow",
+        "list": "allow",
+        "bash": "ask",
+        "lsp": "allow",
+        "skill": "allow",
+
+        "task": "deny",
+        "webfetch": "allow",
+        "websearch": "allow",
+        "question": "deny"
+      }
+    },
+
+    "reviewer": {
+      "description": "Use only for substantial changes where an independent review could find meaningful defects; do not use for trivial edits.",
+      "mode": "subagent",
+      "model": "openai/gpt-5.6-terra",
+      "reasoningEffort": "high",
+      "textVerbosity": "low",
+
+      "permission": {
+        "read": "allow",
+        "edit": "deny",
+        "glob": "allow",
+        "grep": "allow",
+        "list": "allow",
+        "lsp": "allow",
+        "skill": "allow",
+
+        "bash": {
+          "*": "ask",
+          "git status*": "allow",
+          "git diff*": "allow",
+          "git show*": "allow"
+        },
+
+        "task": "deny",
+        "question": "deny",
+        "external_directory": "deny",
         "webfetch": "deny",
         "websearch": "deny"
       }
     },
 
     "explorer": {
-      "description": "Use to locate code, trace behavior, and summarize findings.",
+      "description": "Use to locate code, trace behavior, summarize basic findings, and other simple work.",
       "mode": "subagent",
       "model": "openai/gpt-5.6-luna",
-      "reasoningEffort": "low",
+      "reasoningEffort": "medium",
       "textVerbosity": "low",
 
       "permission": {
@@ -65,7 +130,8 @@
 
         "task": "deny",
         "webfetch": "deny",
-        "websearch": "deny"
+        "websearch": "deny",
+        "question": "deny"
       }
     }
   }
