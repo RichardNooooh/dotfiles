@@ -1,3 +1,6 @@
 ---
 # Common role default variables
 # Note: Primary variables (dotfiles_user, dotfiles_home, dotfiles_repo) are defined in group_vars/all.yml
+
+# URL for win32yank.exe WSL clipboard utility (optional, WSL-only)
+common_win32yank_url: "https://github.com/equalsraf/win32yank/releases/download/v0.1.1/win32yank-x64.zip"

@@ -16,12 +16,41 @@
         cache_valid_time: 3600
       when: ansible_facts['os_family'] == "Debian"
 
-    - name: Install required packages
+    - name: Install required packages (git, build deps)
       ansible.builtin.apt:
         name:
-          - stow
           - git
+          - perl
+          - make
+          - tar
         state: present
+      when: ansible_facts['os_family'] == "Debian"
+
+    - name: Download stow source
+      ansible.builtin.get_url:
+        url: https://ftp.gnu.org/gnu/stow/stow-2.4.1.tar.gz
+        dest: /tmp/stow-2.4.1.tar.gz
+        mode: "0644"
+      when: ansible_facts['os_family'] == "Debian"
+
+    - name: Extract stow source
+      ansible.builtin.unarchive:
+        src: /tmp/stow-2.4.1.tar.gz
+        dest: /tmp/
+        remote_src: true
+      when: ansible_facts['os_family'] == "Debian"
+
+    - name: Configure stow
+      ansible.builtin.command:
+        cmd: ./configure --prefix=/usr/local
+        chdir: /tmp/stow-2.4.1
+        creates: /tmp/stow-2.4.1/Makefile
+      when: ansible_facts['os_family'] == "Debian"
+
+    - name: Build and install stow
+      ansible.builtin.command:
+        cmd: make install
+        chdir: /tmp/stow-2.4.1
       when: ansible_facts['os_family'] == "Debian"
 
     - name: Create test user

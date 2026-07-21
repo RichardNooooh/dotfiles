@@ -12,7 +12,6 @@
       ansible.builtin.package:
         name:
           - zsh
-          - stow
           - git
           - curl
           - make
@@ -22,6 +21,13 @@
       register: pkg_check
       changed_when: false
       failed_when: pkg_check is failed
+
+    - name: Verify stow is installed from source
+      ansible.builtin.command:
+        cmd: stow --version
+      register: stow_check
+      changed_when: false
+      failed_when: stow_check.rc != 0
 
     - name: Verify directories exist for test user
       ansible.builtin.stat:

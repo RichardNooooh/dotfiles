@@ -4,7 +4,6 @@
 
 common_packages:
   - zsh
-  - stow
   - curl
   - wget
   - git

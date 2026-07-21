@@ -6,6 +6,10 @@ Organized dotfiles inspired by ThePrimeagen. Note that the
 Ansible files were vibe-configured by Kimi K2.5 using OpenCode.
 Use at your own risk. The Molecule tests are not that good either...
 
+> [!WARNING]
+> The Ansible setup is currently broken. This is known and accepted for now,
+> and it may be fixed later.
+
 ## Why use Ansible for this?
 
 I began using VMs on my Proxmox cluster as my dev environment, and I wanted a very convenient
@@ -55,6 +59,21 @@ WINDOW_CONFIG='/mnt/c/Users/{USER}'
 `yasb` requires a `.env` file containing:
 - `YASB_WEATHER_API_KEY`
 - `YASB_WEATHER_LOCATION`
+
+### WSL Clipboard (Known Limitation)
+
+Copying text from inside tmux to the Windows system clipboard requires extra setup.
+The tmux config includes WSL-conditional bindings that pipe selections through a
+`wsl-clipboard` wrapper, which tries `win32yank.exe` first (full UTF-8 support)
+and falls back to `clip.exe`.
+
+- **Automatic**: The Ansible `common` role downloads `win32yank.exe` when it detects WSL
+- **Manual install**: `curl -sL "https://github.com/equalsraf/win32yank/releases/download/v0.1.1/win32yank-x64.zip" -o /tmp/win32yank.zip && unzip -o /tmp/win32yank.zip -d ~/.local/bin/`
+- **Without win32yank**: `clip.exe` is used as fallback (may garble UTF-8 characters like emoji/box-drawing)
+
+**Why this is needed**: Windows Terminal's OSC 52 clipboard support is inconsistent,
+so the tmux bindings bypass it entirely by piping directly to Windows clipboard tools
+via `copy-pipe-and-cancel`.
 
 ## Tool Versions (Managed by mise)
 

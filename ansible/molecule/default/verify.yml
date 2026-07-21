@@ -8,13 +8,18 @@
       ansible.builtin.package:
         name:
           - zsh
-          - stow
           - git
           - tmux
         state: present
       check_mode: true
       register: pkg_check
       failed_when: pkg_check is failed
+
+    - name: Verify stow is installed from source
+      ansible.builtin.stat:
+        path: /usr/local/bin/stow
+      register: stow_path_check
+      failed_when: not stow_path_check.stat.exists
 
     - name: Check if mise is installed
       ansible.builtin.stat:
