@@ -13,7 +13,8 @@
       "*": "deny",
       "worker": "allow",
       "researcher": "allow",
-      "explorer": "allow"
+      "explorer": "allow",
+      "reviewer": "allow"
     }
   },
 
@@ -112,7 +113,7 @@
     },
 
     "explorer": {
-      "description": "Use to locate code, trace behavior, summarize basic findings, and other simple work.",
+      "description": "Use to locate code, trace behavior, summarize basic findings, and other simple work. Do not plan or use suggestions with this subagent.",
       "mode": "subagent",
       "model": "openai/gpt-5.6-luna",
       "reasoningEffort": "medium",
