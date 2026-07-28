@@ -14,21 +14,17 @@ uv = "latest"
 
 # Additional useful tools
 stylua = "latest"
+"pipx:pre-commit" = "4.6.1"
 fd = "latest"
 ripgrep = "latest"
 fzf = "latest"
 tree-sitter = "latest"
-# "pipx:pre-commit" = "latest"
 
 # CI/CD testing tools
 # act = "latest"
 
 # AI
 opencode = "latest"
-
-# Linting tools (installed via pipx since they're Python CLIs)
-# "pipx:ansible/ansible-lint" = "latest"
-# "pipx:yamllint" = "latest"
 
 # Misc tools
 tlrc = "latest"

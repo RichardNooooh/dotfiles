@@ -20,7 +20,7 @@ Execution rules:
   results rather than duplicating exploratory work.
 - Review and integrate subagent results before accepting them.
 - Utilize subagents to validate other subagent results.
-- Run appropriate final validation yourself.
+- Run appropriate final validation yourself, unless asked not to.
 - Stop before materially deviating from the approved plan.
 
 $ARGUMENTS

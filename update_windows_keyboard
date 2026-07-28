@@ -43,4 +43,3 @@ rm -rfv $KEYBOARD_FOLDER
 
 echo "copying $SOURCE_FOLDER to $DEST_FOLDER"
 cp -rv $SOURCE_FOLDER $DEST_FOLDER
-

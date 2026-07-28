@@ -10,7 +10,7 @@ Installs and configures zsh with Oh My Zsh framework.
 ## Role Variables
 
 | Variable | Default | Description |
-|----------|---------|-------------|
+| ---------- | --------- | ------------- |
 | dotfiles_home | `{{ ansible_facts['user_dir'] }}` | User home directory |
 | dotfiles_user | `{{ ansible_facts['user_id'] }}` | Target username |
 | shell_default_shell | `/usr/bin/zsh` | Default shell path |
@@ -30,4 +30,5 @@ Installs and configures zsh with Oh My Zsh framework.
 
 ## Notes
 
-User-specific tasks run without privilege escalation to prevent Oh My Zsh from being installed as root.
+User-specific tasks run without privilege escalation to prevent Oh My Zsh from being installed as
+root.

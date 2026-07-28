@@ -11,7 +11,7 @@ Installs JetBrainsMono font for terminal and editor use.
 ## Role Variables
 
 | Variable | Default | Description |
-|----------|---------|-------------|
+| -------- | ------- | ----------- |
 | fonts_install_dir | `{{ dotfiles_home }}/.local/share/fonts` | Font installation directory |
 | fonts_url | JetBrainsMono GitHub release URL | Font download URL |
 

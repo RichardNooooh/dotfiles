@@ -3,4 +3,3 @@
 echo "stowing keyboard/ in local WSL"
 stow -D keyboard
 stow keyboard
-

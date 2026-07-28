@@ -10,7 +10,7 @@ Installs base system packages across multiple Linux distributions.
 ## Role Variables
 
 | Variable | Default | Description |
-|----------|---------|-------------|
+| -------- | ------- | ----------- |
 | dotfiles_home | `{{ ansible_facts['user_dir'] }}` | User home directory |
 | dotfiles_user | `{{ ansible_facts['user_id'] }}` | Target username |
 

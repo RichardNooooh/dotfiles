@@ -27,15 +27,8 @@ exclude_paths:
   - .cache/
   - .git/
   - .github/
-  - .molecule/
   - .tox/
   - venv/
-  - ansible/roles/*/molecule/
-
-# Mock modules to avoid false positives for custom modules
-mock_modules:
-  - community.general.zypper
-  - community.general.zypper_repository
 
 # Mock roles for dependency checking
 mock_roles:

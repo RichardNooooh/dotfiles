@@ -19,4 +19,3 @@ do
     stow -D $folder
     stow $folder
 done
-

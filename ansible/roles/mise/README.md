@@ -10,7 +10,7 @@ Installs mise (formerly rtx) version manager and development tools.
 ## Role Variables
 
 | Variable | Default | Description |
-|----------|---------|-------------|
+| -------- | ------- | ----------- |
 | dotfiles_home | `{{ ansible_env.HOME }}` | User home directory |
 | dotfiles_repo | Repository path | Dotfiles repository location |
 

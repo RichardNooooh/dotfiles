@@ -44,7 +44,7 @@ bars:
         - "cpu"
         - "memory"
         - "traffic"
-      center: 
+      center:
         - "clock"
       right:
         - "active_window"
@@ -474,7 +474,7 @@ widgets:
         color: "black"
         radius: 3
         offset: [ 1, 1 ]
-      app_icons: 
+      app_icons:
         enabled_populated: false
         enabled_active: false
         size: 16

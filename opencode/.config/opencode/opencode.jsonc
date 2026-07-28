@@ -1,14 +1,18 @@
 {
   "$schema": "https://opencode.ai/config.json",
 
-  // Optional privacy preference.
-  "share": "disabled",
+  "plugin": [
+    "opencode-history-search"
+  ],
 
-  // Optional: hide providers you do not intend to use.
+  "share": "disabled",
   "enabled_providers": ["openai"],
 
-  // Only expose these two subagents to primary agents.
   "permission": {
+    // The plugin is installed, but unavailable to ordinary agents.
+    "history-search": "deny",
+
+    // Subagents available to primary agents by default.
     "task": {
       "*": "deny",
       "worker": "allow",
@@ -18,26 +22,62 @@
     }
   },
 
-  // Helps control long-session tool-output accumulation.
   "compaction": {
     "auto": false,
     "prune": false
   },
 
   "agent": {
+    "history": {
+      "description": "Search, inspect, and summarize previous OpenCode sessions and related documentation.",
+      "mode": "primary",
+      "model": "openai/gpt-5.6-terra",
+      "reasoningEffort": "medium",
+      "textVerbosity": "low",
+
+      "prompt": "Use conversation history, local read-only inspection, and external research to answer questions. Do not modify files or execute shell commands.",
+
+      "permission": {
+        "*": "deny",
+
+        // Local read-only inspection.
+        "read": "allow",
+        "glob": "allow",
+        "grep": "allow",
+        "list": "allow",
+
+        // OpenCode session history.
+        "history-search": "allow",
+
+        // External research.
+        "webfetch": "allow",
+        "websearch": "allow",
+
+        // Only these subagents may be delegated to.
+        "task": {
+          "*": "deny",
+          "researcher": "allow",
+          "explorer": "allow"
+        }
+      }
+    },
+
     "worker": {
-      "description": "Use for implementation, refactoring, tests, and validation, along with other non-specialized work.",
+      "description": "Use for implementation, refactoring, tests, validation, and other non-specialized work.",
       "mode": "subagent",
       "model": "openai/gpt-5.6-terra",
       "reasoningEffort": "medium",
       "textVerbosity": "low",
 
       "permission": {
+        "*": "deny",
+
         "read": "allow",
         "edit": "allow",
         "glob": "allow",
         "grep": "allow",
         "list": "allow",
+
         "bash": {
           "*": "allow",
           "git commit*": "ask",
@@ -47,37 +87,32 @@
           "rm -rf*": "ask",
           "sudo*": "deny"
         },
-        "lsp": "allow",
-        "skill": "allow",
 
-        "task": "deny",
-        "webfetch": "deny",
-        "websearch": "deny",
-        "question": "deny"
+        "lsp": "allow",
+        "skill": "allow"
       }
     },
 
     "researcher": {
-      "description": "Use for complex external documentation, dependency, and architectural research, along with complex, independent planning.",
+      "description": "Use for complex external documentation, dependency, and architectural research, along with complex independent planning. Do not re-use same researcher subagent; start a new research subagent each time.",
       "mode": "subagent",
       "model": "openai/gpt-5.6-sol",
       "reasoningEffort": "high",
       "textVerbosity": "medium",
 
       "permission": {
+        "*": "deny",
+
         "read": "allow",
-        "edit": "deny",
         "glob": "allow",
         "grep": "allow",
         "list": "allow",
+
         "bash": "ask",
         "lsp": "allow",
         "skill": "allow",
-
-        "task": "deny",
         "webfetch": "allow",
-        "websearch": "allow",
-        "question": "deny"
+        "websearch": "allow"
       }
     },
 
@@ -89,8 +124,9 @@
       "textVerbosity": "low",
 
       "permission": {
+        "*": "deny",
+
         "read": "allow",
-        "edit": "deny",
         "glob": "allow",
         "grep": "allow",
         "list": "allow",
@@ -102,37 +138,26 @@
           "git status*": "allow",
           "git diff*": "allow",
           "git show*": "allow"
-        },
-
-        "task": "deny",
-        "question": "deny",
-        "external_directory": "deny",
-        "webfetch": "deny",
-        "websearch": "deny"
+        }
       }
     },
 
     "explorer": {
-      "description": "Use to locate code, trace behavior, summarize basic findings, and other simple work. Do not plan or use suggestions with this subagent.",
+      "description": "Use to locate code, trace behavior, summarize basic findings, and perform other simple read-only work. Do not plan or make suggestions.",
       "mode": "subagent",
       "model": "openai/gpt-5.6-luna",
       "reasoningEffort": "medium",
       "textVerbosity": "low",
 
       "permission": {
+        "*": "deny",
+
         "read": "allow",
-        "edit": "deny",
         "glob": "allow",
         "grep": "allow",
         "list": "allow",
-        "bash": "deny",
         "lsp": "allow",
-        "skill": "allow",
-
-        "task": "deny",
-        "webfetch": "deny",
-        "websearch": "deny",
-        "question": "deny"
+        "skill": "allow"
       }
     }
   }

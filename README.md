@@ -1,10 +1,10 @@
 # Dotfiles
 
-[![Molecule Tests](https://github.com/RichardNooooh/dotfiles/actions/workflows/molecule.yml/badge.svg)](https://github.com/RichardNooooh/dotfiles/actions/workflows/molecule.yml)
+[![Lint](https://github.com/RichardNooooh/dotfiles/actions/workflows/lint.yml/badge.svg)](https://github.com/RichardNooooh/dotfiles/actions/workflows/lint.yml)
 
 Organized dotfiles inspired by ThePrimeagen. Note that the
 Ansible files were vibe-configured by Kimi K2.5 using OpenCode.
-Use at your own risk. The Molecule tests are not that good either...
+Use at your own risk.
 
 > [!WARNING]
 > The Ansible setup is currently broken. This is known and accepted for now,
@@ -13,7 +13,7 @@ Use at your own risk. The Molecule tests are not that good either...
 ## Why use Ansible for this?
 
 I began using VMs on my Proxmox cluster as my dev environment, and I wanted a very convenient
-way configuring my dotfiles on all of them. I really like the idea of spinning up a VM, easily configure 
+way configuring my dotfiles on all of them. I really like the idea of spinning up a VM, easily configure
 my dotfiles on there, then destroy it all whenever I want to. At the same time, I'm not willing
 to invest time on something like NixOS, which seems a bit *too much* for me.
 
@@ -57,6 +57,7 @@ WINDOW_CONFIG='/mnt/c/Users/{USER}'
 ```
 
 `yasb` requires a `.env` file containing:
+
 - `YASB_WEATHER_API_KEY`
 - `YASB_WEATHER_LOCATION`
 
@@ -68,8 +69,10 @@ The tmux config includes WSL-conditional bindings that pipe selections through a
 and falls back to `clip.exe`.
 
 - **Automatic**: The Ansible `common` role downloads `win32yank.exe` when it detects WSL
-- **Manual install**: `curl -sL "https://github.com/equalsraf/win32yank/releases/download/v0.1.1/win32yank-x64.zip" -o /tmp/win32yank.zip && unzip -o /tmp/win32yank.zip -d ~/.local/bin/`
-- **Without win32yank**: `clip.exe` is used as fallback (may garble UTF-8 characters like emoji/box-drawing)
+- **Manual install**: `curl -sL "https://github.com/equalsraf/win32yank/releases/download/v0.1.1/win32yank-x64.zip" -o
+  /tmp/win32yank.zip && unzip -o /tmp/win32yank.zip -d ~/.local/bin/`
+- **Without win32yank**: `clip.exe` is used as fallback (may garble UTF-8 characters like
+  emoji/box-drawing)
 
 **Why this is needed**: Windows Terminal's OSC 52 clipboard support is inconsistent,
 so the tmux bindings bypass it entirely by piping directly to Windows clipboard tools
@@ -78,7 +81,7 @@ via `copy-pipe-and-cancel`.
 ## Tool Versions (Managed by mise)
 
 | Tool | Version |
-|------|---------|
+| ------ | --------- |
 | Python | 3.14 |
 | Go | 1.26 |
 | Node.js | 24 LTS |
@@ -87,7 +90,7 @@ via `copy-pipe-and-cancel`.
 
 ## Directory Structure
 
-```
+```text
 .dotfiles/
 ├── ansible/              # Ansible playbooks for bootstrapping
 │   ├── bootstrap.sh      # Main entry point
@@ -134,21 +137,25 @@ uv tool install debugpy ruff sqlfluff ty
 Your Neovim config uses Mason for LSP/DAP tools. On first run, it will auto-install:
 
 **LSP Servers**:
+
 - `lua_ls` - Lua language server
 - `gopls` - Go language server
 - `ruff` - Python linter
 - `ty` - Python type checker
 
 **DAP (Debuggers)**:
+
 - `delve` - Go debugger
 - `debugpy` - Python debugger
 
 **Formatters**:
+
 - `stylua` - Lua formatter
 - `gofmt` - Go formatter (built-in)
 - `sqlfluff` - SQL formatter
 
 **Treesitter Parsers**:
+
 - bash, c, diff, python, go, lua, markdown, terraform, vim
 
 ## Post-Installation
@@ -156,17 +163,21 @@ Your Neovim config uses Mason for LSP/DAP tools. On first run, it will auto-inst
 After running the bootstrap:
 
 1. **Restart your shell** to activate zsh:
+
    ```bash
    exec zsh
    ```
 
 2. **Run Neovim** to install plugins:
+
    ```bash
    nvim
    ```
+
    Wait for Lazy.nvim to install plugins, then restart Neovim.
 
 3. **Verify installations**:
+
    ```bash
    python --version  # 3.14
    go version        # 1.26
@@ -178,50 +189,22 @@ After running the bootstrap:
 ## Maintenance
 
 Update tools managed by mise:
+
 ```bash
 mise upgrade
 ```
 
 Re-run specific Ansible roles:
+
 ```bash
 cd ansible
 ansible-playbook -i inventory.ini site.yml --tags mise
 ```
 
-## Testing
-
-The Ansible setup includes comprehensive Molecule tests for all roles:
-
-```bash
-# Test all roles
-./bootstrap.sh --test
-./bootstrap.sh --test-parallel  # Faster, runs in parallel
-
-# Test a specific role (CI mode)
-./bootstrap.sh --test-role common
-
-# Local development testing
-./bootstrap.sh --test-local common       # Verbose output, inspect containers
-./bootstrap.sh --test-debug common       # Test and enter container shell
-./bootstrap.sh --test-idempotence mise    # Quick idempotence check
-./bootstrap.sh --test-destroy           # Clean up test containers
-```
-
-Tests run in Docker containers (Ubuntu, Fedora) to verify:
-- Role functionality
-- **Idempotency** (no changes on second run)
-- Cross-platform compatibility
-
-**Development Features:**
-- `--test-local`: Verbose output (-vv), containers kept for inspection
-- `--test-debug`: Test then automatically enter container shell
-- `--test-idempotence`: Fast idempotence-only check
-
-See `ansible/README.md` for detailed testing documentation.
-
 ## Supported Platforms
 
 The Ansible playbook supports:
+
 - Debian/Ubuntu
 
 ## Troubleshooting
@@ -235,4 +218,3 @@ The Ansible playbook supports:
 ## TODO
 
 1. Clean up the `update_windows_keyboard` script and keyboard directory structure.
-2. ~~Clean up bootstrapping scripts~~ ✅ Now uses Ansible with Molecule testing

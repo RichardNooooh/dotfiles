@@ -11,7 +11,7 @@ Sets up Neovim data directories and verifies tool dependencies.
 ## Role Variables
 
 | Variable | Default | Description |
-|----------|---------|-------------|
+| -------- | ------- | ----------- |
 | dotfiles_home | `{{ ansible_env.HOME }}` | User home directory |
 
 ## Dependencies
@@ -28,4 +28,5 @@ Sets up Neovim data directories and verifies tool dependencies.
 
 ## Notes
 
-Treesitter parsers and Mason LSP tools are installed automatically by Neovim on first run, not by Ansible.
+Treesitter parsers and Mason LSP tools are installed automatically by Neovim on first run, not by
+Ansible.

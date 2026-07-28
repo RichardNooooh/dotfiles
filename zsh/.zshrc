@@ -3,6 +3,10 @@
 
 # Path to your Oh My Zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
+typeset -U path PATH
+
+HISTSIZE=50000
+SAVEHIST=50000
 
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time Oh My Zsh is loaded, in which case,
@@ -27,6 +31,7 @@ ZSH_THEME="robbyrussell"
 # zstyle ':omz:update' mode disabled  # disable automatic updates
 # zstyle ':omz:update' mode auto      # update automatically without asking
 # zstyle ':omz:update' mode reminder  # just remind me to update when it's time
+zstyle ':omz:update' mode reminder
 
 # Uncomment the following line to change how often to auto-update (in days).
 # zstyle ':omz:update' frequency 13
@@ -70,9 +75,25 @@ ZSH_THEME="robbyrussell"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git)
+zstyle ':omz:plugins:ssh-agent' agent-forwarding yes
+zstyle ':omz:plugins:ssh-agent' quiet yes
+
+eval "$(mise activate zsh)"
+
+plugins=(git fzf sudo colored-man-pages ssh-agent)
 
 source $ZSH/oh-my-zsh.sh
+
+setopt HIST_FIND_NO_DUPS
+setopt HIST_SAVE_NO_DUPS
+setopt HIST_REDUCE_BLANKS
+setopt NO_BEEP
+
+LISTMAX=200
+zstyle ':completion:*:*:*:*:*' menu auto select=2 no=200
+zstyle ':completion:*' matcher-list \
+  'm:{[:lower:][:upper:]-_}={[:upper:][:lower:]_-}' \
+  'm:{[:lower:][:upper:]-_}={[:upper:][:lower:]_-} r:|[._-]=* r:|=*'
 
 # User configuration
 
@@ -104,12 +125,3 @@ source $ZSH/oh-my-zsh.sh
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
 source ~/.zsh_profile
-
-
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-
-# opencode
-export PATH=/home/noh/.opencode/bin:$PATH
-eval "$(mise activate zsh)"

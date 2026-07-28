@@ -4,10 +4,8 @@ export DOTFILES="$HOME/.dotfiles"
 export PATH="$PATH:/opt/nvim-linux-x86_64/bin"
 export PATH="$PATH:/opt/dart-sass"
 export PATH="$PATH:/opt/just"
-export PATH="$PATH:$HOME/.local/bin"
 export PATH="$PATH:/usr/local/go/bin"
 export SOPS_AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt"
-source ~/.zshenv
 
 alias vim='nvim'
 alias v='nvim'
@@ -16,30 +14,6 @@ alias lg='lazygit'
 export COLORTERM='truecolor'
 
 export CGO_ENABLED=1 # Golang setting for testing race conditions(?)
-
-# SSH Agent
-SSH_ENV="$HOME/.ssh/agent-environment"
-
-function start_agent {
-    echo "Initialising new SSH agent..."
-    /usr/bin/ssh-agent | sed 's/^echo/#echo/' >"$SSH_ENV"
-    echo succeeded
-    chmod 600 "$SSH_ENV"
-    . "$SSH_ENV" >/dev/null
-    /usr/bin/ssh-add;
-}
-
-# Source SSH settings, if applicable
-
-if [ -f "$SSH_ENV" ]; then
-    . "$SSH_ENV" >/dev/null
-    #ps $SSH_AGENT_PID doesn't work under Cygwin
-    ps -ef | grep $SSH_AGENT_PID | grep ssh-agent$ >/dev/null || {
-        start_agent
-    }
-else
-    start_agent
-fi
 
 # copied from omarchy
 # create a tmux dev layout with editor, ai, and terminal
@@ -69,10 +43,3 @@ tdl() {
   tmux send-keys -t "$editor_pane" "$EDITOR ." C-m
   tmux select-pane -t "$editor_pane"
 }
-
-eval "$(mise activate zsh)"
-
-# Start ssh-agent if not running
-if [ -z "$SSH_AUTH_SOCK" ]; then
-    eval "$(ssh-agent -s)" > /dev/null
-fi

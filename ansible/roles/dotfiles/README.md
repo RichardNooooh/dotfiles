@@ -10,7 +10,7 @@ Manages dotfiles repository and stows configurations.
 ## Role Variables
 
 | Variable | Default | Description |
-|----------|---------|-------------|
+| ---------- | --------- | ------------- |
 | dotfiles_home | `{{ ansible_facts['user_dir'] }}` | User home directory |
 | dotfiles_user | `{{ ansible_facts['user_id'] }}` | System username |
 | dotfiles_github_user | `RichardNooooh` | GitHub username for repo cloning |
