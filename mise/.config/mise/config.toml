@@ -9,6 +9,9 @@ uv = "latest"
 # Mise-related tooling
 usage = "latest"
 
+# Secret Management
+sops = "latest"
+
 # Additional useful tools
 stylua = "latest"
 "pipx:pre-commit" = "4.6.1"
