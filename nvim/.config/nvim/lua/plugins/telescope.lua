@@ -34,9 +34,13 @@ return {
     map('<leader>sf', function()
       builtin.find_files { hidden = true }
     end, '[S]earch [F]iles')
+    map('<leader>sg', function()
+      builtin.live_grep {
+        additional_args = { '--hidden', '--glob', '!**/.git/**' },
+      }
+    end, '[S]earch by [G]rep')
     map('<leader>ss', builtin.builtin, '[S]earch [S]elect Telescope')
     map('<leader>sw', builtin.grep_string, '[S]earch Current [W]ord')
-    map('<leader>sg', builtin.live_grep, '[S]earch by [G]rep')
     map('<leader>sd', builtin.diagnostics, '[S]earch [D]iagnostics')
     map('<leader>sr', builtin.resume, '[S]earch [R]esume')
     map('<leader>s.', builtin.oldfiles, '[S]earch Recent Files ("." for repeat)')
