@@ -78,9 +78,7 @@ zstyle ':omz:update' mode reminder
 zstyle ':omz:plugins:ssh-agent' agent-forwarding yes
 zstyle ':omz:plugins:ssh-agent' quiet yes
 
-eval "$(mise activate zsh)"
-
-plugins=(git fzf sudo colored-man-pages ssh-agent)
+plugins=(mise git fzf sudo colored-man-pages ssh-agent)
 
 source $ZSH/oh-my-zsh.sh
 

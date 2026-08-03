@@ -15,6 +15,15 @@ export COLORTERM='truecolor'
 
 export CGO_ENABLED=1 # Golang setting for testing race conditions(?)
 
+# Start a default tmux session in the development directory.
+tmux() {
+  if (( $# == 0 )); then
+    command tmux new-session -c "$HOME/dev"
+  else
+    command tmux "$@"
+  fi
+}
+
 # copied from omarchy
 # create a tmux dev layout with editor, ai, and terminal
 # usage: tdl <c|cx|codex|other_ai> [<second_ai>]
