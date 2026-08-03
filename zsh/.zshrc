@@ -78,12 +78,12 @@ zstyle ':omz:update' mode reminder
 zstyle ':omz:plugins:ssh-agent' agent-forwarding yes
 zstyle ':omz:plugins:ssh-agent' quiet yes
 
-plugins=(mise 
-    git 
-    sudo 
-    colored-man-pages 
-    ssh-agent 
-    
+plugins=(mise
+    git
+    sudo
+    colored-man-pages
+    ssh-agent
+
     fzf-tab
     zsh-autosuggestions
     zsh-syntax-highlighting
