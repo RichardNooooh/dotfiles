@@ -85,11 +85,26 @@ zstyle ':omz:update' mode reminder
 zstyle ':omz:plugins:ssh-agent' agent-forwarding yes
 zstyle ':omz:plugins:ssh-agent' quiet yes
 
+KEYTIMEOUT=25 # avoids vim multikey binding issues
+
+VI_MODE_SET_CURSOR=true
+VI_MODE_CURSOR_NORMAL=2  # solid block
+VI_MODE_CURSOR_VISUAL=2  # solid block
+VI_MODE_CURSOR_INSERT=6  # solid beam
+VI_MODE_CURSOR_OPPEND=4  # solid underline
+
+MODE_INDICATOR=""
+INSERT_MODE_INDICATOR=""
+
+
+
 plugins=(mise
     git
     sudo
     colored-man-pages
     ssh-agent
+
+    vi-mode
 
     fzf-tab
     zsh-autosuggestions
@@ -97,6 +112,8 @@ plugins=(mise
 )
 
 source $ZSH/oh-my-zsh.sh
+
+bindkey -M viins '^Y' autosuggest-accept
 
 setopt HIST_FIND_NO_DUPS
 setopt HIST_SAVE_NO_DUPS
