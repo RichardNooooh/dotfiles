@@ -31,7 +31,9 @@ return {
 
     map('<leader>sh', builtin.help_tags, '[S]earch [H]elp')
     map('<leader>sk', builtin.keymaps, '[S]earch [K]eymaps')
-    map('<leader>sf', builtin.find_files, '[S]earch [F]iles')
+    map('<leader>sf', function()
+      builtin.find_files { hidden = true }
+    end, '[S]earch [F]iles')
     map('<leader>ss', builtin.builtin, '[S]earch [S]elect Telescope')
     map('<leader>sw', builtin.grep_string, '[S]earch Current [W]ord')
     map('<leader>sg', builtin.live_grep, '[S]earch by [G]rep')
