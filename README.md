@@ -2,219 +2,111 @@
 
 [![Lint](https://github.com/RichardNooooh/dotfiles/actions/workflows/lint.yml/badge.svg)](https://github.com/RichardNooooh/dotfiles/actions/workflows/lint.yml)
 
-Organized dotfiles inspired by ThePrimeagen. Note that the
-Ansible files were vibe-configured by Kimi K2.5 using OpenCode.
-Use at your own risk.
+Personal dotfiles for a WSL development environment and selected Windows applications. GNU Stow deploys the WSL
+configuration as symlinks; separate scripts copy Windows configuration into the Windows user profile.
 
 > [!WARNING]
-> The Ansible setup is currently broken. This is known and accepted for now,
-> and it may be fixed later.
+> The Ansible setup is currently broken and unsupported. The files remain in the repository for possible future work,
+> but they are not the primary setup path.
 
-## Why use Ansible for this?
+## Deployment Model
 
-I began using VMs on my Proxmox cluster as my dev environment, and I wanted a very convenient
-way configuring my dotfiles on all of them. I really like the idea of spinning up a VM, easily configure
-my dotfiles on there, then destroy it all whenever I want to. At the same time, I'm not willing
-to invest time on something like NixOS, which seems a bit *too much* for me.
+| Target | Configuration | Command | Behavior |
+| ------ | ------------- | ------- | -------- |
+| WSL home | zsh, Ghostty, Neovim, Zellij, tmux, mise, OpenCode, local bin | `./stow_config` | Creates symlinks with GNU Stow |
+| Windows profile | GlazeWM and YASB | `./update_windows` | Replaces destination directories by copying |
+| WSL QMK tree | Cubtyl keyboard | `./stow_keyboard` | Creates symlinks with GNU Stow |
+| Windows QMK tree | Cubtyl keyboard | `./update_windows_keyboard` | Replaces the keyboard directory by copying |
 
-## Quick Start (New Ansible Setup)
+Run the scripts from the repository root. The shell configuration expects the repository at `~/.dotfiles`; the
+Windows update scripts honor `DOTFILES` when their source repository is elsewhere.
 
-Bootstrap your entire environment with one command:
+## Fresh WSL Setup
 
-```bash
-# Run on your local machine
-./bootstrap.sh --local
+Install these prerequisites using the appropriate upstream or distribution instructions:
 
-# Or run on remote hosts (configure ansible/inventory.ini first)
-./bootstrap.sh --remote
+- Git, zsh, and GNU Stow
+- [mise](https://mise.jdx.dev/)
+- [Oh My Zsh](https://ohmyz.sh/)
+- The Powerlevel10k theme
+- The `fzf-tab`, `zsh-autosuggestions`, and `zsh-syntax-highlighting` Oh My Zsh plugins
+
+Clone the repository, deploy the WSL configuration, and install the tools declared in
+`mise/.config/mise/config.toml`:
+
+```zsh
+git clone git@github.com:RichardNooooh/dotfiles.git ~/.dotfiles
+cd ~/.dotfiles
+./stow_config
+mise install
+exec zsh
 ```
 
-See `ansible/README.md` for detailed documentation.
+`stow_config` deploys the package list defined inside the script. Resolve any existing-file conflicts before
+rerunning it; the script does not overwrite conflicting files in `$HOME`.
 
-## What's Included
+## Windows Configuration
 
-- **Shell**: zsh + Oh My Zsh (git plugin)
-- **Editor**: Neovim with LSP, DAP, and Treesitter
-- **Terminal**: Ghostty + tmux + zellij
-- **Fonts**: JetBrainsMono
+The Windows update scripts run from WSL. Create an ignored `.env` file in the repository root containing the Windows
+user profile path:
 
-## Prerequisites
-
-All prerequisites are automatically installed by the Ansible playbook:
-
-- `zsh` - shell
-- `nvim` - editor (installed via mise)
-- `ghostty` - terminal (stowed from dotfiles)
-- `stow` - dotfile management
-- `ripgrep`, `fd-find` - search tools for Telescope
-
-### Windows (WSL) Configuration
-
-Create an `.env` file with the `WINDOW_CONFIG` variable:
-
-```bash
-WINDOW_CONFIG='/mnt/c/Users/{USER}'
+```zsh
+WINDOWS_CONFIG='/mnt/c/Users/<windows-user>'
 ```
 
-`yasb` requires a `.env` file containing:
+Deploy GlazeWM and YASB with:
+
+```zsh
+./update_windows
+```
+
+> [!CAUTION]
+> `update_windows` recursively deletes each destination directory before copying its replacement. With the default
+> configuration, it replaces `.glzr` and `.config` under `WINDOWS_CONFIG`; it does not merge their contents.
+
+The YASB weather widget also expects these variables in the Windows environment:
 
 - `YASB_WEATHER_API_KEY`
 - `YASB_WEATHER_LOCATION`
 
-### WSL Clipboard (Known Limitation)
+## Keyboard Configuration
 
-Copying text from inside tmux to the Windows system clipboard requires extra setup.
-The tmux config includes WSL-conditional bindings that pipe selections through a
-`wsl-clipboard` wrapper, which tries `win32yank.exe` first (full UTF-8 support)
-and falls back to `clip.exe`.
+Choose the command for the environment where the QMK tree lives:
 
-- **Automatic**: The Ansible `common` role downloads `win32yank.exe` when it detects WSL
-- **Manual install**: `curl -sL "https://github.com/equalsraf/win32yank/releases/download/v0.1.1/win32yank-x64.zip" -o
-  /tmp/win32yank.zip && unzip -o /tmp/win32yank.zip -d ~/.local/bin/`
-- **Without win32yank**: `clip.exe` is used as fallback (may garble UTF-8 characters like
-  emoji/box-drawing)
+```zsh
+# Symlink keyboard/qmk_firmware into the WSL home directory
+./stow_keyboard
 
-**Why this is needed**: Windows Terminal's OSC 52 clipboard support is inconsistent,
-so the tmux bindings bypass it entirely by piping directly to Windows clipboard tools
-via `copy-pipe-and-cancel`.
-
-## Tool Versions (Managed by mise)
-
-| Tool | Version |
-| ------ | --------- |
-| Python | 3.14 |
-| Go | 1.26 |
-| Node.js | 24 LTS |
-| Neovim | latest (0.12+) |
-| uv | latest |
-
-## Directory Structure
-
-```text
-.dotfiles/
-├── ansible/              # Ansible playbooks for bootstrapping
-│   ├── bootstrap.sh      # Main entry point
-│   ├── inventory.ini     # Host inventory (local + remote)
-│   ├── site.yml          # Main playbook
-│   └── roles/            # Individual setup roles
-├── zsh/                  # Zsh configuration
-├── nvim/                 # Neovim configuration
-├── tmux/                 # Tmux configuration
-├── zellij/               # Zellij configuration
-├── ghostty/              # Ghostty terminal config
-├── fonts/                # JetBrainsMono font files
-├── keyboard/             # QMK keyboard firmware
-├── mise/                 # mise configuration (tool versions)
-└── README.md             # This file
+# Copy Cubtyl into the Windows QMK tree
+./update_windows_keyboard
 ```
 
-## Manual Setup (Without Ansible)
+> [!CAUTION]
+> `update_windows_keyboard` recursively deletes the destination `cubtyl` directory before copying its replacement.
 
-If you prefer not to use Ansible:
+## WSL Clipboard
 
-```bash
-# 1. Install base packages (example for Debian/Ubuntu)
-sudo apt install zsh stow curl git build-essential
-
-# 2. Install mise
-curl https://mise.run | sh
-
-# 3. Install tools via mise
-mise install
-
-# 4. Install Oh My Zsh
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-
-# 5. Stow dotfiles
-./stow_config
-
-# 6. Install Python packages via uv
-uv tool install debugpy ruff sqlfluff ty
-```
-
-## Neovim Dependencies
-
-Your Neovim config uses Mason for LSP/DAP tools. On first run, it will auto-install:
-
-**LSP Servers**:
-
-- `lua_ls` - Lua language server
-- `gopls` - Go language server
-- `ruff` - Python linter
-- `ty` - Python type checker
-
-**DAP (Debuggers)**:
-
-- `delve` - Go debugger
-- `debugpy` - Python debugger
-
-**Formatters**:
-
-- `stylua` - Lua formatter
-- `gofmt` - Go formatter (built-in)
-- `sqlfluff` - SQL formatter
-
-**Treesitter Parsers**:
-
-- bash, c, diff, python, go, lua, markdown, terraform, vim
-
-## Post-Installation
-
-After running the bootstrap:
-
-1. **Restart your shell** to activate zsh:
-
-   ```bash
-   exec zsh
-   ```
-
-2. **Run Neovim** to install plugins:
-
-   ```bash
-   nvim
-   ```
-
-   Wait for Lazy.nvim to install plugins, then restart Neovim.
-
-3. **Verify installations**:
-
-   ```bash
-   python --version  # 3.14
-   go version        # 1.26
-   node --version    # v24.x
-   nvim --version    # 0.12
-   which debugpy ruff ty  # Python tools
-   ```
+The tmux configuration sends copied text through the stowed `wsl-clipboard` wrapper. The wrapper prefers
+`win32yank.exe` for reliable UTF-8 handling and falls back to the WSL-provided `clip.exe` when `win32yank.exe` is not
+available.
 
 ## Maintenance
 
 Update tools managed by mise:
 
-```bash
+```zsh
 mise upgrade
 ```
 
-Re-run specific Ansible roles:
+Run the repository checks:
 
-```bash
-cd ansible
-ansible-playbook -i inventory.ini site.yml --tags mise
+```zsh
+pre-commit run --all-files
 ```
 
-## Supported Platforms
+## Unsupported Setup
 
-The Ansible playbook supports:
+The following paths are retained but are not current setup workflows:
 
-- Debian/Ubuntu
-
-## Troubleshooting
-
-**Ansible not found**: Run `./bootstrap.sh --install-only` to install Ansible only.
-
-**Font not showing**: Run `fc-cache -fv` and restart your terminal.
-
-**Neovim treesitter fails**: Ensure `gcc` and `make` are installed (handled by common role).
-
-## TODO
-
-1. Clean up the `update_windows_keyboard` script and keyboard directory structure.
+- `bootstrap.sh` and `ansible/**`: broken, deferred Ansible bootstrap
+- `ubuntu_install`: incomplete legacy installer

@@ -1,63 +1,48 @@
 # AGENTS.md
 
-Dotfiles repository using Ansible for bootstrapping.
+Personal dotfiles for a WSL development environment and selected Windows applications. Read `README.md` for the
+operational setup and deployment workflows.
 
-## Repository Type
+## Active Architecture
 
-- **Primary**: Ansible playbooks for cross-platform dotfiles setup
-- **Secondary**: Configuration files for zsh, nvim, tmux, ghostty, zellij
+- GNU Stow deploys WSL configuration as symlinks into `$HOME`.
+- `stow_config` owns the active WSL package list.
+- `update_windows` copies GlazeWM and YASB configuration into the Windows user profile.
+- `stow_keyboard` and `update_windows_keyboard` are alternative WSL and Windows targets for the Cubtyl QMK config.
+- mise owns development tool versions through `mise/.config/mise/config.toml`.
+
+Do not duplicate exact tool versions or Neovim-managed dependency inventories in repository-level documentation.
+Reference their canonical configuration files instead.
 
 ## Entry Points
 
-```bash
-# Bootstrap everything (installs Ansible, runs playbooks)
-./bootstrap.sh --local          # Local deployment
-./bootstrap.sh --remote         # Remote deployment (configure inventory.ini first)
-
-# Manual stowing (after Ansible setup)
-./stow_config                   # Stow main dotfiles (zsh, nvim, tmux, ghostty, zellij)
-./stow_keyboard                 # Stow keyboard config (WSL-specific)
+```zsh
+./stow_config
+./update_windows
+./stow_keyboard
+./update_windows_keyboard
 ```
 
-## Linting & Quality
+Run these scripts from the repository root. `update_windows` and `update_windows_keyboard` recursively delete their
+destination directories before copying replacements; preserve that warning whenever documenting or changing them.
 
-CI runs repository linting only. There is no maintained role or integration test suite.
+`bootstrap.sh`, `ubuntu_install`, and `ansible/**` are unsupported legacy or deferred setup paths. Do not modify
+Ansible files or present Ansible as the primary architecture unless the user specifically requests Ansible work.
 
-```bash
-# Run all checks manually
+## Validation
+
+CI runs repository linting only. There is no maintained integration test suite.
+
+```zsh
 pre-commit run --all-files
 ```
 
-## Key Configuration Files
-
-| File | Purpose |
-| ------ | --------- |
-| `mise/.config/mise/config.toml` | Tool versions (Python 3.14, Go 1.26, Node 24, Neovim latest) |
-| `ansible/inventory.ini` | Host inventory (local + remote) |
-| `ansible/site.yml` | Main playbook orchestrating all roles |
-| `ansible/group_vars/all.yml` | Role variables (stow_folders, paths) |
-| `ansible/.ansible-lint` | Ansible linting rules |
-
-## Architecture Notes
-
-- **Roles**: Ansible roles in `ansible/roles/`
-- **Idempotency**: All roles must be idempotent (0 changes on second run)
-- **Privilege escalation**: Most roles run as root; `mise`, `dotfiles`, `neovim` run as user
-- **Dotfile management**: Uses GNU stow; unstows before restowing for clean state
-- **Tool management**: mise handles all dev tools; uv handles Python packages
-
-## Common Tasks
-
-```bash
-# Run specific tags only
-ansible-playbook -i ansible/inventory.ini ansible/site.yml --tags mise
-
-# Update tools after changing mise/.config/mise/config.toml
-mise upgrade
-```
+Relevant checks include Markdownlint, ShellCheck for non-zsh scripts, StyLua for Neovim Lua, actionlint, and
+Ansible Lint for changes under `ansible/`.
 
 ## Constraints
 
-- **No root**: Playbooks warn if run as root (use `--limit local` instead)
-- **CI/CD**: GitHub Actions runs repository linting on pushes and pull requests
-- **WSL**: Windows config path in `.env` (`WINDOWS_CONFIG='/mnt/c/Users/{USER}'`)
+- Preserve GNU Stow package structure: each package mirrors paths relative to its deployment target.
+- Keep WSL and Windows deployment semantics distinct: WSL uses symlinks; Windows scripts copy directories.
+- The ignored root `.env` provides `WINDOWS_CONFIG` to Windows update scripts. Do not commit local paths or secrets.
+- Prefer small, factual documentation that points to current configuration over manually maintained snapshots.
