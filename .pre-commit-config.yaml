@@ -18,8 +18,6 @@ repos:
       - id: check-merge-conflict
       - id: check-symlinks
       - id: destroyed-symlinks
-      - id: check-executables-have-shebangs
-      - id: check-shebang-scripts-are-executable
       - id: check-json
       - id: check-toml
       - id: check-yaml

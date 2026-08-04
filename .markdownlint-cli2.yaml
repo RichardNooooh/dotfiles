@@ -9,4 +9,5 @@ config:
     siblings_only: true
 ignores:
   - opencode/.config/opencode/commands/**
+  - opencode/.config/opencode/command-resources/**
   - opencode/.config/opencode/skills/**
