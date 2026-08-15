@@ -160,7 +160,7 @@
 
       "permission": {
         "edit": "deny",
-        "bash": "deny",
+        "bash": "ask",
         "task": "deny",
         "question": "deny"
       }
