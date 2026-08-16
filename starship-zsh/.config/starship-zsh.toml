@@ -1,0 +1,140 @@
+# Zsh-specific prompt. Select with STARSHIP_CONFIG=~/.config/starship-zsh.toml.
+add_newline = false
+command_timeout = 200
+
+format = """
+[](fg:blue)\
+$directory\
+[](fg:blue bg:bright-black)\
+$git_branch\
+$git_status\
+[](fg:bright-black) \
+"""
+
+right_format = """
+$cmd_duration\
+$jobs\
+[](fg:bright-black)\
+[$direnv$mise$python$nodejs$golang$rust$ruby$java$lua$php$kubernetes$terraform$aws$gcloud$nix_shell$container$status$time](bg:bright-black)\
+[](fg:bright-black)
+"""
+
+[directory]
+format = "[ $path$read_only ]($style)"
+style = "bold bright-white bg:blue"
+repo_root_style = "bold bright-white bg:blue"
+repo_root_format = "[ $repo_root]($repo_root_style)[$path$read_only ]($style)"
+read_only = " 󰌾"
+truncation_length = 3
+truncate_to_repo = true
+truncation_symbol = "…/"
+
+[git_branch]
+format = "[ $symbol$branch(:$remote_branch) ]($style)"
+style = "bold blue bg:bright-black"
+symbol = " "
+truncation_length = 32
+truncation_symbol = "…"
+
+[git_status]
+format = "[$all_status$ahead_behind ]($style)"
+style = "bold blue bg:bright-black"
+conflicted = "~${count} "
+ahead = "⇡${count} "
+behind = "⇣${count} "
+diverged = "⇣${behind_count}⇡${ahead_count} "
+up_to_date = ""
+untracked = "?${count} "
+stashed = "*${count} "
+modified = "!${count} "
+staged = "+${count} "
+renamed = "»${count} "
+deleted = "✘${count} "
+typechanged = "≠${count} "
+
+[status]
+disabled = false
+format = "[ $status ](bold red bg:bright-black)"
+
+[cmd_duration]
+min_time = 3000
+show_milliseconds = false
+format = "[](fg:yellow)[ 󰔛 $duration ](bold black bg:yellow)[](fg:yellow)"
+
+[jobs]
+format = "[](fg:cyan)[ $symbol$number ](bold black bg:cyan)[](fg:cyan)"
+symbol = "󰒓 "
+number_threshold = 1
+symbol_threshold = 1
+
+[direnv]
+disabled = false
+format = "[ $symbol$loaded ](bold yellow bg:bright-black)"
+symbol = "󰌪 "
+
+[mise]
+disabled = false
+format = "[ $symbol$health ](bold cyan bg:bright-black)"
+symbol = "󰏗 "
+
+[python]
+format = "[ $symbol$virtualenv ](bold yellow bg:bright-black)"
+symbol = " "
+
+[nodejs]
+format = "[ $symbol$version ](bold green bg:bright-black)"
+symbol = " "
+
+[golang]
+format = "[ $symbol$version ](bold cyan bg:bright-black)"
+symbol = " "
+
+[rust]
+format = "[ $symbol$version ](bold red bg:bright-black)"
+symbol = " "
+
+[ruby]
+format = "[ $symbol$version ](bold red bg:bright-black)"
+symbol = " "
+
+[java]
+format = "[ $symbol$version ](bold yellow bg:bright-black)"
+symbol = " "
+
+[lua]
+format = "[ $symbol$version ](bold blue bg:bright-black)"
+symbol = " "
+
+[php]
+format = "[ $symbol$version ](bold purple bg:bright-black)"
+symbol = " "
+
+[kubernetes]
+disabled = false
+format = "[ $symbol$context(::$namespace) ](bold blue bg:bright-black)"
+symbol = "󱃾 "
+
+[terraform]
+format = "[ $symbol$workspace ](bold purple bg:bright-black)"
+symbol = "󱁢 "
+
+[aws]
+format = "[ $symbol$profile(::$region) ](bold yellow bg:bright-black)"
+symbol = "󰸏 "
+
+[gcloud]
+format = "[ $symbol$account(@$domain)(::$project) ](bold blue bg:bright-black)"
+symbol = "󱇶 "
+
+[nix_shell]
+format = "[ $symbol$state(::$name) ](bold cyan bg:bright-black)"
+symbol = " "
+
+[container]
+format = "[ $symbol$name ](bold red bg:bright-black)"
+symbol = " "
+
+[time]
+disabled = false
+format = "[  $time ](bold bright-white bg:bright-black)"
+time_format = "%H:%M"
