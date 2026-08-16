@@ -1,21 +1,103 @@
-#!/usr/bin/env zsh
+#!/bin/sh
 
+set -eu
 
-if [[ -z $STOW_FOLDERS ]]; then
-    STOW_FOLDERS='zsh,nvim,tmux,mise,opencode'
+DOTFILES=${DOTFILES:-"$HOME/.dotfiles"}
+
+package_has_active_layout() {
+  case $1 in
+    bin)      [ -d "$DOTFILES/bin/.local/bin" ] ;;
+    zsh)      [ -f "$DOTFILES/zsh/.zshrc" ] ;;
+    mise)     [ -f "$DOTFILES/mise/.config/mise/conf.d/50-personal.toml" ] ;;
+    hypr)     [ -f "$DOTFILES/hypr/.config/hypr/hyprland.lua" ] ;;
+    starship-zsh) [ -f "$DOTFILES/starship-zsh/.config/starship-zsh.toml" ] ;;
+    ghostty)  [ -f "$DOTFILES/ghostty/.config/ghostty/config" ] ;;
+    tmux)     [ -f "$DOTFILES/tmux/.config/tmux/tmux.conf" ] ;;
+    opencode) [ -f "$DOTFILES/opencode/.config/opencode/opencode.jsonc" ] ;;
+    omarchy-user) [ -f "$DOTFILES/omarchy-user/.config/omarchy/branding/screensaver.txt" ] ;;
+    *)        return 1 ;;
+  esac
+}
+
+default_packages() {
+  for package in bin zsh mise starship-zsh ghostty tmux hypr opencode omarchy-user; do
+    package_has_active_layout "$package" && printf '%s\n' "$package"
+  done
+}
+
+requested_packages() {
+  if [ -n "${STOW_FOLDERS:-}" ]; then
+    printf '%s\n' "$STOW_FOLDERS" | tr ',[:space:]' '\n' | while IFS= read -r package; do
+      [ -n "$package" ] && printf '%s\n' "$package"
+    done
+  else
+    default_packages
+  fi
+}
+
+migrate_target() {
+  target=$1
+  if [ -L "$target" ]; then
+    resolved=$(readlink -f -m -- "$target")
+    case $resolved in
+      "$DOTFILES"/*) rm -- "$target" ;;
+    esac
+  elif [ -e "$target" ]; then
+    relative=${target#"$HOME"/}
+    backup="$backup_root/$relative"
+    mkdir -p "$(dirname -- "$backup")"
+    mv -- "$target" "$backup"
+    printf 'backed up %s to %s\n' "$target" "$backup"
+  fi
+}
+
+migrate_layout() {
+  backup_root=${XDG_STATE_HOME:-"$HOME/.local/state"}/dotfiles/backups/$(date +%Y%m%d-%H%M%S)
+
+  # Retire links from packages that no longer own these legacy locations.
+  migrate_target "$HOME/.tmux.conf"
+  migrate_target "$HOME/.zsh_profile"
+  migrate_target "$HOME/.p10k.zsh"
+
+  # Preserve mutable Omarchy files before replacing them with selective links.
+  migrate_target "$HOME/.config/ghostty/config"
+  migrate_target "$HOME/.config/tmux/tmux.conf"
+  migrate_target "$HOME/.config/hypr/autostart.lua"
+  migrate_target "$HOME/.config/hypr/hyprland.lua"
+  migrate_target "$HOME/.config/hypr/input.lua"
+  migrate_target "$HOME/.config/hypr/monitors.lua"
+  migrate_target "$HOME/.config/omarchy/branding/screensaver.txt"
+  migrate_target "$HOME/.config/omarchy/branding/NOTE.md"
+}
+
+if [ "${1:-}" = "--list-packages" ]; then
+  requested_packages
+  exit 0
 fi
 
-if [[ -z $DOTFILES ]]; then
-    DOTFILES=$HOME/.dotfiles
+if [ "${1:-}" = "--migrate" ]; then
+  migrate_layout
+  shift
 fi
 
+if [ "$#" -ne 0 ]; then
+  printf 'usage: %s [--list-packages|--migrate]\n' "$0" >&2
+  exit 2
+fi
 
-# Ensure stow target directories exist (some go under ~/.local/)
-mkdir -p $HOME/.local/bin
+requested_packages | while IFS= read -r package; do
+  case $package in
+    *[!A-Za-z0-9._-]*)
+      printf 'invalid Stow package name: %s\n' "$package" >&2
+      exit 2
+      ;;
+  esac
 
-for folder in $(echo $STOW_FOLDERS | sed "s/,/ /g")
-do
-    echo "stowing $folder"
-    stow -D $folder
-    stow $folder
+  if [ ! -d "$DOTFILES/$package" ]; then
+    printf 'missing Stow package: %s\n' "$package" >&2
+    exit 1
+  fi
+
+  printf 'stowing %s\n' "$package"
+  stow --no-folding --dir "$DOTFILES" --target "$HOME" "$package"
 done
