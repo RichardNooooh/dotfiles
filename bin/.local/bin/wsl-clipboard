@@ -1,8 +1,0 @@
-#!/bin/sh
-# WSL clipboard wrapper: pipes stdin to Windows clipboard
-# Uses win32yank.exe (UTF-8 safe) with clip.exe fallback
-if command -v win32yank.exe >/dev/null 2>&1; then
-    exec win32yank.exe -i
-else
-    exec clip.exe
-fi

@@ -1,5 +1,0 @@
----
-# Dotfiles role default variables
-
-dotfiles_stow_folders: "zsh,ghostty,nvim,zellij,tmux,mise,opencode,bin"
-dotfiles_github_user: "RichardNooooh"

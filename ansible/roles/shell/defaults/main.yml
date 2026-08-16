@@ -1,5 +1,0 @@
----
-# Shell role default variables
-
-shell_default_shell: /usr/bin/zsh
-shell_oh_my_zsh_repo: "https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh"
