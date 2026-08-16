@@ -1,0 +1,18 @@
+[tools]
+# Personal development tools not supplied by Omarchy packages.
+go = "1.26"
+uv = "latest"
+sops = "latest"
+stylua = "latest"
+"pipx:pre-commit" = "4.6.1"
+yq = "latest"
+
+[settings]
+minimum_release_age = "7d"
+experimental = false
+
+[settings.python]
+uv_venv_auto = true
+
+[env]
+OPENCODE_ENABLE_EXA = "1"
