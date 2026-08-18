@@ -4,35 +4,13 @@ set -eu
 
 DOTFILES=${DOTFILES:-"$HOME/.dotfiles"}
 
-package_has_active_layout() {
-  case $1 in
-    bin)      [ -d "$DOTFILES/bin/.local/bin" ] ;;
-    zsh)      [ -f "$DOTFILES/zsh/.zshrc" ] ;;
-    mise)     [ -f "$DOTFILES/mise/.config/mise/conf.d/50-personal.toml" ] ;;
-    hypr)     [ -f "$DOTFILES/hypr/.config/hypr/hyprland.lua" ] ;;
-    starship-zsh) [ -f "$DOTFILES/starship-zsh/.config/starship-zsh.toml" ] ;;
-    ghostty)  [ -f "$DOTFILES/ghostty/.config/ghostty/config" ] ;;
-    tmux)     [ -f "$DOTFILES/tmux/.config/tmux/tmux.conf" ] ;;
-    nvim)     [ -f "$DOTFILES/nvim/.config/nvim/init.lua" ] ;;
-    opencode) [ -f "$DOTFILES/opencode/.config/opencode/opencode.jsonc" ] ;;
-    omarchy-user) [ -f "$DOTFILES/omarchy-user/.config/omarchy/branding/screensaver.txt" ] ;;
-    *)        return 1 ;;
-  esac
-}
-
-default_packages() {
-  for package in bin zsh mise starship-zsh ghostty tmux hypr nvim opencode omarchy-user; do
-    package_has_active_layout "$package" && printf '%s\n' "$package"
-  done
-}
-
 requested_packages() {
   if [ -n "${STOW_FOLDERS:-}" ]; then
     printf '%s\n' "$STOW_FOLDERS" | tr ',[:space:]' '\n' | while IFS= read -r package; do
       [ -n "$package" ] && printf '%s\n' "$package"
     done
   else
-    default_packages
+    printf '%s\n' bin desktop zsh mise starship-zsh ghostty tmux hypr nvim opencode omarchy-user
   fi
 }
 
