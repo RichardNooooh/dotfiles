@@ -22,6 +22,30 @@
           "id": "omarchy.indicators"
         },
         {
+          "id": "matjam.omawall",
+          "primaryDisplay": "DP-2",
+          "perDisplayConfig": true,
+          "displayConfig": {
+            "DP-2": {
+              "folder": "/mnt/media/Wallpapers/anime_girls/landscape",
+              "mode": "shuffle",
+              "pinned": "",
+              "recursive": true,
+              "scaling": "zoom"
+            },
+            "HDMI-A-1": {
+              "folder": "/mnt/media/Wallpapers/anime_girls/portrait",
+              "mode": "shuffle",
+              "pinned": "",
+              "recursive": true,
+              "scaling": "zoom"
+            }
+          },
+          "shuffleOnWake": true,
+          "intervalSec": 86400,
+          "autoTheme": true
+        },
+        {
           "id": "omarchy.clock",
           "format": "dddd HH:mm",
           "formatAlt": "d MMMM 'W'ww yyyy",
@@ -62,5 +86,11 @@
       ]
     }
   },
-  "plugins": []
+  "plugins": [],
+  "disabledPlugins": [
+    "omarchy.background"
+  ],
+  "cloneSourceRestores": [
+    "matjam.omawall"
+  ]
 }

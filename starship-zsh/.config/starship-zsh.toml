@@ -1,6 +1,6 @@
 # Zsh-specific prompt. Select with STARSHIP_CONFIG=~/.config/starship-zsh.toml.
 add_newline = false
-command_timeout = 200
+command_timeout = 500
 
 format = """
 [](fg:blue)\
