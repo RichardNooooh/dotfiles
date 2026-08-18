@@ -1,57 +1,102 @@
+local function root()
+  return vim.fs.root(0, { '.git' }) or vim.uv.cwd()
+end
+
+local function picker(name, opts)
+  return function()
+    require('telescope.builtin')[name](opts or {})
+  end
+end
+
 return {
   'nvim-telescope/telescope.nvim',
-  event = 'VimEnter',
-  tag = 'v0.2.0',
+  cmd = 'Telescope',
+  version = false,
   dependencies = {
     'nvim-lua/plenary.nvim',
-    { -- If encountering errors, see telescope-fzf-native README for installation instructions
+    {
       'nvim-telescope/telescope-fzf-native.nvim',
-
-      -- `build` is used to run some command when the plugin is installed/updated.
-      -- This is only run then, not every time Neovim starts up.
       build = 'make',
-
-      -- `cond` is a condition used to determine whether this plugin should be
-      -- installed and loaded.
       cond = function()
         return vim.fn.executable 'make' == 1
       end,
     },
-    { 'nvim-telescope/telescope-ui-select.nvim' },
-
-    -- Useful for getting pretty icons, but requires a Nerd Font.
-    { 'nvim-tree/nvim-web-devicons', enabled = vim.g.have_nerd_font },
+    'nvim-telescope/telescope-ui-select.nvim',
+    'nvim-mini/mini.icons',
+  },
+  keys = {
+    { '<leader><leader>', picker('buffers', { sort_mru = true, sort_lastused = true }), desc = 'Find existing buffers' },
+    { '<leader>s.', picker 'oldfiles', desc = 'Recent files' },
+    { '<leader>sf', picker('find_files', { hidden = true }), desc = 'Search files' },
+    {
+      '<leader>sg',
+      function()
+        require('telescope.builtin').live_grep { cwd = root(), additional_args = { '--hidden', '--glob', '!**/.git/**' } }
+      end,
+      desc = 'Grep root directory',
+    },
+    {
+      '<leader>sG',
+      function()
+        require('telescope.builtin').live_grep { additional_args = { '--hidden', '--glob', '!**/.git/**' } }
+      end,
+      desc = 'Grep working directory',
+    },
+    { '<leader>sh', picker 'help_tags', desc = 'Help pages' },
+    { '<leader>sk', picker 'keymaps', desc = 'Keymaps' },
+    { '<leader>sw', picker 'grep_string', desc = 'Search word' },
+    {
+      '<leader>sw',
+      function()
+        local region = vim.fn.getregion(vim.fn.getpos 'v', vim.fn.getpos '.', { type = vim.fn.mode() })
+        require('telescope.builtin').grep_string { search = table.concat(region, ' ') }
+      end,
+      mode = 'x',
+      desc = 'Search selection',
+    },
+    { '<leader>sd', picker 'diagnostics', desc = 'Diagnostics' },
+    { '<leader>sD', picker('diagnostics', { bufnr = 0 }), desc = 'Buffer diagnostics' },
+    { '<leader>sR', picker 'resume', desc = 'Resume picker' },
+    { '<leader>ss', picker 'lsp_document_symbols', desc = 'Document symbols' },
+    { '<leader>sS', picker 'lsp_dynamic_workspace_symbols', desc = 'Workspace symbols' },
+    { '<leader>s"', picker 'registers', desc = 'Registers' },
+    { '<leader>s/', picker 'search_history', desc = 'Search history' },
+    { '<leader>sa', picker 'autocommands', desc = 'Autocommands' },
+    { '<leader>sb', picker 'current_buffer_fuzzy_find', desc = 'Buffer lines' },
+    { '<leader>sc', picker 'command_history', desc = 'Command history' },
+    { '<leader>sC', picker 'commands', desc = 'Commands' },
+    { '<leader>sH', picker 'highlights', desc = 'Highlight groups' },
+    { '<leader>sj', picker 'jumplist', desc = 'Jumplist' },
+    { '<leader>sl', picker 'loclist', desc = 'Location list' },
+    { '<leader>sM', picker 'man_pages', desc = 'Man pages' },
+    { '<leader>sm', picker 'marks', desc = 'Marks' },
+    { '<leader>so', picker 'vim_options', desc = 'Options' },
+    { '<leader>sq', picker 'quickfix', desc = 'Quickfix list' },
+    { '<leader>gc', picker 'git_commits', desc = 'Git commits' },
+    { '<leader>gl', picker 'git_commits', desc = 'Git log' },
+    { '<leader>gs', picker 'git_status', desc = 'Git status' },
+    { '<leader>gS', picker 'git_stash', desc = 'Git stash' },
+    {
+      '<leader>sn',
+      function()
+        require('telescope.builtin').find_files { cwd = vim.fn.stdpath 'config', follow = true, hidden = true }
+      end,
+      desc = 'Search Neovim files',
+    },
   },
   opts = function()
-    local builtin = require 'telescope.builtin'
-
-    local function map(keys, func, desc)
-      vim.keymap.set('n', keys, func, { desc = 'Telescope: ' .. desc })
-    end
-
-    map('<leader>sh', builtin.help_tags, '[S]earch [H]elp')
-    map('<leader>sk', builtin.keymaps, '[S]earch [K]eymaps')
-    map('<leader>sf', function()
-      builtin.find_files { hidden = true }
-    end, '[S]earch [F]iles')
-    map('<leader>sg', function()
-      builtin.live_grep {
-        additional_args = { '--hidden', '--glob', '!**/.git/**' },
-      }
-    end, '[S]earch by [G]rep')
-    map('<leader>ss', builtin.builtin, '[S]earch [S]elect Telescope')
-    map('<leader>sw', builtin.grep_string, '[S]earch Current [W]ord')
-    map('<leader>sd', builtin.diagnostics, '[S]earch [D]iagnostics')
-    map('<leader>sr', builtin.resume, '[S]earch [R]esume')
-    map('<leader>s.', builtin.oldfiles, '[S]earch Recent Files ("." for repeat)')
-    map('<leader><leader>', builtin.buffers, '[ ] Find Existing Buffers')
-
-    map('<leader>sn', function()
-      builtin.find_files {
-        cwd = vim.fn.stdpath 'config',
-        follow = true,
-        hidden = true,
-      }
-    end, '[S]earch [N]eovim files')
+    return {
+      defaults = { prompt_prefix = '> ', selection_caret = '> ' },
+      extensions = {
+        fzf = { fuzzy = true, override_generic_sorter = true, override_file_sorter = true, case_mode = 'smart_case' },
+        ['ui-select'] = require('telescope.themes').get_dropdown(),
+      },
+    }
+  end,
+  config = function(_, opts)
+    local telescope = require 'telescope'
+    telescope.setup(opts)
+    pcall(telescope.load_extension, 'fzf')
+    pcall(telescope.load_extension, 'ui-select')
   end,
 }

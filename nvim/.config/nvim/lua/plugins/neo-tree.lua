@@ -8,7 +8,7 @@ return {
   dependencies = {
     'nvim-lua/plenary.nvim',
     'MunifTanjim/nui.nvim',
-    { 'nvim-tree/nvim-web-devicons', enabled = vim.g.have_nerd_font },
+    'nvim-mini/mini.icons',
   },
   keys = {
     {
@@ -24,6 +24,11 @@ return {
         require('neo-tree.command').execute { toggle = true, dir = vim.fn.getcwd() }
       end,
       desc = 'Explorer (cwd)',
+    },
+    {
+      '<leader>ge',
+      '<cmd>Neotree toggle source=git_status<cr>',
+      desc = 'Git explorer',
     },
   },
   opts = {
@@ -45,5 +50,6 @@ return {
       use_libuv_file_watcher = true,
       hijack_netrw_behavior = 'disabled',
     },
+    sources = { 'filesystem', 'git_status' },
   },
 }

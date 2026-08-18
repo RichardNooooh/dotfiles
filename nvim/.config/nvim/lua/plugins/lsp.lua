@@ -1,195 +1,183 @@
--- Based on kickstart.nvim and ThePrimeAgen
+local servers = { 'lua_ls', 'ty', 'ruff', 'gopls', 'ansiblels' }
+
+local function hypr_lua_settings()
+  local luarc = vim.fn.expand '~/.config/hypr/.luarc.json'
+  if vim.fn.filereadable(luarc) ~= 1 or vim.fn.isdirectory '/usr/share/omarchy' ~= 1 then
+    return
+  end
+
+  local ok, config = pcall(vim.json.decode, table.concat(vim.fn.readfile(luarc), '\n'))
+  if not ok then
+    return
+  end
+
+  local workspace = config.workspace or {}
+  local library = vim.deepcopy(workspace.library or {})
+  library[#library + 1] = '/usr/share/omarchy'
+  return {
+    workspace = vim.tbl_extend('force', workspace, { library = library }),
+    diagnostics = { globals = (config.diagnostics or {}).globals or {} },
+  }
+end
+
 return {
-  'neovim/nvim-lspconfig',
-  dependencies = {
-    -- Automatically installing LSPs
-    { 'mason-org/mason.nvim', opts = {} },
-    'mason-org/mason-lspconfig.nvim',
-    'WhoIsSethDaniel/mason-tool-installer.nvim',
-
-    -- Useful status updates for LSP
-    { 'j-hui/fidget.nvim', opts = {} },
-
-    -- Allows extra capabilities provided by blink.cmp
-    'saghen/blink.cmp',
+  {
+    'mason-org/mason.nvim',
+    cmd = 'Mason',
+    opts = {},
   },
-  config = function()
-    vim.api.nvim_create_autocmd('LspAttach', {
-      group = vim.api.nvim_create_augroup('config-lsp-attach', { clear = true }),
-      callback = function(event)
-        local map = function(keys, func, desc, mode)
-          mode = mode or 'n'
-          vim.keymap.set(mode, keys, func, { buffer = event.buf, desc = 'LSP: ' .. desc })
-        end
-
-        map('grn', vim.lsp.buf.rename, '[R]e[N]ame')
-        map('gra', vim.lsp.buf.code_action, '[G]oto Code [A]ction', { 'n', 'x' })
-        map('grr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
-        map('gri', require('telescope.builtin').lsp_implementations, '[G]oto [I]mplementation')
-        map('grd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
-        map('grD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
-        map('gO', require('telescope.builtin').lsp_document_symbols, '[G]oto Document [S]ymbols')
-        map('gW', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[G]oto Workspace [S]ymbols')
-        map('grt', require('telescope.builtin').lsp_type_definitions, '[G]oto [T]ype Definition')
-
-        -- Overrides default hover to add the rounded border
-        map('K', function()
-          vim.lsp.buf.hover { border = 'rounded' }
-        end, 'Hover')
-        map('<C-s>', function()
-          vim.lsp.buf.signature_help { border = 'rounded' }
-        end, 'Signature Help', 'i')
-
-        -- resolves difference between neovim v0.11 and v0.10
-        ---@param client vim.lsp.Client
-        ---@param method vim.lsp.protocol.Method
-        ---@param bufnr? integer some lsp support methods only in specific files
-        ---@return boolean
-        local function client_supports_method(client, method, bufnr)
-          if vim.fn.has 'nvim-0.11' == 1 then
-            return client:supports_method(method, bufnr)
-          else
-            return client.supports_method(method, { bufnr = bufnr })
-          end
-        end
-
-        -- these two commands used to highlight references of the word under cursor
-        local client = vim.lsp.get_client_by_id(event.data.client_id)
-        if client and client_supports_method(client, vim.lsp.protocol.Methods.textDocument_documentHighlight, event.buf) then
-          local highlight_augroup = vim.api.nvim_create_augroup('config-lsp-highlight', { clear = false })
-          vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
-            buffer = event.buf,
-            group = highlight_augroup,
-            callback = vim.lsp.buf.document_highlight,
-          })
-
-          vim.api.nvim_create_autocmd({ 'CursorMoved', 'CursorMovedI' }, {
-            buffer = event.buf,
-            group = highlight_augroup,
-            callback = vim.lsp.buf.clear_references,
-          })
-
-          vim.api.nvim_create_autocmd('LspDetach', {
-            group = vim.api.nvim_create_augroup('config-lsp-detach', { clear = true }),
-            callback = function(event2)
-              vim.lsp.buf.clear_references()
-              vim.api.nvim_clear_autocmds { group = 'config-lsp-highlight', buffer = event2.buf }
-            end,
-          })
-        end
-
-        -- toggles inlay hints in code
-        if client and client_supports_method(client, vim.lsp.protocol.Methods.textDocument_inlayHint, event.buf) then
-          map('<leader>th', function()
-            vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled { bufnr = event.buf })
-          end, '[T]oggle Inlay [H]ints')
-        end
-      end,
-    })
-
-    -- Diagnostic Config
-    -- See :help vim.diagnostic.Opts
-    vim.diagnostic.config {
-      severity_sort = true,
-      float = { border = 'rounded', source = 'if_many' },
-      underline = { severity = vim.diagnostic.severity.ERROR },
-      signs = vim.g.have_nerd_font and {
-        text = {
-          [vim.diagnostic.severity.ERROR] = '󰅚 ',
-          [vim.diagnostic.severity.WARN] = '󰀪 ',
-          [vim.diagnostic.severity.INFO] = '󰋽 ',
-          [vim.diagnostic.severity.HINT] = '󰌶 ',
-        },
-      } or {},
-      virtual_text = {
-        source = 'if_many',
-        spacing = 2,
-        format = function(diagnostic)
-          local diagnostic_message = {
-            [vim.diagnostic.severity.ERROR] = diagnostic.message,
-            [vim.diagnostic.severity.WARN] = diagnostic.message,
-            [vim.diagnostic.severity.INFO] = diagnostic.message,
-            [vim.diagnostic.severity.HINT] = diagnostic.message,
-          }
-          return diagnostic_message[diagnostic.severity]
-        end,
+  {
+    'WhoIsSethDaniel/mason-tool-installer.nvim',
+    dependencies = { 'mason-org/mason.nvim' },
+    opts = {
+      ensure_installed = {
+        'lua-language-server',
+        'ty',
+        'ruff',
+        'gopls',
+        'ansible-language-server',
+        'stylua',
+        'debugpy',
       },
-    }
+      auto_update = false,
+      run_on_start = true,
+    },
+  },
+  {
+    'neovim/nvim-lspconfig',
+    event = { 'BufReadPre', 'BufNewFile' },
+    dependencies = {
+      'mason-org/mason.nvim',
+      'saghen/blink.cmp',
+      'nvim-telescope/telescope.nvim',
+      { 'j-hui/fidget.nvim', opts = {} },
+    },
+    config = function()
+      local hypr_settings = hypr_lua_settings()
+      local hypr_root = vim.fs.normalize(vim.fn.expand '~/.config/hypr')
 
-    local capabilities = require('blink.cmp').get_lsp_capabilities()
-    local servers = {
-      lua_ls = {
-        settings = {
-          Lua = {
-            completion = {
-              callSnippet = 'Replace',
-            },
+      vim.diagnostic.config {
+        severity_sort = true,
+        signs = {
+          text = {
+            [vim.diagnostic.severity.ERROR] = 'E ',
+            [vim.diagnostic.severity.WARN] = 'W ',
+            [vim.diagnostic.severity.INFO] = 'I ',
+            [vim.diagnostic.severity.HINT] = 'H ',
           },
         },
-      },
-      ty = { -- https://docs.astral.sh/ty/reference/editor-settings/
-        settings = { ty = {
-          diagnosticMode = 'workspace',
-        } },
-      },
-      ruff = {
-        init_options = { settings = {} },
-        on_attach = function(client, _)
+        underline = true,
+        virtual_text = false,
+        virtual_lines = false,
+        float = { border = 'rounded', source = 'if_many' },
+      }
+
+      vim.lsp.config('*', { capabilities = require('blink.cmp').get_lsp_capabilities() })
+      vim.lsp.config('lua_ls', {
+        settings = {
+          Lua = {
+            completion = { callSnippet = 'Replace' },
+            hint = { enable = true },
+          },
+        },
+        before_init = function(_, config)
+          local root = type(config.root_dir) == 'string' and vim.fs.normalize(config.root_dir)
+          if hypr_settings and root and (root == hypr_root or vim.startswith(root, '/usr/share/omarchy/')) then
+            config.settings.Lua = vim.tbl_deep_extend('force', config.settings.Lua or {}, vim.deepcopy(hypr_settings))
+          end
+        end,
+      })
+      vim.lsp.config('ty', { settings = { ty = { diagnosticMode = 'workspace' } } })
+      vim.lsp.config('ruff', {
+        on_attach = function(client)
           client.server_capabilities.hoverProvider = false
           client.server_capabilities.renameProvider = false
         end,
-      },
-      debugpy = {}, -- Required for Python DAP
-      delve = {}, -- Required for Go DAP
-      gopls = {},
-      ansiblels = {
+      })
+      vim.lsp.config('gopls', {})
+      vim.lsp.config('ansiblels', {
+        filetypes = { 'yaml.ansible' },
+        root_markers = { 'ansible.cfg', '.git' },
         settings = {
           ansible = {
-            python = {
-              interpreterPath = 'python3',
-            },
-            ansible = {
-              path = 'ansible',
-              useFullyQualifiedCollectionNames = true,
-            },
-            executionEnvironment = {
-              enabled = false,
-            },
-            validation = {
-              enabled = true,
-              lint = {
-                enabled = vim.fn.executable 'ansible-lint' == 1,
-                path = 'ansible-lint',
-              },
-            },
-            completion = {
-              provideRedirectModules = true,
-              provideModuleOptionAliases = true,
-            },
+            python = { interpreterPath = 'python3' },
+            ansible = { path = 'ansible', useFullyQualifiedCollectionNames = true },
+            executionEnvironment = { enabled = false },
+            validation = { enabled = true, lint = { enabled = false } },
+            completion = { provideRedirectModules = true, provideModuleOptionAliases = true },
           },
         },
-        filetypes = { 'yaml.ansible' },
-        root_dir = require('lspconfig').util.root_pattern('roles', 'playbooks'),
-        -- single_file_support = true,
-      },
-    }
+      })
 
-    local ensure_installed = vim.tbl_keys(servers or {})
-    vim.list_extend(ensure_installed, {
-      'stylua',
-      --  'yamlfmt',
-    })
-    require('mason-tool-installer').setup { ensure_installed = ensure_installed }
-    require('mason-lspconfig').setup {
-      ensure_installed = {}, -- explicitly set to empty since we install via mason-tool-installer
-      automatic_installation = false,
-      handlers = {
-        function(server_name)
-          local server = servers[server_name] or {}
-          server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
-          require('lspconfig')[server_name].setup(server)
+      local group = vim.api.nvim_create_augroup('custom-lsp-attach', { clear = true })
+      vim.api.nvim_create_autocmd('LspAttach', {
+        group = group,
+        callback = function(event)
+          local client = vim.lsp.get_client_by_id(event.data.client_id)
+          local function map(keys, action, desc, mode)
+            vim.keymap.set(mode or 'n', keys, action, { buffer = event.buf, desc = 'LSP: ' .. desc })
+          end
+
+          map('grn', vim.lsp.buf.rename, 'Rename')
+          map('gra', vim.lsp.buf.code_action, 'Code action', { 'n', 'x' })
+          map('grr', require('telescope.builtin').lsp_references, 'References')
+          map('gri', require('telescope.builtin').lsp_implementations, 'Implementation')
+          map('grd', require('telescope.builtin').lsp_definitions, 'Definition')
+          map('grD', vim.lsp.buf.declaration, 'Declaration')
+          map('gO', require('telescope.builtin').lsp_document_symbols, 'Document symbols')
+          map('gW', require('telescope.builtin').lsp_dynamic_workspace_symbols, 'Workspace symbols')
+          map('grt', require('telescope.builtin').lsp_type_definitions, 'Type definition')
+          map('K', function()
+            vim.lsp.buf.hover { border = 'rounded' }
+          end, 'Hover')
+
+          if client and client:supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint, event.buf) then
+            vim.lsp.inlay_hint.enable(true, { bufnr = event.buf })
+            map('<leader>th', function()
+              local enabled = vim.lsp.inlay_hint.is_enabled { bufnr = event.buf }
+              vim.lsp.inlay_hint.enable(not enabled, { bufnr = event.buf })
+            end, 'Toggle inlay hints')
+          end
+
+          if client and client:supports_method(vim.lsp.protocol.Methods.textDocument_documentHighlight, event.buf) then
+            local highlight = vim.api.nvim_create_augroup('custom-lsp-highlight', { clear = false })
+            if not vim.b[event.buf].lsp_document_highlight then
+              vim.b[event.buf].lsp_document_highlight = true
+              vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
+                group = highlight,
+                buffer = event.buf,
+                callback = vim.lsp.buf.document_highlight,
+              })
+              vim.api.nvim_create_autocmd({ 'CursorMoved', 'CursorMovedI' }, {
+                group = highlight,
+                buffer = event.buf,
+                callback = vim.lsp.buf.clear_references,
+              })
+            end
+          end
         end,
-      },
-    }
-  end,
+      })
+
+      vim.api.nvim_create_autocmd('LspDetach', {
+        group = group,
+        callback = function(event)
+          vim.schedule(function()
+            if not vim.api.nvim_buf_is_valid(event.buf) then
+              return
+            end
+            local supported = vim.tbl_filter(function(client)
+              return client:supports_method(vim.lsp.protocol.Methods.textDocument_documentHighlight, event.buf)
+            end, vim.lsp.get_clients { bufnr = event.buf })
+            if #supported == 0 then
+              vim.lsp.buf.clear_references()
+              vim.api.nvim_clear_autocmds { group = 'custom-lsp-highlight', buffer = event.buf }
+              vim.b[event.buf].lsp_document_highlight = nil
+            end
+          end)
+        end,
+      })
+
+      vim.lsp.enable(servers)
+    end,
+  },
 }

@@ -6,42 +6,44 @@ return {
     {
       '<leader>f',
       function()
-        require('conform').format { async = true, lsp_format = 'fallback' }
+        local policy = require 'custom.format'
+        local context = policy.context(vim.api.nvim_get_current_buf())
+        local formatters = context and policy.manual_formatters(context) or {}
+        if #formatters > 0 then
+          require('conform').format { async = true, formatters = formatters, lsp_format = 'never' }
+        end
       end,
-      mode = '',
+      mode = { 'n', 'x' },
       desc = 'Conform: [F]ormat',
     },
   },
   opts = {
     -- notify_on_error = false,
     format_on_save = function(bufnr)
-      local disable_filetypes = { c = true, cpp = true }
-      if disable_filetypes[vim.bo[bufnr].filetype] then
-        return nil
-      else
+      local policy = require 'custom.format'
+      local context = policy.context(bufnr)
+      local formatters = context and policy.save_formatters(context) or {}
+      if #formatters > 0 then
         return {
-          timeout_ms = vim.bo[bufnr].filetype == 'sql' and 2000 or 500,
-          lsp_format = 'fallback',
+          timeout_ms = 500,
+          formatters = formatters,
+          lsp_format = 'never',
         }
       end
     end,
-    formatters_by_ft = {
-      lua = { 'stylua' },
-      go = { 'gofmt' },
-      python = { 'ruff_fix', 'ruff_format', 'ruff_organize_imports' },
-      sql = { 'sqlfluff' },
-      -- yaml = { 'yamlfmt' },
-      ['yaml.ansible'] = vim.fn.executable 'ansible-lint' == 1 and { 'ansible_lint' } or {},
-      markdown = { 'prettier' },
-    },
     formatters = {
+      prettier = {
+        prefer_local = 'node_modules/.bin',
+      },
+      ruff_fix = { prefer_local = '.venv/bin' },
+      ruff_format = { prefer_local = '.venv/bin' },
+      ruff_organize_imports = { prefer_local = '.venv/bin' },
+      sqlfluff = { prefer_local = '.venv/bin' },
       ansible_lint = {
         command = 'ansible-lint',
         args = { '--fix', '$FILENAME' },
         stdin = false,
-        condition = function()
-          return vim.fn.executable 'ansible-lint' == 1
-        end,
+        prefer_local = '.venv/bin',
       },
     },
   },

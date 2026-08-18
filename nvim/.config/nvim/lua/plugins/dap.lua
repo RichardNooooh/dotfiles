@@ -1,94 +1,62 @@
--- adapted from tjdevries/config.nvim
 return {
   'mfussenegger/nvim-dap',
   dependencies = {
     'mfussenegger/nvim-dap-python',
-    'leoluz/nvim-dap-go',
     'rcarriga/nvim-dap-ui',
     'theHamsta/nvim-dap-virtual-text',
     'nvim-neotest/nvim-nio',
-    'williamboman/mason.nvim',
+    'mason-org/mason.nvim',
   },
   config = function()
     local dap = require 'dap'
     local ui = require 'dapui'
+    local adapter = vim.fn.stdpath 'data' .. '/mason/bin/debugpy-adapter'
 
-    require('dapui').setup {
+    require('dap-python').setup(adapter)
+    ui.setup {
       layouts = {
         {
           position = 'left',
-          size = 80,
+          size = 60,
           elements = {
-            {
-              id = 'scopes',
-              size = 0.40,
-            },
-            {
-              id = 'breakpoints',
-              size = 0.20,
-            },
-            {
-              id = 'stacks',
-              size = 0.20,
-            },
-            {
-              id = 'watches',
-              size = 0.20,
-            },
+            { id = 'scopes', size = 0.4 },
+            { id = 'breakpoints', size = 0.2 },
+            { id = 'stacks', size = 0.2 },
+            { id = 'watches', size = 0.2 },
           },
         },
         {
           position = 'bottom',
-          size = 20,
+          size = 15,
           elements = {
-            {
-              id = 'repl',
-              size = 0.4,
-            },
-            {
-              id = 'console',
-              size = 0.6,
-            },
+            { id = 'repl', size = 0.4 },
+            { id = 'console', size = 0.6 },
           },
         },
       },
     }
-    require('dap-go').setup()
-    require('dap-python').setup 'uv'
     require('nvim-dap-virtual-text').setup()
 
-    local map = function(keys, func, desc, mode)
-      mode = mode or 'n'
-      vim.keymap.set(mode, keys, func, { desc = 'DAP: ' .. desc })
+    local function map(keys, action, desc, mode)
+      vim.keymap.set(mode or 'n', keys, action, { desc = 'DAP: ' .. desc })
     end
 
-    map('<leader>b', dap.toggle_breakpoint, 'Toggle [B]reakpoint')
-    map('<leader>gb', dap.run_to_cursor, '[G]o to Cursor/[B]reakpoint')
-
+    map('<leader>b', dap.toggle_breakpoint, 'Toggle breakpoint')
+    map('<leader>gb', dap.run_to_cursor, 'Run to cursor')
     map('<leader>?', function()
-      require('dapui').eval(nil, { enter = true })
-    end, 'Evaluate var under cursor')
-
-    map('<F1>', dap.step_back, 'Step Back')
-    map('<F2>', dap.step_out, 'Step Out')
-    map('<F3>', dap.step_over, 'Step Over')
-    map('<F4>', dap.step_into, 'Step Into')
+      ui.eval(nil, { enter = true })
+    end, 'Evaluate under cursor', { 'n', 'x' })
+    map('<F2>', dap.step_out, 'Step out')
+    map('<F3>', dap.step_over, 'Step over')
+    map('<F4>', dap.step_into, 'Step into')
     map('<F5>', dap.continue, 'Continue')
     map('<F12>', dap.restart, 'Restart')
 
-    dap.listeners.before.attach.dapui_config = function()
-      ui.open()
-    end
-    dap.listeners.before.launch.dapui_config = function()
-      ui.open()
-    end
-    dap.listeners.before.event_terminated.dapui_config = function()
-      ui.close()
-    end
-    dap.listeners.before.event_exited.dapui_config = function()
-      ui.close()
-    end
+    dap.listeners.before.attach.custom_dapui = ui.open
+    dap.listeners.before.launch.custom_dapui = ui.open
+    dap.listeners.before.event_terminated.custom_dapui = ui.close
+    dap.listeners.before.event_exited.custom_dapui = ui.close
 
-    vim.fn.sign_define('DapBreakpoint', { text = '🛑', texthl = '', linehl = '', numhl = '' })
+    vim.fn.sign_define('DapBreakpoint', { text = '●', texthl = 'DiagnosticError' })
   end,
 }

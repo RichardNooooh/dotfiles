@@ -1,9 +1,12 @@
 return {
-  { -- Add indentation guides even on blank lines
-    'lukas-reineke/indent-blankline.nvim',
-    -- Enable `lukas-reineke/indent-blankline.nvim`
-    -- See `:help ibl`
-    main = 'ibl',
-    opts = {},
+  {
+    'folke/snacks.nvim',
+    priority = 900,
+    lazy = false,
+    opts = {
+      indent = { enabled = true },
+      scope = { enabled = true },
+      scroll = { enabled = false },
+    },
   },
 }

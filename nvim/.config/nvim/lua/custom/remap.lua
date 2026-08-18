@@ -1,6 +1,3 @@
-vim.g.mapleader = ' '
-vim.g.maplocalleader = '\\'
-
 vim.keymap.set('n', '<leader>pv', vim.cmd.Ex, { desc = '[P]roject [V]iew Netrw' })
 
 -- Clear highlights on search
@@ -24,8 +21,7 @@ vim.keymap.set('n', 'N', 'Nzzzv')
 -- "greatest remap ever" to keep my paste register
 vim.keymap.set('x', '<leader>p', [["_dP]])
 
--- -- split navigation
--- vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to left window' })
--- vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to lower window' })
--- vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to upper window' })
--- vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to right window' })
+vim.keymap.set('n', '<M-j>', '<cmd>move .+1<cr>==', { desc = 'Move line down' })
+vim.keymap.set('n', '<M-k>', '<cmd>move .-2<cr>==', { desc = 'Move line up' })
+vim.keymap.set('x', '<M-j>', ":move '>+1<cr>gv=gv", { desc = 'Move selection down' })
+vim.keymap.set('x', '<M-k>', ":move '<-2<cr>gv=gv", { desc = 'Move selection up' })

@@ -13,6 +13,7 @@ package_has_active_layout() {
     starship-zsh) [ -f "$DOTFILES/starship-zsh/.config/starship-zsh.toml" ] ;;
     ghostty)  [ -f "$DOTFILES/ghostty/.config/ghostty/config" ] ;;
     tmux)     [ -f "$DOTFILES/tmux/.config/tmux/tmux.conf" ] ;;
+    nvim)     [ -f "$DOTFILES/nvim/.config/nvim/init.lua" ] ;;
     opencode) [ -f "$DOTFILES/opencode/.config/opencode/opencode.jsonc" ] ;;
     omarchy-user) [ -f "$DOTFILES/omarchy-user/.config/omarchy/branding/screensaver.txt" ] ;;
     *)        return 1 ;;
@@ -20,7 +21,7 @@ package_has_active_layout() {
 }
 
 default_packages() {
-  for package in bin zsh mise starship-zsh ghostty tmux hypr opencode omarchy-user; do
+  for package in bin zsh mise starship-zsh ghostty tmux hypr nvim opencode omarchy-user; do
     package_has_active_layout "$package" && printf '%s\n' "$package"
   done
 }
@@ -51,23 +52,36 @@ migrate_target() {
   fi
 }
 
+migrate_package() {
+  case $1 in
+    zsh)
+      migrate_target "$HOME/.zsh_profile"
+      migrate_target "$HOME/.p10k.zsh"
+      ;;
+    ghostty) migrate_target "$HOME/.config/ghostty/config" ;;
+    tmux)
+      migrate_target "$HOME/.tmux.conf"
+      migrate_target "$HOME/.config/tmux/tmux.conf"
+      ;;
+    nvim) migrate_target "$HOME/.config/nvim" ;;
+    hypr)
+      migrate_target "$HOME/.config/hypr/autostart.lua"
+      migrate_target "$HOME/.config/hypr/hyprland.lua"
+      migrate_target "$HOME/.config/hypr/input.lua"
+      migrate_target "$HOME/.config/hypr/monitors.lua"
+      ;;
+    omarchy-user)
+      migrate_target "$HOME/.config/omarchy/branding/screensaver.txt"
+      migrate_target "$HOME/.config/omarchy/branding/NOTE.md"
+      ;;
+  esac
+}
+
 migrate_layout() {
   backup_root=${XDG_STATE_HOME:-"$HOME/.local/state"}/dotfiles/backups/$(date +%Y%m%d-%H%M%S)
-
-  # Retire links from packages that no longer own these legacy locations.
-  migrate_target "$HOME/.tmux.conf"
-  migrate_target "$HOME/.zsh_profile"
-  migrate_target "$HOME/.p10k.zsh"
-
-  # Preserve mutable Omarchy files before replacing them with selective links.
-  migrate_target "$HOME/.config/ghostty/config"
-  migrate_target "$HOME/.config/tmux/tmux.conf"
-  migrate_target "$HOME/.config/hypr/autostart.lua"
-  migrate_target "$HOME/.config/hypr/hyprland.lua"
-  migrate_target "$HOME/.config/hypr/input.lua"
-  migrate_target "$HOME/.config/hypr/monitors.lua"
-  migrate_target "$HOME/.config/omarchy/branding/screensaver.txt"
-  migrate_target "$HOME/.config/omarchy/branding/NOTE.md"
+  requested_packages | while IFS= read -r package; do
+    migrate_package "$package"
+  done
 }
 
 if [ "${1:-}" = "--list-packages" ]; then
