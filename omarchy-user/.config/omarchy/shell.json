@@ -43,7 +43,7 @@
           },
           "shuffleOnWake": true,
           "intervalSec": 86400,
-          "autoTheme": true
+          "autoTheme": false
         },
         {
           "id": "omarchy.clock",
@@ -70,6 +70,9 @@
         },
         {
           "id": "omarchy.bluetooth"
+        },
+        {
+          "id": "glafeara.wireguard"
         },
         {
           "id": "omarchy.network"
