@@ -27,18 +27,18 @@ return {
   keys = {
     { '<leader><leader>', picker('buffers', { sort_mru = true, sort_lastused = true }), desc = 'Find existing buffers' },
     { '<leader>s.', picker 'oldfiles', desc = 'Recent files' },
-    { '<leader>sf', picker('find_files', { hidden = true }), desc = 'Search files' },
+    { '<leader>sf', picker 'find_files', desc = 'Search files' },
     {
       '<leader>sg',
       function()
-        require('telescope.builtin').live_grep { cwd = root(), additional_args = { '--hidden', '--glob', '!**/.git/**' } }
+        require('telescope.builtin').live_grep { cwd = root() }
       end,
       desc = 'Grep root directory',
     },
     {
       '<leader>sG',
       function()
-        require('telescope.builtin').live_grep { additional_args = { '--hidden', '--glob', '!**/.git/**' } }
+        require('telescope.builtin').live_grep()
       end,
       desc = 'Grep working directory',
     },
@@ -79,7 +79,7 @@ return {
     {
       '<leader>sn',
       function()
-        require('telescope.builtin').find_files { cwd = vim.fn.stdpath 'config', follow = true, hidden = true }
+        require('telescope.builtin').find_files { cwd = vim.fn.stdpath 'config', follow = true }
       end,
       desc = 'Search Neovim files',
     },
@@ -87,6 +87,11 @@ return {
   opts = function()
     return {
       defaults = { prompt_prefix = '> ', selection_caret = '> ' },
+      pickers = {
+        find_files = { find_command = { 'rg', '--files', '--hidden', '--no-ignore', '--glob', '!**/.git/**' } },
+        live_grep = { additional_args = { '--hidden', '--no-ignore', '--glob', '!**/.git/**' } },
+        grep_string = { additional_args = { '--hidden', '--no-ignore', '--glob', '!**/.git/**' } },
+      },
       extensions = {
         fzf = { fuzzy = true, override_generic_sorter = true, override_file_sorter = true, case_mode = 'smart_case' },
         ['ui-select'] = require('telescope.themes').get_dropdown(),
