@@ -40,20 +40,40 @@ gd() {
 }
 
 # Tmux layouts
+_tmux_start_pane_command() {
+  local pane="$1" pane_command="$2" ready
+  local -i attempts=0 ready_checks=0
+  tmux select-pane -t "$pane" || return
+  tmux send-keys -t "$pane" -l "$pane_command"
+  tmux send-keys -t "$pane" C-m
+  while (( attempts < 50 )); do
+    ready=$(tmux display-message -p -t "$pane" '#{alternate_on}') || return
+    (( ++attempts ))
+    if [[ $ready == 1 ]]; then
+      (( ++ready_checks ))
+      (( ready_checks == 5 )) && return 0
+    else
+      ready_checks=0
+    fi
+    sleep 0.02
+  done
+}
+
 tdl() {
   [[ -n ${1:-} ]] || { print -u2 "Usage: tdl <c|cx|codex|other_ai> [<second_ai>]"; return 1; }
   [[ -n ${TMUX:-} ]] || { print -u2 "You must start tmux to use tdl."; return 1; }
   local current_dir="$PWD" editor_pane="$TMUX_PANE" ai_pane ai2_pane
   local ai="$1" ai2="${2:-}"
   tmux rename-window -t "$editor_pane" "${current_dir:t}"
-  tmux split-window -v -p 15 -t "$editor_pane" -c "$current_dir"
   ai_pane=$(tmux split-window -h -p 30 -t "$editor_pane" -c "$current_dir" -P -F '#{pane_id}') || return
+  tmux split-window -v -p 25 -t "$editor_pane" -c "$current_dir" || return
   if [[ -n $ai2 ]]; then
     ai2_pane=$(tmux split-window -v -t "$ai_pane" -c "$current_dir" -P -F '#{pane_id}') || return
-    tmux send-keys -t "$ai2_pane" "$ai2" C-m
+    _tmux_start_pane_command "$ai2_pane" "$ai2" || return
   fi
-  tmux send-keys -t "$ai_pane" "$ai" C-m
-  tmux send-keys -t "$editor_pane" "$EDITOR ." C-m
+  _tmux_start_pane_command "$ai_pane" "$ai" || return
+  tmux send-keys -t "$editor_pane" -l "$EDITOR ."
+  tmux send-keys -t "$editor_pane" C-m
   tmux select-pane -t "$editor_pane"
 }
 
