@@ -8,22 +8,22 @@
     "opencode-history-search"
   ],
 
-  "mcp": {
-    "exa": {
-      "type": "local",
-      "command": [
-        "sops",
-        "exec-env",
-        "--same-process",
-        "{env:HOME}/.local/share/homelab-secrets/agents/exa-search.sops.yaml",
-        "npx -y exa-mcp-server"
-      ],
-      "enabled": true
-    }
-  },
+  // "mcp": {
+  //   "exa": {
+  //     "type": "local",
+  //     "command": [
+  //       "sops",
+  //       "exec-env",
+  //       "--same-process",
+  //       "{env:HOME}/.local/share/homelab-secrets/agents/exa-search.sops.yaml",
+  //       "npx -y exa-mcp-server"
+  //     ],
+  //     "enabled": true
+  //   }
+  // },
 
   "share": "disabled",
-  "enabled_providers": ["openai"],
+  // "enabled_providers": ["openai"],
 
   "permission": {
     "*": "ask",
@@ -47,7 +47,7 @@
     "lsp": "allow",
     "skill": "allow",
     "webfetch": "allow",
-    "websearch": "deny",
+    "websearch": "allow",
     "question": "allow",
     "todowrite": "allow",
     "edit": {
@@ -106,6 +106,8 @@
   },
 
   "agent": {
+    // Primary agents own interaction, orchestration, and artifact workflows.
+    // Custom roles receive bounded briefs rather than owning those workflows.
     "history": {
       "description": "Search, inspect, and summarize previous OpenCode sessions and related documentation.",
       "mode": "primary",
@@ -119,6 +121,12 @@
         "edit": "deny",
         "bash": "deny",
         "history-search": "allow",
+        "skill": {
+          "research": "deny",
+          "code-review": "deny",
+          "grilling": "deny",
+          "domain-modeling": "deny"
+        },
         "task": {
           "*": "deny",
           "researcher": "allow",
@@ -135,7 +143,13 @@
       "textVerbosity": "low",
 
       "permission": {
-          "question": "deny"
+          "question": "deny",
+          "skill": {
+            "research": "deny",
+            "code-review": "deny",
+            "grilling": "deny",
+            "domain-modeling": "deny"
+          }
       }
     },
 
@@ -150,7 +164,13 @@
         "edit": "deny",
         "bash": "deny",
         "task": "deny",
-        "question": "deny"
+        "question": "deny",
+        "skill": {
+          "research": "deny",
+          "code-review": "deny",
+          "grilling": "deny",
+          "domain-modeling": "deny"
+        }
       }
     },
 
@@ -165,7 +185,13 @@
         "edit": "deny",
         "bash": "ask",
         "task": "deny",
-        "question": "deny"
+        "question": "deny",
+        "skill": {
+          "research": "deny",
+          "code-review": "deny",
+          "grilling": "deny",
+          "domain-modeling": "deny"
+        }
       }
     },
 
@@ -180,7 +206,13 @@
         "edit": "deny",
         "bash": "deny",
         "task": "deny",
-        "question": "deny"
+        "question": "deny",
+        "skill": {
+          "research": "deny",
+          "code-review": "deny",
+          "grilling": "deny",
+          "domain-modeling": "deny"
+        }
       }
     },
 

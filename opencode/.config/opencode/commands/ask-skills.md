@@ -6,7 +6,7 @@ I am unsure which OpenCode command or skill to use right now. Can you use this g
 
 # Ask Skills
 
-Use what I want to accomplish to recommend a route. If that is not clear, ask me.
+Use what I want to accomplish to recommend a route. If that is not clear, ask me. Commands are the adaptation boundary for upstream workflows that require an explicit user invocation; loadable skills are available for model invocation when their trigger applies.
 
 A **flow** is a path through routes and skills. Most paths run along one **main flow**, and two **on-ramps** merge onto it. Everything else is standalone, or a vocabulary layer that runs underneath.
 
@@ -59,7 +59,7 @@ When the **words** or focused process, not the wider route, are the problem, loa
 - Load **`tdd`** — build a concrete behaviour test-first without a full spec.
 - Load **`code-review`** — review a branch or PR against a fixed point.
 - Load **`prototype`** — make a small, throwaway program to answer one design question.
-- Load **`research`** — investigate a question against primary sources and leave a cited Markdown file in the repo.
+- Load **`research`** — when I need a durable, cited Markdown research artifact in the repo. It investigates a bounded question from high-trust primary sources; use ordinary documentation lookup or API fact-finding directly instead.
 - Load **`diagnosing-bugs`** — establish a tight feedback loop before fixing a hard bug with a regression test.
 - Load **`resolving-merge-conflicts`** — resolve a merge conflict while preserving each side's intended behaviour.
 
@@ -75,7 +75,9 @@ Off the main flow entirely.
 - **`/grill-me`** — the same relentless interview as `/grill-with-docs`, but for when I have **no codebase**. Stateless: it saves nothing locally, builds no `CONTEXT.md`. Reach for it to sharpen any plan or design that doesn't live in a repo.
 - Load **`prototype`** — a small, throwaway program that answers one design question: does this state model feel right, or what should this UI look like. Throwaway from day one — keep the answer, delete the code. It's the detour in step 2 of the main flow, but reach for it any time a design question is hard to settle on paper.
 - **`/teach`** — learn a concept over multiple sessions, using the current directory as a stateful workspace.
-- **`/writing-great-skills`** — reference for writing and editing skills well.
+- Load **`writing-for-agents`** — a model-invoked skill for writing instructions and skills that agents can follow.
+- **`/writing-great-skills`** — manual wrapper that loads `writing-for-agents` when I explicitly want to write or edit a skill.
+- **`/wait-what`** — standalone command that re-pitches the previous message with the needed context in Simplified Technical English.
 
 ## Precondition
 

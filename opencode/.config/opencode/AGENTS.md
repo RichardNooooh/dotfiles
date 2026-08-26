@@ -14,3 +14,5 @@
   what the "correct" decision is.
 - If a given prompt is vague or unclear, be sure to ask clarifying questions instead of making silent assumptions.
 - Assume user cannot see output from subagents, so present options clearly before asking questions.
+- When permissions prohibit a write required by a skill, complete the read-only analysis, identify the deferred
+  artifact and intended path, and wait for a writable agent rather than attempting the denied write.

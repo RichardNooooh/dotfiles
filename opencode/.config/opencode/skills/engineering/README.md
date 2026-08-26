@@ -1,6 +1,6 @@
 # Engineering
 
-Engineering workflows and loadable skills for taking work from an idea to a reviewed implementation.
+Engineering workflows and loadable skills for taking work from an idea to a reviewed implementation. Commands are the adaptation boundary for upstream workflows that require explicit user invocation; loadable skills are model-invoked when their triggers apply.
 
 ## Slash Workflows
 
@@ -13,6 +13,8 @@ Engineering workflows and loadable skills for taking work from an idea to a revi
 - **[to-tickets](../../commands/to-tickets.md)** - Turn a plan, spec, or conversation into tracer-bullet tickets with explicit blocking edges.
 - **[triage](../../commands/triage.md)** - Categorize, verify, and prepare issues or external pull requests for the appropriate next step.
 - **[wayfinder](../../commands/wayfinder.md)** - Map a huge, uncertain effort as decision tickets and resolve them until the route to the destination is clear.
+- **[writing-great-skills](../../commands/writing-great-skills.md)** - Manual wrapper that loads `writing-for-agents` to write or edit skills.
+- **[wait-what](../../commands/wait-what.md)** - Standalone command that re-pitches the previous message with context in Simplified Technical English.
 
 ## Loadable Skills
 
@@ -21,6 +23,6 @@ Engineering workflows and loadable skills for taking work from an idea to a revi
 - **[diagnosing-bugs](diagnosing-bugs/SKILL.md)** - Diagnose hard bugs and performance regressions by first building a tight feedback loop, then fixing with a regression test.
 - **[domain-modeling](domain-modeling/SKILL.md)** - Build and sharpen the project's domain terminology, glossary, and architectural decisions.
 - **[prototype](prototype/SKILL.md)** - Build throwaway logic or UI prototypes to answer a focused design question.
-- **[research](research/SKILL.md)** - Investigate a question from high-trust primary sources and capture cited findings in the repository.
+- **[research](research/SKILL.md)** - Produce a durable cited Markdown research artifact in the repository from a bounded investigation of high-trust primary sources; not for routine documentation lookup or API fact-finding.
 - **[resolving-merge-conflicts](resolving-merge-conflicts/SKILL.md)** - Resolve an in-progress merge or rebase by tracing and preserving each side's intent, then verify and finish it.
 - **[tdd](tdd/SKILL.md)** - Build features or fixes test-first with a red-green-refactor loop at agreed seams.
