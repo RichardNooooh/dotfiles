@@ -65,6 +65,7 @@
     "external_directory": {
       "*": "ask",
       "/tmp/opencode/**": "allow",
+      "~/.agents/**": "allow",
       "~/.config/opencode/**": "allow",
       "~/.dotfiles/opencode/**": "allow",
       "~/.local/share/homelab-secrets/**": "deny",
@@ -80,6 +81,20 @@
       "git ls-files *": "allow",
       "git rev-parse *": "allow",
       "ls *": "allow",
+      "command -v *": "allow",
+      "rg *": "allow",
+      "pwd": "allow",
+      "whoami": "allow",
+      "id *": "allow",
+      "uname *": "allow",
+      "date": "allow",
+      "stat *": "allow",
+      "file *": "allow",
+      "realpath *": "allow",
+      "readlink *": "allow",
+      "rg *--pre*": "ask",
+      "*>*": "ask",
+      "*<*": "ask",
       "*sops*": "deny",
       "age": "deny",
       "age *": "deny",
@@ -154,11 +169,14 @@
     },
 
     "researcher": {
-      "description": "Use for complex external documentation, dependency, and architectural research, along with complex independent planning. Do not re-use same researcher subagent; start a new research subagent each time.",
+      "description": "Use for complex external documentation, dependency, and architectural research, along with complex independent planning.",
       "mode": "subagent",
       "model": "openai/gpt-5.6-sol",
+      "steps": 12,
       "reasoningEffort": "high",
       "textVerbosity": "low",
+
+      "prompt": "Perform one bounded investigation. Before investigating, verify that the brief satisfies the Research Delegation contract in the global AGENTS.md. If it does not, return a scope objection and propose independently researchable briefs without beginning broad research. Investigate only the accepted brief. Prefer official documentation, source code, specifications, and first-party material; use secondary sources for concrete practitioner experience or when primary evidence is absent. While websearch uses the free anonymous Exa service, begin with at most two focused queries and inspect the best three to five authoritative sources. Search further only to resolve conflicts or material gaps, and never issue more than two searches concurrently. Attempt each query at most three times: the initial search, one retry after other useful work, then fetch any known authoritative URLs before one final search. Stop immediately when a 429 indicates the daily limit. This Exa-specific policy applies only to the current free websearch tool, not the planned SearXNG and Firecrawl tooling. Stop when the required claims are supported, conflicts and gaps are identified, and further reading is unlikely to change the answer. Return only a concise answer, claim-linked evidence, conflicts or unknowns, and gaps; do not include a reading diary. If the step limit interrupts the investigation, return the best partial result and explicit gaps. Do not create research files or other artifacts.",
 
       "permission": {
         "edit": "deny",
@@ -183,7 +201,6 @@
 
       "permission": {
         "edit": "deny",
-        "bash": "ask",
         "task": "deny",
         "question": "deny",
         "skill": {

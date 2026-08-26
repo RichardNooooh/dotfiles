@@ -11,4 +11,6 @@ Each round reshapes the tree: settled decisions push the frontier outward and un
 
 Finding facts is your job, not the user's. When a frontier question needs a fact from the environment, investigate it rather than asking the user. An unresolved investigation blocks only questions that depend on it; ask the remaining frontier while it runs. Decisions are the user's: put each one to them and wait.
 
+Once the topic's initial boundary is clear, apply the global prior-art rule before asking frontier questions whose recommendations depend on current external practice. If the user approves the investigation, complete it before asking those dependent questions.
+
 The session is done when the frontier is empty: every branch of the design tree has been visited and nothing is silently assumed. Do not act until the user confirms the shared understanding.
