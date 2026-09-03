@@ -27,14 +27,14 @@
           "perDisplayConfig": true,
           "displayConfig": {
             "DP-2": {
-              "folder": "/mnt/media/Wallpapers/anime_girls/landscape",
+              "folder": "/mnt/media/Wallpapers/anime_girls_landscape",
               "mode": "shuffle",
               "pinned": "",
               "recursive": true,
               "scaling": "zoom"
             },
             "HDMI-A-1": {
-              "folder": "/mnt/media/Wallpapers/anime_girls/portrait",
+              "folder": "/mnt/media/Wallpapers/anime_girls_portrait",
               "mode": "shuffle",
               "pinned": "",
               "recursive": true,

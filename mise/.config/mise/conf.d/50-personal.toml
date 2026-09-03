@@ -5,6 +5,7 @@ uv = "latest"
 sops = "latest"
 stylua = "latest"
 "pipx:pre-commit" = "4.6.1"
+"npm:oc-codex-multi-auth" = { version = "latest", trust_policy_excludes = ["effect@4.0.0-beta.83"] }
 yq = "latest"
 
 [settings]
@@ -16,3 +17,4 @@ uv_venv_auto = true
 
 [env]
 OPENCODE_ENABLE_EXA = "1"
+CRAWL4AI_API_TOKEN = { value = "{{ exec(command='sops --decrypt ~/.local/share/homelab-secrets/docker/citadel/web-research/crawl4ai-api-token.sops.txt') | trim }}", redact = true, tools = true }
