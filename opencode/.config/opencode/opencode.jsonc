@@ -30,7 +30,7 @@
   "tools": {
     "mcp_search_searxng_search_suggestions": false,
     "mcp_search_searxng_instance_info": false,
-    "mcp_search_web_url_read": false,
+    "mcp_crawl_md": false,
     "mcp_crawl_html": false,
     "mcp_crawl_screenshot": false,
     "mcp_crawl_pdf": false,
@@ -371,9 +371,14 @@
     }
   },
 
+  "tool_output": {
+    "max_lines": 300,
+    "max_bytes": 12000
+  },
+
   "compaction": {
-    "auto": false,
-    "prune": false
+    "auto": true,
+    "prune": true
   },
 
   "experimental": {
@@ -436,9 +441,10 @@
       "reasoningEffort": "high",
       "textVerbosity": "low",
 
-      "prompt": "Perform one bounded investigation. Before investigating, verify that the brief satisfies the Research Delegation contract in the global AGENTS.md. If it does not, return a scope objection and propose independently researchable briefs without beginning broad research. Investigate only the accepted brief. Prefer official documentation, source code, specifications, and first-party material; use secondary sources for concrete practitioner experience or when primary evidence is absent. While websearch uses the free anonymous Exa service, begin with at most two focused queries and inspect the best three to five authoritative sources. Search further only to resolve conflicts or material gaps, and never issue more than two searches concurrently. Attempt each query at most three times: the initial search, one retry after other useful work, then fetch any known authoritative URLs before one final search. Stop immediately when a 429 indicates the daily limit. This Exa-specific policy applies only to the current free websearch tool, not the planned SearXNG and Firecrawl tooling. Stop when the required claims are supported, conflicts and gaps are identified, and further reading is unlikely to change the answer. Return only a concise answer, claim-linked evidence, conflicts or unknowns, and gaps; do not include a reading diary. If the step limit interrupts the investigation, return the best partial result and explicit gaps. Do not create research files or other artifacts.",
+      "prompt": "Perform one bounded investigation. Before investigating, verify that the brief satisfies the Research Delegation contract in the global AGENTS.md. If it does not, return a scope objection and propose independently researchable briefs without beginning broad research. Investigate only the accepted brief. Prefer official documentation, source code, specifications, and first-party material; use secondary sources for concrete practitioner experience or when primary evidence is absent. While websearch uses the free anonymous Exa service, begin with at most two focused queries and inspect the best three to five authoritative sources. Search further only to resolve conflicts or material gaps, and never issue more than two searches concurrently. Attempt each query at most three times: the initial search, one retry after other useful work, then fetch any known authoritative URLs before one final search. Stop immediately when a 429 indicates the daily limit. This Exa-specific policy applies only to the current free websearch tool, not the planned SearXNG and Firecrawl tooling. For normal page reads, use mcp_search_web_url_read first: use readHeadings, then section or paragraphRange; when using maxLength, keep it at or below 8000 characters. Use Crawl4AI only when normal reads fail or the page is JavaScript-heavy, using mcp_crawl_md with f: bm25 and a focused q. Stop when the required claims are supported, conflicts and gaps are identified, and further reading is unlikely to change the answer. Return only a concise answer, claim-linked evidence, conflicts or unknowns, and gaps; do not include a reading diary. If the step limit interrupts the investigation, return the best partial result and explicit gaps. Do not create research files or other artifacts.",
 
       "permission": {
+        "mcp_crawl_md": "allow",
         "edit": "deny",
         "bash": "deny",
         "task": "deny",

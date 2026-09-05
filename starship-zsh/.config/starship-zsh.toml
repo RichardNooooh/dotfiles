@@ -3,26 +3,44 @@ add_newline = false
 command_timeout = 500
 
 format = """
-[](fg:blue)\
+[](fg:bright-black)\
+$status\
+[](fg:bright-black bg:blue)\
 $directory\
-[](fg:blue bg:bright-black)\
+[](fg:blue bg:green)\
 $git_branch\
 $git_status\
-[](fg:bright-black) \
-"""
-
-right_format = """
-$cmd_duration\
+[](fg:green bg:bright-black)\
+$direnv\
+$mise\
+$nix_shell\
+$rust\
+$golang\
+$nodejs\
+$php\
+$java\
+$python\
+$ruby\
+$lua\
+$container\
+$kubernetes\
+$terraform\
+$aws\
+$gcloud\
 $jobs\
-[](fg:bright-black)\
-[$direnv$mise$python$nodejs$golang$rust$ruby$java$lua$php$kubernetes$terraform$aws$gcloud$nix_shell$container$status$time](bg:bright-black)\
-[](fg:bright-black)
+[](fg:bright-black bg:black)\
+$cmd_duration\
+[](fg:black bg:red)\
+$time\
+[](fg:red)\
+$line_break\
+$character
 """
 
 [directory]
 format = "[ $path$read_only ]($style)"
-style = "bold bright-white bg:blue"
-repo_root_style = "bold bright-white bg:blue"
+style = "bold black bg:blue"
+repo_root_style = "bold black bg:blue"
 repo_root_format = "[ $repo_root]($repo_root_style)[$path$read_only ]($style)"
 read_only = " 󰌾"
 truncation_length = 3
@@ -31,14 +49,14 @@ truncation_symbol = "…/"
 
 [git_branch]
 format = "[ $symbol$branch(:$remote_branch) ]($style)"
-style = "bold blue bg:bright-black"
+style = "bold black bg:green"
 symbol = " "
 truncation_length = 32
 truncation_symbol = "…"
 
 [git_status]
 format = "[$all_status$ahead_behind ]($style)"
-style = "bold blue bg:bright-black"
+style = "bold black bg:green"
 conflicted = "~${count} "
 ahead = "⇡${count} "
 behind = "⇣${count} "
@@ -59,10 +77,10 @@ format = "[ $status ](bold red bg:bright-black)"
 [cmd_duration]
 min_time = 3000
 show_milliseconds = false
-format = "[](fg:yellow)[ 󰔛 $duration ](bold black bg:yellow)[](fg:yellow)"
+format = "[ 󰔛 $duration ](bold yellow bg:black)"
 
 [jobs]
-format = "[](fg:cyan)[ $symbol$number ](bold black bg:cyan)[](fg:cyan)"
+format = "[ $symbol$number ](bold cyan bg:bright-black)"
 symbol = "󰒓 "
 number_threshold = 1
 symbol_threshold = 1
@@ -73,7 +91,7 @@ format = "[ $symbol$loaded ](bold yellow bg:bright-black)"
 symbol = "󰌪 "
 
 [mise]
-disabled = false
+disabled = true
 format = "[ $symbol$health ](bold cyan bg:bright-black)"
 symbol = "󰏗 "
 
@@ -136,5 +154,14 @@ symbol = " "
 
 [time]
 disabled = false
-format = "[  $time ](bold bright-white bg:bright-black)"
+format = "[  $time ](bold black bg:red)"
 time_format = "%H:%M"
+
+[character]
+disabled = false
+success_symbol = "[](bold green)"
+error_symbol = "[](bold red)"
+vimcmd_symbol = "[](bold green)"
+vimcmd_replace_one_symbol = "[](bold purple)"
+vimcmd_replace_symbol = "[](bold purple)"
+vimcmd_visual_symbol = "[](bold cyan)"

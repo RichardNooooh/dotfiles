@@ -144,8 +144,8 @@ hdl() {
   local current_dir="$PWD" editor_pane="$HERDR_PANE_ID" ai_pane ai2_pane
   local ai="$1" ai2="${2:-}"
   herdr tab rename "$HERDR_TAB_ID" "${current_dir:t}" >/dev/null
-  _herdr_split "$editor_pane" down 0.85 "$current_dir" >/dev/null
   ai_pane=$(_herdr_split "$editor_pane" right 0.7 "$current_dir") || return
+  _herdr_split "$editor_pane" down 0.75 "$current_dir" >/dev/null
   if [[ -n $ai2 ]]; then
     ai2_pane=$(_herdr_split "$ai_pane" down 0.5 "$current_dir") || return
     herdr pane run "$ai2_pane" "$ai2" >/dev/null
