@@ -4,7 +4,7 @@ description: "Implement a piece of work based on a spec or set of tickets."
 
 Implement the work described in the current conversation, spec, tickets, or appended request.
 
-Settle the scope and acceptance criteria before implementation. When useful, delegate bounded coding work to a suitable available subagent with that settled scope and acceptance criteria.
+Settle the scope and acceptance criteria before implementation. Delegate bounded coding work to suitable available subagents with that settled scope and acceptance criteria. Your job is to orchestrate these subagents.
 
 Load `tdd` where possible, at pre-agreed seams.
 

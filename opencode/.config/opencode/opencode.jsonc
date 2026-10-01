@@ -6,7 +6,7 @@
 
   "plugin": [
     "opencode-history-search",
-    "oc-codex-multi-auth"
+    "file:///home/rnoh/.local/share/mise/installs/npm-oc-codex-multi-auth/latest/node_modules/oc-codex-multi-auth"
   ],
 
   "mcp": {
@@ -437,7 +437,7 @@
       "description": "Use for complex external documentation, dependency, and architectural research, along with complex independent planning.",
       "mode": "subagent",
       "model": "openai/gpt-5.6-sol",
-      "steps": 30,
+      "steps": 50,
       "reasoningEffort": "high",
       "textVerbosity": "low",
 
@@ -461,8 +461,8 @@
     "reviewer": {
       "description": "Use only for substantial changes where an independent review could find meaningful defects; do not use for trivial edits.",
       "mode": "subagent",
-      "model": "openai/gpt-5.6-terra",
-      "reasoningEffort": "high",
+      "model": "openai/gpt-5.6-sol",
+      "reasoningEffort": "medium",
       "textVerbosity": "low",
 
       "permission": {

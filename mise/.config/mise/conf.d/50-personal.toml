@@ -5,11 +5,10 @@ uv = "latest"
 sops = "latest"
 stylua = "latest"
 "pipx:pre-commit" = "4.6.1"
-"npm:oc-codex-multi-auth" = { version = "latest", trust_policy_excludes = ["effect@4.0.0-beta.83"] }
 yq = "latest"
 
 [settings]
-minimum_release_age = "7d"
+minimum_release_age = "5d"
 experimental = false
 
 [settings.python]
