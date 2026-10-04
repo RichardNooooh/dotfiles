@@ -117,6 +117,8 @@ function M.save_formatters(context)
     formatter = 'ruff_format'
   elseif ext == 'go' and (exists(context, 'go.mod') or exists(context, 'go.work')) and has_executable(context, 'gofmt') then
     formatter = 'gofmt'
+  elseif ext == 'odin' and exists(context, 'odinfmt.json') and has_executable(context, 'odinfmt') then
+    formatter = 'odinfmt'
   elseif is_prettier_file(context) and prettier_enabled(context) and has_local_executable(context, 'node_modules/.bin/prettier') then
     formatter = 'prettier'
   end

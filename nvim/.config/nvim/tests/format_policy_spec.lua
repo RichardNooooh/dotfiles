@@ -63,6 +63,26 @@ assert_formatters(
   }, { gofmt = true }))
 )
 
+local odin_nested = context('/workspace/apps/demo/src/main.odin', {
+  ['/workspace/apps/demo/odinfmt.json'] = '{}',
+}, { odinfmt = true })
+odin_nested.roots = { '/workspace/apps/demo/src', '/workspace/apps/demo', '/workspace/apps', '/workspace' }
+assert_formatters({ 'odinfmt' }, format.save_formatters(odin_nested))
+assert_formatters({ 'odinfmt' }, format.manual_formatters(odin_nested))
+assert_formatters({}, format.save_formatters(context('/workspace/main.odin', {}, { odinfmt = true })))
+assert_formatters(
+  {},
+  format.save_formatters(context('/workspace/main.odin', {
+    ['/workspace/odinfmt.json'] = '{}',
+  }, {}))
+)
+assert_formatters(
+  {},
+  format.manual_formatters(context('/workspace/main.odin', {
+    ['/workspace/odinfmt.json'] = '{}',
+  }, {}))
+)
+
 assert_formatters(
   { 'prettier' },
   format.save_formatters(context('/workspace/page.md', {

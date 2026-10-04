@@ -1,4 +1,4 @@
-local servers = { 'lua_ls', 'ty', 'ruff', 'gopls', 'ansiblels' }
+local servers = { 'lua_ls', 'ty', 'ruff', 'gopls', 'ols', 'ansiblels' }
 
 local function hypr_lua_settings()
   local luarc = vim.fn.expand '~/.config/hypr/.luarc.json'
@@ -35,6 +35,7 @@ return {
         'ty',
         'ruff',
         'gopls',
+        'ols',
         'ansible-language-server',
         'stylua',
         'debugpy',
@@ -95,6 +96,7 @@ return {
         end,
       })
       vim.lsp.config('gopls', {})
+      vim.lsp.config('ols', {})
       vim.lsp.config('ansiblels', {
         filetypes = { 'yaml.ansible' },
         root_markers = { 'ansible.cfg', '.git' },

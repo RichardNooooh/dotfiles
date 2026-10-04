@@ -4,6 +4,7 @@ go = "1.26"
 uv = "latest"
 sops = "latest"
 stylua = "latest"
+odin = { version = "latest", version_prefix = "dev-", asset_pattern = "odin-linux-amd64-*.tar.gz" }
 "pipx:pre-commit" = "4.6.1"
 yq = "latest"
 
