@@ -61,6 +61,8 @@
 
     "codex-*": "deny",
     "exa_*": "allow",
+    "mcp_search_*": "allow",
+    "mcp_crawl_*": "allow",
     "history-search": "deny",
     "read": {
       "*": "allow",
