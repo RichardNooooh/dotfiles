@@ -18,3 +18,7 @@ uv_venv_auto = true
 [env]
 OPENCODE_ENABLE_EXA = "1"
 CRAWL4AI_API_TOKEN = { value = "{{ exec(command='sops --decrypt ~/.local/share/homelab-secrets/docker/citadel/web-research/crawl4ai-api-token.sops.txt') | trim }}", redact = true, tools = true }
+
+[tasks."latex:preview"]
+description = "Render Markdown with LaTeX to a standalone HTML preview"
+run = "cd \"$MISE_ORIGINAL_CWD\" && node \"${HOME}/.config/mise/latex-preview/render.mjs\" \"$@\""

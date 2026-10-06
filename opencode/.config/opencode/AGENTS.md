@@ -27,3 +27,4 @@
 - For a non-trivial design choice that could benefit from current external practice, offer the user a bounded
   prior-art question and source scope, then wait for explicit approval before researching. Skip this offer for trivial
   or fully specified work.
+- Once that bounded check is approved, delegate it to a fresh researcher subagent; the primary owns synthesis.

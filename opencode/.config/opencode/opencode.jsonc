@@ -438,7 +438,7 @@
     "researcher": {
       "description": "Use for complex external documentation, dependency, and architectural research, along with complex independent planning.",
       "mode": "subagent",
-      "model": "openai/gpt-5.6-sol",
+      "model": "openai/gpt-6.1-sol",
       "steps": 50,
       "reasoningEffort": "high",
       "textVerbosity": "low",
@@ -463,7 +463,7 @@
     "reviewer": {
       "description": "Use only for substantial changes where an independent review could find meaningful defects; do not use for trivial edits.",
       "mode": "subagent",
-      "model": "openai/gpt-5.6-sol",
+      "model": "openai/gpt-6.1-sol",
       "reasoningEffort": "medium",
       "textVerbosity": "low",
 
