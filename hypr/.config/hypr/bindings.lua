@@ -67,3 +67,8 @@ o.bind("SUPER + SHIFT + DOWN", "Move window down", hl.dsp.window.move({ directio
 o.bind("SUPER + ALT + J", "Toggle window split", hl.dsp.layout("togglesplit"))
 o.bind("SUPER + ALT + L", "Toggle workspace layout", "omarchy-hyprland-workspace-layout-toggle")
 o.bind("SUPER + SHIFT + SLASH", "Keybindings", "omarchy-menu-keybindings")
+
+-- Move push-to-talk dictation from F9 to SUPER+D.
+hl.unbind("F9")
+o.bind("SUPER + D", "Start dictation (push-to-talk)", "voxtype record start")
+o.bind("SUPER + D", "Stop dictation (push-to-talk)", "voxtype record stop", { release = true })
