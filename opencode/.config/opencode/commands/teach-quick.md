@@ -1,6 +1,6 @@
 ---
 description: Explain a technical topic interatively, one concise section at a time.
-subtask: false
+subagent: false
 ---
 
 Teach me about the following topic or question:

@@ -1,510 +1,431 @@
 {
   "$schema": "https://opencode.ai/config.json",
-
-  "autoupdate": false,
+  "update": "disable",
   "shell": "/usr/bin/bash",
-
-  "plugin": [
-    "opencode-history-search",
-    "file:///home/rnoh/.local/share/mise/installs/npm-oc-codex-multi-auth/latest/node_modules/oc-codex-multi-auth"
+  "share": "disabled",
+  "plugins": [
+    "file:///home/rnoh/.local/share/mise/installs/npm-oc-codex-multi-auth/latest/node_modules/oc-codex-multi-auth/dist"
   ],
-
   "mcp": {
-    "mcp_search": {
-      "type": "remote",
-      "url": "https://mcp-search.citadel.lab.answerisnoh.dev/mcp",
-      "enabled": true,
-      "oauth": false
-    },
-    "mcp_crawl": {
-      "type": "remote",
-      "url": "https://mcp-crawl.citadel.lab.answerisnoh.dev/mcp/sse",
-      "enabled": true,
-      "oauth": false,
-      "headers": {
-        "Authorization": "Bearer {env:CRAWL4AI_API_TOKEN}"
+    "servers": {
+      "mcp_search": {
+        "type": "remote",
+        "url": "https://mcp-search.citadel.lab.answerisnoh.dev/mcp",
+        "disabled": false,
+        "oauth": false
+      },
+      "mcp_crawl": {
+        "type": "local",
+        "disabled": false,
+        "command": [
+          "npx",
+          "-y",
+          "mcp-remote@0.1.38",
+          "https://mcp-crawl.citadel.lab.answerisnoh.dev/mcp/sse",
+          "--transport",
+          "sse-only",
+          "--header",
+          "Authorization: Bearer ${CRAWL4AI_API_TOKEN}"
+        ]
       }
     }
   },
-
-  "tools": {
-    "mcp_search_searxng_search_suggestions": false,
-    "mcp_search_searxng_instance_info": false,
-    "mcp_crawl_md": false,
-    "mcp_crawl_html": false,
-    "mcp_crawl_screenshot": false,
-    "mcp_crawl_pdf": false,
-    "mcp_crawl_execute_js": false,
-    "mcp_crawl_crawl": false,
-    "mcp_crawl_ask": false
+  // OpenCode 2.0.28 requires this key; top-level policies are ignored.
+  "experimental": {
+    "policies": [
+    // Hard blocks override permission asks and saved approvals.
+    {"action": "tool.use", "resource": "read:*.sops.yml", "effect": "deny"},
+    {"action": "tool.use", "resource": "read:*.sops.yaml", "effect": "deny"},
+    {"action": "tool.use", "resource": "read:*.sops.json", "effect": "deny"},
+    {"action": "tool.use", "resource": "read:/home/rnoh/.local/share/homelab-secrets/**", "effect": "deny"},
+    {"action": "tool.use", "resource": "read:/home/rnoh/.config/sops/**", "effect": "deny"},
+    {"action": "tool.use", "resource": "read:/home/rnoh/.config/age/**", "effect": "deny"},
+    {"action": "tool.use", "resource": "edit:*.sops.yml", "effect": "deny"},
+    {"action": "tool.use", "resource": "edit:*.sops.yaml", "effect": "deny"},
+    {"action": "tool.use", "resource": "edit:*.sops.json", "effect": "deny"},
+    {"action": "tool.use", "resource": "edit:/home/rnoh/.local/share/homelab-secrets/**", "effect": "deny"},
+    {"action": "tool.use", "resource": "edit:/home/rnoh/.config/sops/**", "effect": "deny"},
+    {"action": "tool.use", "resource": "edit:/home/rnoh/.config/age/**", "effect": "deny"},
+    {"action": "tool.use", "resource": "external_directory:/home/rnoh/.local/share/homelab-secrets/**", "effect": "deny"},
+    {"action": "tool.use", "resource": "external_directory:/home/rnoh/.config/sops/**", "effect": "deny"},
+    {"action": "tool.use", "resource": "external_directory:/home/rnoh/.config/age/**", "effect": "deny"},
+    {"action": "tool.use", "resource": "shell:*sops*", "effect": "deny"},
+    {"action": "tool.use", "resource": "shell:age *", "effect": "deny"},
+    {"action": "tool.use", "resource": "shell:* age *", "effect": "deny"},
+    {"action": "tool.use", "resource": "shell:*age-keygen*", "effect": "deny"},
+    {"action": "tool.use", "resource": "shell:*HOMELAB_SECRETS_DIR*", "effect": "deny"},
+    {"action": "tool.use", "resource": "shell:*homelab-secrets*", "effect": "deny"},
+    {"action": "tool.use", "resource": "shell:*.sops.*", "effect": "deny"},
+    {"action": "integration.use", "resource": "plugin:/home/rnoh/.config/opencode/plugins/herdr-agent-state.js", "effect": "deny"},
+    ]
   },
-
-  // "mcp": {
-  //   "exa": {
-  //     "type": "local",
-  //     "command": [
-  //       "sops",
-  //       "exec-env",
-  //       "--same-process",
-  //       "{env:HOME}/.local/share/homelab-secrets/agents/exa-search.sops.yaml",
-  //       "npx -y exa-mcp-server"
-  //     ],
-  //     "enabled": true
-  //   }
-  // },
-
-  "share": "disabled",
-  // "enabled_providers": ["openai"],
-
-  "permission": {
-    "*": "ask",
-
-    "codex-*": "deny",
-    "exa_*": "allow",
-    "mcp_search_*": "allow",
-    "mcp_crawl_*": "allow",
-    "history-search": "deny",
-    "read": {
-      "*": "allow",
-      "*.env": "ask",
-      "*.env.*": "ask",
-      "*.env.example": "allow",
-      "*.sops.yml": "deny",
-      "*.sops.yaml": "deny",
-      "*.sops.json": "deny",
-      "~/.local/share/homelab-secrets/**": "deny",
-      "~/.config/sops/**": "deny",
-      "~/.config/age/**": "deny"
-    },
-    "glob": "allow",
-    "grep": "allow",
-    "lsp": "allow",
-    "skill": "allow",
-    "webfetch": "allow",
-    "websearch": "allow",
-    "question": "allow",
-    "todowrite": "allow",
-    "batch": "allow",
-    "edit": {
-      "*": "allow",
-      "*.env": "ask",
-      "*.env.*": "ask",
-      "*.env.example": "ask",
-      "*.sops.yml": "deny",
-      "*.sops.yaml": "deny",
-      "*.sops.json": "deny",
-      "~/.local/share/homelab-secrets/**": "deny",
-      "~/.config/sops/**": "deny",
-      "~/.config/age/**": "deny"
-    },
-    "external_directory": {
-      "*": "ask",
-      "/tmp/opencode/**": "allow",
-      "~/.agents/**": "allow",
-      "~/.config/opencode/**": "allow",
-      "~/.dotfiles/opencode/**": "allow",
-      "~/.local/share/homelab-secrets/**": "deny",
-      "~/.config/sops/**": "deny",
-      "~/.config/age/**": "deny"
-    },
-    "bash": {
-      "*": "ask",
-
-      // Canonical Git inspection commands. Mixed-purpose commands are
-      // constrained to forms that do not update refs or the working tree.
-      "git annotate": "allow",
-      "git annotate *": "allow",
-      "git blame": "allow",
-      "git blame *": "allow",
-      "git cat-file": "allow",
-      "git cat-file *": "allow",
-      "git check-attr": "allow",
-      "git check-attr *": "allow",
-      "git check-ignore": "allow",
-      "git check-ignore *": "allow",
-      "git check-mailmap": "allow",
-      "git check-mailmap *": "allow",
-      "git check-ref-format": "allow",
-      "git check-ref-format *": "allow",
-      "git cherry": "allow",
-      "git cherry *": "allow",
-      "git config get": "allow",
-      "git config get *": "allow",
-      "git config list": "allow",
-      "git config list *": "allow",
-      "git config --get": "allow",
-      "git config --get *": "allow",
-      "git config --list": "allow",
-      "git config --list *": "allow",
-      "git count-objects": "allow",
-      "git count-objects *": "allow",
-      "git describe": "allow",
-      "git describe *": "allow",
-      "git diff": "allow",
-      "git diff *": "allow",
-      "git for-each-ref": "allow",
-      "git for-each-ref *": "allow",
-      "git grep": "allow",
-      "git grep *": "allow",
-      "git last-modified": "allow",
-      "git last-modified *": "allow",
-      "git log": "allow",
-      "git log *": "allow",
-      "git ls-files": "allow",
-      "git ls-files *": "allow",
-      "git ls-remote": "allow",
-      "git ls-remote *": "allow",
-      "git ls-tree": "allow",
-      "git ls-tree *": "allow",
-      "git merge-base": "allow",
-      "git merge-base *": "allow",
-      "git name-rev": "allow",
-      "git name-rev *": "allow",
-      "git range-diff": "allow",
-      "git range-diff *": "allow",
-      "git reflog show": "allow",
-      "git reflog show *": "allow",
-      "git repo": "allow",
-      "git repo *": "allow",
-      "git rev-list": "allow",
-      "git rev-list *": "allow",
-      "git rev-parse": "allow",
-      "git rev-parse *": "allow",
-      "git shortlog": "allow",
-      "git shortlog *": "allow",
-      "git show": "allow",
-      "git show *": "allow",
-      "git status": "allow",
-      "git status *": "allow",
-      "git var": "allow",
-      "git var *": "allow",
-      "git verify-pack": "allow",
-      "git verify-pack *": "allow",
-      "git whatchanged": "allow",
-      "git whatchanged *": "allow",
-      "git branch": "allow",
-      "git branch --contains*": "allow",
-      "git branch --format*": "allow",
-      "git branch --list*": "allow",
-      "git branch --merged*": "allow",
-      "git branch --no-contains*": "allow",
-      "git branch --no-merged*": "allow",
-      "git branch --show-current*": "allow",
-      "git notes get-ref*": "allow",
-      "git notes list*": "allow",
-      "git notes show*": "allow",
-      "git remote": "allow",
-      "git remote --verbose*": "allow",
-      "git remote -v*": "allow",
-      "git remote get-url*": "allow",
-      "git remote show*": "allow",
-      "git stash list": "allow",
-      "git stash list *": "allow",
-      "git submodule status": "allow",
-      "git submodule status *": "allow",
-      "git tag": "allow",
-      "git tag --contains*": "allow",
-      "git tag --format*": "allow",
-      "git tag --list*": "allow",
-      "git tag --merged*": "allow",
-      "git tag --no-contains*": "allow",
-      "git tag --no-merged*": "allow",
-      "git tag --points-at*": "allow",
-      "git worktree list": "allow",
-      "git worktree list *": "allow",
-
-      // GitHub queries that read remote state without downloading files,
-      // launching a browser, exposing tokens, or invoking arbitrary APIs.
-      "gh agent-task list": "allow",
-      "gh agent-task list *": "allow",
-      "gh agent-task view": "allow",
-      "gh agent-task view *": "allow",
-      "gh cache list": "allow",
-      "gh cache list *": "allow",
-      "gh codespace list": "allow",
-      "gh codespace list *": "allow",
-      "gh codespace logs": "allow",
-      "gh codespace logs *": "allow",
-      "gh codespace view": "allow",
-      "gh codespace view *": "allow",
-      "gh discussion list": "allow",
-      "gh discussion list *": "allow",
-      "gh discussion view": "allow",
-      "gh discussion view *": "allow",
-      "gh gist list": "allow",
-      "gh gist list *": "allow",
-      "gh gist view": "allow",
-      "gh gist view *": "allow",
-      "gh gpg-key list": "allow",
-      "gh gpg-key list *": "allow",
-      "gh issue list": "allow",
-      "gh issue list *": "allow",
-      "gh issue status": "allow",
-      "gh issue status *": "allow",
-      "gh issue view": "allow",
-      "gh issue view *": "allow",
-      "gh label list": "allow",
-      "gh label list *": "allow",
-      "gh org list": "allow",
-      "gh org list *": "allow",
-      "gh pr checks": "allow",
-      "gh pr checks *": "allow",
-      "gh pr diff": "allow",
-      "gh pr diff *": "allow",
-      "gh pr list": "allow",
-      "gh pr list *": "allow",
-      "gh pr status": "allow",
-      "gh pr status *": "allow",
-      "gh pr view": "allow",
-      "gh pr view *": "allow",
-      "gh project field-list": "allow",
-      "gh project field-list *": "allow",
-      "gh project item-list": "allow",
-      "gh project item-list *": "allow",
-      "gh project list": "allow",
-      "gh project list *": "allow",
-      "gh project view": "allow",
-      "gh project view *": "allow",
-      "gh release list": "allow",
-      "gh release list *": "allow",
-      "gh release view": "allow",
-      "gh release view *": "allow",
-      "gh repo autolink list": "allow",
-      "gh repo autolink list *": "allow",
-      "gh repo autolink view": "allow",
-      "gh repo autolink view *": "allow",
-      "gh repo deploy-key list": "allow",
-      "gh repo deploy-key list *": "allow",
-      "gh repo gitignore list": "allow",
-      "gh repo gitignore list *": "allow",
-      "gh repo gitignore view": "allow",
-      "gh repo gitignore view *": "allow",
-      "gh repo license list": "allow",
-      "gh repo license list *": "allow",
-      "gh repo license view": "allow",
-      "gh repo license view *": "allow",
-      "gh repo list": "allow",
-      "gh repo list *": "allow",
-      "gh repo read-dir": "allow",
-      "gh repo read-dir *": "allow",
-      "gh repo view": "allow",
-      "gh repo view *": "allow",
-      "gh ruleset check": "allow",
-      "gh ruleset check *": "allow",
-      "gh ruleset list": "allow",
-      "gh ruleset list *": "allow",
-      "gh ruleset view": "allow",
-      "gh ruleset view *": "allow",
-      "gh run list": "allow",
-      "gh run list *": "allow",
-      "gh run view": "allow",
-      "gh run view *": "allow",
-      "gh run watch": "allow",
-      "gh run watch *": "allow",
-      "gh search code": "allow",
-      "gh search code *": "allow",
-      "gh search commits": "allow",
-      "gh search commits *": "allow",
-      "gh search issues": "allow",
-      "gh search issues *": "allow",
-      "gh search prs": "allow",
-      "gh search prs *": "allow",
-      "gh search repos": "allow",
-      "gh search repos *": "allow",
-      "gh secret list": "allow",
-      "gh secret list *": "allow",
-      "gh skill preview": "allow",
-      "gh skill preview *": "allow",
-      "gh skill search": "allow",
-      "gh skill search *": "allow",
-      "gh ssh-key list": "allow",
-      "gh ssh-key list *": "allow",
-      "gh status": "allow",
-      "gh status *": "allow",
-      "gh workflow list": "allow",
-      "gh workflow list *": "allow",
-      "gh workflow view": "allow",
-      "gh workflow view *": "allow",
-
-      "ls *": "allow",
-      "command -v *": "allow",
-      "rg *": "allow",
-      "pwd": "allow",
-      "whoami": "allow",
-      "id *": "allow",
-      "uname *": "allow",
-      "date": "allow",
-      "stat *": "allow",
-      "file *": "allow",
-      "realpath *": "allow",
-      "readlink *": "allow",
-      "rg *--pre*": "ask",
-      "gh *--web*": "ask",
-      "gh * -w*": "ask",
-      "git cat-file *--filters*": "ask",
-      "git grep *--ext-grep*": "ask",
-      "git grep *-O*": "ask",
-      "git ls-remote *--upload-pack*": "ask",
-      "git ls-remote * -u *": "ask",
-      "git * --ext-diff*": "ask",
-      "git * --open-files-in-pager*": "ask",
-      "git * --output *": "ask",
-      "git * --output=*": "ask",
-      "git * --textconv*": "ask",
-      "*>*": "ask",
-      "*<*": "ask",
-      "*sops*": "deny",
-      "age": "deny",
-      "age *": "deny",
-      "* age": "deny",
-      "* age *": "deny",
-      "*age-keygen*": "deny",
-      "*HOMELAB_SECRETS_DIR*": "deny",
-      "*homelab-secrets*": "deny",
-      "*.sops.*": "deny",
-      "*.env*": "ask"
-    },
-    "task": {
-      "*": "deny",
-      "worker": "allow",
-      "researcher": "allow",
-      "explorer": "allow",
-      "reviewer": "allow"
-    }
-  },
-
+  "permissions": [
+    // Default approval, followed by established global exceptions.
+    {"action": "*", "resource": "*", "effect": "ask"},
+    {"action": "codex_*", "resource": "*", "effect": "deny"},
+    {"action": "exa_*", "resource": "*", "effect": "allow"},
+    {"action": "mcp_search_*", "resource": "*", "effect": "allow"},
+    {"action": "mcp_crawl_*", "resource": "*", "effect": "allow"},
+    // Read access and environment-file approval behavior.
+    {"action": "read", "resource": "*", "effect": "allow"},
+    {"action": "read", "resource": "*.env", "effect": "ask"},
+    {"action": "read", "resource": "*.env.*", "effect": "ask"},
+    {"action": "read", "resource": "*.env.example", "effect": "allow"},
+    // Local discovery tools.
+    {"action": "glob", "resource": "*", "effect": "allow"},
+    {"action": "grep", "resource": "*", "effect": "allow"},
+    // Skills and web access.
+    {"action": "skill", "resource": "*", "effect": "allow"},
+    {"action": "webfetch", "resource": "*", "effect": "allow"},
+    {"action": "question", "resource": "*", "effect": "allow"},
+    // Editing defaults and environment-file approval behavior.
+    {"action": "edit", "resource": "*", "effect": "allow"},
+    {"action": "edit", "resource": "*.env", "effect": "ask"},
+    {"action": "edit", "resource": "*.env.*", "effect": "ask"},
+    {"action": "edit", "resource": "*.env.example", "effect": "ask"},
+    // External-directory access.
+    {"action": "external_directory", "resource": "*", "effect": "ask"},
+    {"action": "external_directory", "resource": "/tmp/opencode/**", "effect": "allow"},
+    {"action": "external_directory", "resource": "~/.agents/**", "effect": "allow"},
+    {"action": "external_directory", "resource": "~/.config/opencode/**", "effect": "allow"},
+    {"action": "external_directory", "resource": "~/.dotfiles/opencode/**", "effect": "allow"},
+    // Shell auto-approval allowlist, followed by overrides.
+    {"action": "shell", "resource": "*", "effect": "ask"},
+    {"action": "shell", "resource": "git annotate *", "effect": "allow"},
+    {"action": "shell", "resource": "git blame *", "effect": "allow"},
+    {"action": "shell", "resource": "git cat-file *", "effect": "allow"},
+    {"action": "shell", "resource": "git check-attr *", "effect": "allow"},
+    {"action": "shell", "resource": "git check-ignore *", "effect": "allow"},
+    {"action": "shell", "resource": "git check-mailmap *", "effect": "allow"},
+    {"action": "shell", "resource": "git check-ref-format *", "effect": "allow"},
+    {"action": "shell", "resource": "git cherry *", "effect": "allow"},
+    {"action": "shell", "resource": "git config get *", "effect": "allow"},
+    {"action": "shell", "resource": "git config list *", "effect": "allow"},
+    {"action": "shell", "resource": "git config --get *", "effect": "allow"},
+    {"action": "shell", "resource": "git config --list *", "effect": "allow"},
+    {"action": "shell", "resource": "git count-objects *", "effect": "allow"},
+    {"action": "shell", "resource": "git describe *", "effect": "allow"},
+    {"action": "shell", "resource": "git diff *", "effect": "allow"},
+    {"action": "shell", "resource": "git for-each-ref *", "effect": "allow"},
+    {"action": "shell", "resource": "git grep *", "effect": "allow"},
+    {"action": "shell", "resource": "git last-modified *", "effect": "allow"},
+    {"action": "shell", "resource": "git log *", "effect": "allow"},
+    {"action": "shell", "resource": "git ls-files *", "effect": "allow"},
+    {"action": "shell", "resource": "git ls-remote *", "effect": "allow"},
+    {"action": "shell", "resource": "git ls-tree *", "effect": "allow"},
+    {"action": "shell", "resource": "git merge-base *", "effect": "allow"},
+    {"action": "shell", "resource": "git name-rev *", "effect": "allow"},
+    {"action": "shell", "resource": "git range-diff *", "effect": "allow"},
+    {"action": "shell", "resource": "git reflog show *", "effect": "allow"},
+    {"action": "shell", "resource": "git repo *", "effect": "allow"},
+    {"action": "shell", "resource": "git rev-list *", "effect": "allow"},
+    {"action": "shell", "resource": "git rev-parse *", "effect": "allow"},
+    {"action": "shell", "resource": "git shortlog *", "effect": "allow"},
+    {"action": "shell", "resource": "git show *", "effect": "allow"},
+    {"action": "shell", "resource": "git status *", "effect": "allow"},
+    {"action": "shell", "resource": "git var *", "effect": "allow"},
+    {"action": "shell", "resource": "git verify-pack *", "effect": "allow"},
+    {"action": "shell", "resource": "git whatchanged *", "effect": "allow"},
+    {"action": "shell", "resource": "git branch", "effect": "allow"},
+    {"action": "shell", "resource": "git branch --contains*", "effect": "allow"},
+    {"action": "shell", "resource": "git branch --format*", "effect": "allow"},
+    {"action": "shell", "resource": "git branch --list*", "effect": "allow"},
+    {"action": "shell", "resource": "git branch --merged*", "effect": "allow"},
+    {"action": "shell", "resource": "git branch --no-contains*", "effect": "allow"},
+    {"action": "shell", "resource": "git branch --no-merged*", "effect": "allow"},
+    {"action": "shell", "resource": "git branch --show-current*", "effect": "allow"},
+    {"action": "shell", "resource": "git notes get-ref*", "effect": "allow"},
+    {"action": "shell", "resource": "git notes list*", "effect": "allow"},
+    {"action": "shell", "resource": "git notes show*", "effect": "allow"},
+    {"action": "shell", "resource": "git remote", "effect": "allow"},
+    {"action": "shell", "resource": "git remote --verbose*", "effect": "allow"},
+    {"action": "shell", "resource": "git remote -v*", "effect": "allow"},
+    {"action": "shell", "resource": "git remote get-url*", "effect": "allow"},
+    {"action": "shell", "resource": "git remote show*", "effect": "allow"},
+    {"action": "shell", "resource": "git stash list *", "effect": "allow"},
+    {"action": "shell", "resource": "git submodule status *", "effect": "allow"},
+    {"action": "shell", "resource": "git tag", "effect": "allow"},
+    {"action": "shell", "resource": "git tag --contains*", "effect": "allow"},
+    {"action": "shell", "resource": "git tag --format*", "effect": "allow"},
+    {"action": "shell", "resource": "git tag --list*", "effect": "allow"},
+    {"action": "shell", "resource": "git tag --merged*", "effect": "allow"},
+    {"action": "shell", "resource": "git tag --no-contains*", "effect": "allow"},
+    {"action": "shell", "resource": "git tag --no-merged*", "effect": "allow"},
+    {"action": "shell", "resource": "git tag --points-at*", "effect": "allow"},
+    {"action": "shell", "resource": "git worktree list *", "effect": "allow"},
+    {"action": "shell", "resource": "gh agent-task list *", "effect": "allow"},
+    {"action": "shell", "resource": "gh agent-task view *", "effect": "allow"},
+    {"action": "shell", "resource": "gh cache list *", "effect": "allow"},
+    {"action": "shell", "resource": "gh codespace list *", "effect": "allow"},
+    {"action": "shell", "resource": "gh codespace logs *", "effect": "allow"},
+    {"action": "shell", "resource": "gh codespace view *", "effect": "allow"},
+    {"action": "shell", "resource": "gh discussion list *", "effect": "allow"},
+    {"action": "shell", "resource": "gh discussion view *", "effect": "allow"},
+    {"action": "shell", "resource": "gh gist list *", "effect": "allow"},
+    {"action": "shell", "resource": "gh gist view *", "effect": "allow"},
+    {"action": "shell", "resource": "gh gpg-key list *", "effect": "allow"},
+    {"action": "shell", "resource": "gh issue list *", "effect": "allow"},
+    {"action": "shell", "resource": "gh issue status *", "effect": "allow"},
+    {"action": "shell", "resource": "gh issue view *", "effect": "allow"},
+    {"action": "shell", "resource": "gh label list *", "effect": "allow"},
+    {"action": "shell", "resource": "gh org list *", "effect": "allow"},
+    {"action": "shell", "resource": "gh pr checks *", "effect": "allow"},
+    {"action": "shell", "resource": "gh pr diff *", "effect": "allow"},
+    {"action": "shell", "resource": "gh pr list *", "effect": "allow"},
+    {"action": "shell", "resource": "gh pr status *", "effect": "allow"},
+    {"action": "shell", "resource": "gh pr view *", "effect": "allow"},
+    {"action": "shell", "resource": "gh project field-list *", "effect": "allow"},
+    {"action": "shell", "resource": "gh project item-list *", "effect": "allow"},
+    {"action": "shell", "resource": "gh project list *", "effect": "allow"},
+    {"action": "shell", "resource": "gh project view *", "effect": "allow"},
+    {"action": "shell", "resource": "gh release list *", "effect": "allow"},
+    {"action": "shell", "resource": "gh release view *", "effect": "allow"},
+    {"action": "shell", "resource": "gh repo autolink list *", "effect": "allow"},
+    {"action": "shell", "resource": "gh repo autolink view *", "effect": "allow"},
+    {"action": "shell", "resource": "gh repo deploy-key list *", "effect": "allow"},
+    {"action": "shell", "resource": "gh repo gitignore list *", "effect": "allow"},
+    {"action": "shell", "resource": "gh repo gitignore view *", "effect": "allow"},
+    {"action": "shell", "resource": "gh repo license list *", "effect": "allow"},
+    {"action": "shell", "resource": "gh repo license view *", "effect": "allow"},
+    {"action": "shell", "resource": "gh repo list *", "effect": "allow"},
+    {"action": "shell", "resource": "gh repo read-dir *", "effect": "allow"},
+    {"action": "shell", "resource": "gh repo view *", "effect": "allow"},
+    {"action": "shell", "resource": "gh ruleset check *", "effect": "allow"},
+    {"action": "shell", "resource": "gh ruleset list *", "effect": "allow"},
+    {"action": "shell", "resource": "gh ruleset view *", "effect": "allow"},
+    {"action": "shell", "resource": "gh run list *", "effect": "allow"},
+    {"action": "shell", "resource": "gh run view *", "effect": "allow"},
+    {"action": "shell", "resource": "gh run watch *", "effect": "allow"},
+    {"action": "shell", "resource": "gh search code *", "effect": "allow"},
+    {"action": "shell", "resource": "gh search commits *", "effect": "allow"},
+    {"action": "shell", "resource": "gh search issues *", "effect": "allow"},
+    {"action": "shell", "resource": "gh search prs *", "effect": "allow"},
+    {"action": "shell", "resource": "gh search repos *", "effect": "allow"},
+    {"action": "shell", "resource": "gh secret list *", "effect": "allow"},
+    {"action": "shell", "resource": "gh skill preview *", "effect": "allow"},
+    {"action": "shell", "resource": "gh skill search *", "effect": "allow"},
+    {"action": "shell", "resource": "gh ssh-key list *", "effect": "allow"},
+    {"action": "shell", "resource": "gh status *", "effect": "allow"},
+    {"action": "shell", "resource": "gh workflow list *", "effect": "allow"},
+    {"action": "shell", "resource": "gh workflow view *", "effect": "allow"},
+    {"action": "shell", "resource": "ls *", "effect": "allow"},
+    {"action": "shell", "resource": "command -v *", "effect": "allow"},
+    {"action": "shell", "resource": "rg *", "effect": "allow"},
+    {"action": "shell", "resource": "pwd", "effect": "allow"},
+    {"action": "shell", "resource": "whoami", "effect": "allow"},
+    {"action": "shell", "resource": "id *", "effect": "allow"},
+    {"action": "shell", "resource": "uname *", "effect": "allow"},
+    {"action": "shell", "resource": "date", "effect": "allow"},
+    {"action": "shell", "resource": "stat *", "effect": "allow"},
+    {"action": "shell", "resource": "file *", "effect": "allow"},
+    {"action": "shell", "resource": "realpath *", "effect": "allow"},
+    {"action": "shell", "resource": "readlink *", "effect": "allow"},
+    {"action": "shell", "resource": "rg *--pre*", "effect": "ask"},
+    {"action": "shell", "resource": "gh *--web*", "effect": "ask"},
+    {"action": "shell", "resource": "gh * -w*", "effect": "ask"},
+    {"action": "shell", "resource": "git cat-file *--filters*", "effect": "ask"},
+    {"action": "shell", "resource": "git grep *--ext-grep*", "effect": "ask"},
+    {"action": "shell", "resource": "git grep *-O*", "effect": "ask"},
+    {"action": "shell", "resource": "git ls-remote *--upload-pack*", "effect": "ask"},
+    {"action": "shell", "resource": "git ls-remote * -u *", "effect": "ask"},
+    {"action": "shell", "resource": "git * --ext-diff*", "effect": "ask"},
+    {"action": "shell", "resource": "git * --open-files-in-pager*", "effect": "ask"},
+    {"action": "shell", "resource": "git * --output *", "effect": "ask"},
+    {"action": "shell", "resource": "git * --output=*", "effect": "ask"},
+    {"action": "shell", "resource": "git * --textconv*", "effect": "ask"},
+    {"action": "shell", "resource": "*>*", "effect": "ask"},
+    {"action": "shell", "resource": "*<*", "effect": "ask"},
+    {"action": "shell", "resource": "*.env*", "effect": "ask"},
+    // Repository configuration may request approval for OpenCode invocations.
+    {"action": "shell", "resource": "opencode *", "effect": "deny"},
+    {"action": "shell", "resource": "*/opencode *", "effect": "deny"},
+    // Only the named custom subagents may be launched.
+    {"action": "subagent", "resource": "*", "effect": "deny"},
+    {"action": "subagent", "resource": "work", "effect": "allow"},
+    {"action": "subagent", "resource": "research", "effect": "allow"},
+    {"action": "subagent", "resource": "explore", "effect": "allow"},
+    {"action": "subagent", "resource": "review", "effect": "allow"},
+    // Named MCP restrictions override wildcard grants.
+    {"action": "mcp_search_searxng_search_suggestions", "resource": "*", "effect": "deny"},
+    {"action": "mcp_search_searxng_instance_info", "resource": "*", "effect": "deny"},
+    {"action": "mcp_crawl_md", "resource": "*", "effect": "deny"},
+    {"action": "mcp_crawl_html", "resource": "*", "effect": "deny"},
+    {"action": "mcp_crawl_screenshot", "resource": "*", "effect": "deny"},
+    {"action": "mcp_crawl_pdf", "resource": "*", "effect": "deny"},
+    {"action": "mcp_crawl_execute_js", "resource": "*", "effect": "deny"},
+    {"action": "mcp_crawl_crawl", "resource": "*", "effect": "deny"},
+    {"action": "mcp_crawl_ask", "resource": "*", "effect": "deny"},
+    // Disable built-in web search in favor of configured MCP search.
+    {"action": "websearch", "resource": "*", "effect": "deny"}
+  ],
   "tool_output": {
     "max_lines": 300,
     "max_bytes": 12000
   },
-
   "compaction": {
-    "auto": true,
-    "prune": true
+    "auto": true
   },
-
-  "experimental": {
-    "batch_tool": true
+  "providers": {
+    "openai": {
+      "models": {
+        "gpt-5.6-terra": {
+          "variants": [
+            {
+              "id": "reasoning-medium-verbosity-low",
+              "settings": {
+                "reasoningEffort": "medium",
+                "textVerbosity": "low"
+              }
+            }
+          ]
+        },
+        "gpt-6.1-sol": {
+          "variants": [
+            {
+              "id": "reasoning-high-verbosity-low",
+              "settings": {
+                "reasoningEffort": "high",
+                "textVerbosity": "low"
+              }
+            },
+            {
+              "id": "reasoning-medium-verbosity-low",
+              "settings": {
+                "reasoningEffort": "medium",
+                "textVerbosity": "low"
+              }
+            }
+          ]
+        },
+        "gpt-5.6-luna": {
+          "variants": [
+            {
+              "id": "reasoning-medium-verbosity-low",
+              "settings": {
+                "reasoningEffort": "medium",
+                "textVerbosity": "low"
+              }
+            }
+          ]
+        }
+      }
+    }
   },
-
-  "agent": {
-    // Primary agents own interaction, orchestration, and artifact workflows.
-    // Custom roles receive bounded briefs rather than owning those workflows.
+  "agents": {
     "history": {
+      "disabled": true,
       "description": "Search, inspect, and summarize previous OpenCode sessions and related documentation.",
       "mode": "primary",
-      "model": "openai/gpt-5.6-terra",
-      "reasoningEffort": "medium",
-      "textVerbosity": "low",
-
-      "prompt": "Use conversation history, local read-only inspection, and external research to answer questions. Do not modify files or execute shell commands.",
-
-      "permission": {
-        "edit": "deny",
-        "bash": "deny",
-        "history-search": "allow",
-        "skill": {
-          "research": "deny",
-          "code-review": "deny",
-          "grilling": "deny",
-          "domain-modeling": "deny"
+      "model": "openai/gpt-5.6-terra#reasoning-medium-verbosity-low",
+      "system": "Use conversation history, local read-only inspection, and external research to answer questions. Do not modify files or execute shell commands.",
+      "permissions": [
+        {
+          "action": "edit",
+          "resource": "*",
+          "effect": "deny"
         },
-        "task": {
-          "*": "deny",
-          "researcher": "allow",
-          "explorer": "allow"
+        {
+          "action": "shell",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "skill",
+          "resource": "research",
+          "effect": "deny"
+        },
+        {
+          "action": "skill",
+          "resource": "code-review",
+          "effect": "deny"
+        },
+        {
+          "action": "skill",
+          "resource": "grilling",
+          "effect": "deny"
+        },
+        {
+          "action": "skill",
+          "resource": "domain-modeling",
+          "effect": "deny"
+        },
+        {
+          "action": "subagent",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "subagent",
+          "resource": "research",
+          "effect": "allow"
+        },
+        {
+          "action": "subagent",
+          "resource": "explore",
+          "effect": "allow"
         }
-      }
+      ]
     },
-
-    "worker": {
-      "description": "Use for implementation, refactoring, tests, validation, and other non-specialized work.",
-      "mode": "subagent",
-      "model": "openai/gpt-5.6-terra",
-      "reasoningEffort": "medium",
-      "textVerbosity": "low",
-
-      "permission": {
-          "question": "deny",
-          "skill": {
-            "research": "deny",
-            "code-review": "deny",
-            "grilling": "deny",
-            "domain-modeling": "deny"
-          }
-      }
-    },
-
-    "researcher": {
-      "description": "Use for complex external documentation, dependency, and architectural research, along with complex independent planning.",
-      "mode": "subagent",
-      "model": "openai/gpt-6.1-sol",
-      "steps": 50,
-      "reasoningEffort": "high",
-      "textVerbosity": "low",
-
-      "prompt": "Perform one bounded investigation. Before investigating, verify that the brief satisfies the Research Delegation contract in the global AGENTS.md. If it does not, return a scope objection and propose independently researchable briefs without beginning broad research. Investigate only the accepted brief. Prefer official documentation, source code, specifications, and first-party material; use secondary sources for concrete practitioner experience or when primary evidence is absent. While websearch uses the free anonymous Exa service, begin with at most two focused queries and inspect the best three to five authoritative sources. Search further only to resolve conflicts or material gaps, and never issue more than two searches concurrently. Attempt each query at most three times: the initial search, one retry after other useful work, then fetch any known authoritative URLs before one final search. Stop immediately when a 429 indicates the daily limit. This Exa-specific policy applies only to the current free websearch tool, not the planned SearXNG and Firecrawl tooling. For normal page reads, use mcp_search_web_url_read first: use readHeadings, then section or paragraphRange; when using maxLength, keep it at or below 8000 characters. Use Crawl4AI only when normal reads fail or the page is JavaScript-heavy, using mcp_crawl_md with f: bm25 and a focused q. Stop when the required claims are supported, conflicts and gaps are identified, and further reading is unlikely to change the answer. Return only a concise answer, claim-linked evidence, conflicts or unknowns, and gaps; do not include a reading diary. If the step limit interrupts the investigation, return the best partial result and explicit gaps. Do not create research files or other artifacts.",
-
-      "permission": {
-        "mcp_crawl_md": "allow",
-        "edit": "deny",
-        "bash": "deny",
-        "task": "deny",
-        "question": "deny",
-        "skill": {
-          "research": "deny",
-          "code-review": "deny",
-          "grilling": "deny",
-          "domain-modeling": "deny"
+    "plan": {
+      "permissions": [
+        {
+          "action": "edit",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "edit",
+          "resource": "~/.opencode/plan/*",
+          "effect": "allow"
         }
-      }
+      ]
     },
-
-    "reviewer": {
-      "description": "Use only for substantial changes where an independent review could find meaningful defects; do not use for trivial edits.",
-      "mode": "subagent",
-      "model": "openai/gpt-6.1-sol",
-      "reasoningEffort": "medium",
-      "textVerbosity": "low",
-
-      "permission": {
-        "edit": "deny",
-        "task": "deny",
-        "question": "deny",
-        "skill": {
-          "research": "deny",
-          "code-review": "deny",
-          "grilling": "deny",
-          "domain-modeling": "deny"
-        }
-      }
-    },
-
-    "explorer": {
+    "explore": {
       "description": "Use to locate code, trace behavior, summarize basic findings, and perform other simple read-only work. Do not plan or make suggestions.",
       "mode": "subagent",
-      "model": "openai/gpt-5.6-luna",
-      "reasoningEffort": "medium",
-      "textVerbosity": "low",
-
-      "permission": {
-        "edit": "deny",
-        "bash": "deny",
-        "task": "deny",
-        "question": "deny",
-        "skill": {
-          "research": "deny",
-          "code-review": "deny",
-          "grilling": "deny",
-          "domain-modeling": "deny"
+      "model": "openai/gpt-5.6-luna#reasoning-medium-verbosity-low",
+      "permissions": [
+        {
+          "action": "edit",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "subagent",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "question",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "skill",
+          "resource": "research",
+          "effect": "deny"
+        },
+        {
+          "action": "skill",
+          "resource": "code-review",
+          "effect": "deny"
+        },
+        {
+          "action": "skill",
+          "resource": "grilling",
+          "effect": "deny"
+        },
+        {
+          "action": "skill",
+          "resource": "domain-modeling",
+          "effect": "deny"
         }
-      }
-    },
-
-    "plan": {
-      "permission": {
-        "edit": "deny"
-      }
+      ]
     }
   }
 }

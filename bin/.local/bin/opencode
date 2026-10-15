@@ -1,0 +1,7 @@
+#!/bin/sh
+# Temporary V2 launcher. Do not replace this by `mise use -g`: that can select V1.
+set -eu
+
+tool='npm:@opencode/cli@2.0.28'
+binary="$(mise --no-env which opencode --tool="$tool")"
+exec mise exec "$tool" -- "$binary" "$@"

@@ -7,6 +7,7 @@ stylua = "latest"
 odin = { version = "latest", version_prefix = "dev-", asset_pattern = "odin-linux-amd64-*.tar.gz" }
 "pipx:pre-commit" = "4.6.1"
 yq = "latest"
+"npm:@opencode/cli" = { version = "2.0.28", allow_builds = ["@opencode/cli"] }
 
 [settings]
 minimum_release_age = "5d"
@@ -16,7 +17,6 @@ experimental = false
 uv_venv_auto = true
 
 [env]
-OPENCODE_ENABLE_EXA = "1"
 CRAWL4AI_API_TOKEN = { value = "{{ exec(command='sops --decrypt ~/.local/share/homelab-secrets/docker/citadel/web-research/crawl4ai-api-token.sops.txt') | trim }}", redact = true, tools = true }
 
 [tasks."latex:preview"]
