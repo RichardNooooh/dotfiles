@@ -1,0 +1,16 @@
+#!/usr/bin/bash
+set -euo pipefail
+
+# Resolve the Dell by identity, not by the connector it happens to use.
+description='Dell Inc. Dell S2417DG #ASM4NFO2WRbd'
+monitors=$(hyprctl monitors -j)
+output=$(jq -r --arg description "$description" '
+  [.[] | select(.description == $description) | .name]
+  | if length == 1 then .[0] else empty end
+' <<< "$monitors")
+
+# Do not change the primary output if the Dell is absent or ambiguous.
+[[ -n "$output" ]] || exit 0
+
+# This sets an X11 hint only; Hyprland still controls the physical layout.
+xrandr --output "$output" --primary
