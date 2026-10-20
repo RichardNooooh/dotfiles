@@ -3,6 +3,7 @@
 set -eu
 
 DOTFILES=${DOTFILES:-"$HOME/.dotfiles"}
+GLOBAL_IGNORE_FILE=$DOTFILES/.stow-global-ignore
 
 requested_packages() {
   if [ -n "${STOW_FOLDERS:-}" ]; then
@@ -10,56 +11,66 @@ requested_packages() {
       [ -n "$package" ] && printf '%s\n' "$package"
     done
   else
-    printf '%s\n' bin desktop zsh mise starship-zsh ghostty tmux hypr nvim opencode omarchy-user
+    printf '%s\n' bin btop desktop zsh mise starship-zsh ghostty tmux hypr nvim opencode omarchy-user herdr misc
   fi
 }
 
-migrate_target() {
-  target=$1
-  if [ -L "$target" ]; then
-    resolved=$(readlink -f -m -- "$target")
-    case $resolved in
-      "$DOTFILES"/*) rm -- "$target" ;;
-    esac
-  elif [ -e "$target" ]; then
-    relative=${target#"$HOME"/}
-    backup="$backup_root/$relative"
-    mkdir -p "$(dirname -- "$backup")"
-    mv -- "$target" "$backup"
-    printf 'backed up %s to %s\n' "$target" "$backup"
-  fi
-}
-
-migrate_package() {
-  case $1 in
-    zsh)
-      migrate_target "$HOME/.zsh_profile"
-      migrate_target "$HOME/.p10k.zsh"
-      ;;
-    ghostty) migrate_target "$HOME/.config/ghostty/config" ;;
-    tmux)
-      migrate_target "$HOME/.tmux.conf"
-      migrate_target "$HOME/.config/tmux/tmux.conf"
-      ;;
-    nvim) migrate_target "$HOME/.config/nvim" ;;
-    hypr)
-      migrate_target "$HOME/.config/hypr/autostart.lua"
-      migrate_target "$HOME/.config/hypr/hyprland.lua"
-      migrate_target "$HOME/.config/hypr/input.lua"
-      migrate_target "$HOME/.config/hypr/monitors.lua"
-      ;;
-    omarchy-user)
-      migrate_target "$HOME/.config/omarchy/branding/screensaver.txt"
-      migrate_target "$HOME/.config/omarchy/branding/NOTE.md"
-      ;;
-  esac
-}
-
-migrate_layout() {
-  backup_root=${XDG_STATE_HOME:-"$HOME/.local/state"}/dotfiles/backups/$(date +%Y%m%d-%H%M%S)
+validate_packages() {
   requested_packages | while IFS= read -r package; do
-    migrate_package "$package"
+    case $package in
+      . | .. | -*)
+        printf 'invalid Stow package name: %s\n' "$package" >&2
+        exit 2
+        ;;
+      *[!A-Za-z0-9._-]*)
+        printf 'invalid Stow package name: %s\n' "$package" >&2
+        exit 2
+        ;;
+    esac
+
+    if [ ! -d "$DOTFILES/$package" ]; then
+      printf 'missing Stow package: %s\n' "$package" >&2
+      exit 1
+    fi
   done
+}
+
+prepare_shared_ancestors() {
+  for relative in \
+    .config \
+    .local \
+    .local/bin \
+    .local/share \
+    .local/share/icons \
+    .local/share/icons/hicolor \
+    .local/share/icons/hicolor/256x256 \
+    .local/share/icons/hicolor/256x256/apps \
+    .opencode
+  do
+    target=$HOME/$relative
+    if [ -L "$target" ] || { [ -e "$target" ] && [ ! -d "$target" ]; }; then
+      printf 'shared Stow ancestor must be a real directory: %s\n' "$target" >&2
+      exit 1
+    fi
+    if [ ! -e "$target" ]; then
+      mkdir -- "$target"
+    fi
+  done
+}
+
+stow_package() {
+  package=$1
+  set --
+
+  while IFS= read -r pattern || [ -n "$pattern" ]; do
+    case $pattern in
+      '' | \#*) continue ;;
+    esac
+    set -- "$@" "--ignore=$pattern"
+  done < "$GLOBAL_IGNORE_FILE"
+
+  printf 'stowing %s\n' "$package"
+  stow "$@" --dir "$DOTFILES" --target "$HOME" "$package"
 }
 
 if [ "${1:-}" = "--list-packages" ]; then
@@ -67,29 +78,19 @@ if [ "${1:-}" = "--list-packages" ]; then
   exit 0
 fi
 
-if [ "${1:-}" = "--migrate" ]; then
-  migrate_layout
-  shift
-fi
-
 if [ "$#" -ne 0 ]; then
-  printf 'usage: %s [--list-packages|--migrate]\n' "$0" >&2
+  printf 'usage: %s [--list-packages]\n' "$0" >&2
   exit 2
 fi
 
+if [ ! -r "$GLOBAL_IGNORE_FILE" ]; then
+  printf 'missing shared Stow ignore list: %s\n' "$GLOBAL_IGNORE_FILE" >&2
+  exit 1
+fi
+
+validate_packages
+prepare_shared_ancestors
+
 requested_packages | while IFS= read -r package; do
-  case $package in
-    *[!A-Za-z0-9._-]*)
-      printf 'invalid Stow package name: %s\n' "$package" >&2
-      exit 2
-      ;;
-  esac
-
-  if [ ! -d "$DOTFILES/$package" ]; then
-    printf 'missing Stow package: %s\n' "$package" >&2
-    exit 1
-  fi
-
-  printf 'stowing %s\n' "$package"
-  stow --no-folding --dir "$DOTFILES" --target "$HOME" "$package"
+  stow_package "$package"
 done

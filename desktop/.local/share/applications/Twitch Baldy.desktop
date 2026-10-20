@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.0
+Name=Twitch Baldy
+Comment=Twitch Baldy
+Exec=omarchy-launch-webapp https://twitch.tv/zackrawrr
+Terminal=false
+Type=Application
+Icon=twitch-baldy
+StartupNotify=true

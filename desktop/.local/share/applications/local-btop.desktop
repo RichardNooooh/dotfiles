@@ -1,0 +1,8 @@
+[Desktop Entry]
+Version=1.0
+Name=btop
+Exec=omarchy launch tui --app-id=TUI.tile btop
+Terminal=false
+Type=Application
+Icon=btop
+StartupNotify=true

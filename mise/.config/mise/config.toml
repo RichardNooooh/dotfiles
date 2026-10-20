@@ -1,0 +1,7 @@
+[tools]
+codex = "0.153.4"
+gh = "latest"
+node = "26.7.0"
+"npm:playwright" = "latest"
+[settings.upgrade]
+auto_prune = false

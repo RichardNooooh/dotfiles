@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Proton VPN
+Comment=Start Proton VPN after graphical login
+Exec=protonvpn-app --start-minimized
+TryExec=protonvpn-app
+Terminal=false
+X-GNOME-Autostart-enabled=true

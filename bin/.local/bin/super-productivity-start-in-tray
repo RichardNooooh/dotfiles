@@ -1,0 +1,38 @@
+#!/usr/bin/python
+"""Start Super Productivity at login, then close its window into its tray."""
+
+import json
+import subprocess
+import time
+import urllib.error
+import urllib.request
+
+
+def ready():
+    try:
+        with urllib.request.urlopen('http://127.0.0.1:3876/health', timeout=1) as response:
+            return json.load(response).get('data', {}).get('rendererReady', False)
+    except (OSError, ValueError, urllib.error.URLError):
+        return False
+
+
+# Do not hide a window the user has already opened.
+if ready():
+    raise SystemExit(0)
+
+process = subprocess.Popen(['super-productivity'], start_new_session=True)
+for _ in range(90):
+    if process.poll() is not None:
+        raise SystemExit(process.returncode)
+    if ready():
+        clients = json.loads(subprocess.check_output(['hyprctl', 'clients', '-j']))
+        if any(client.get('class') == 'superproductivity' for client in clients):
+            # The app's enabled "Minimize to tray" setting handles this close.
+            subprocess.run([
+                'hyprctl', 'eval',
+                'hl.dsp.window.close({window = "class:superproductivity"})',
+            ], check=True)
+            raise SystemExit(0)
+    time.sleep(1)
+
+raise SystemExit('Super Productivity did not become ready within 90 seconds')

@@ -1,49 +1,13 @@
 {
-  "version": 1,
-  "idle": {
-    "screensaver": 300,
-    "lock": 600
-  },
   "bar": {
-    "position": "top",
-    "transparent": false,
     "centerAnchor": "omarchy.clock",
     "layout": {
-      "left": [
-        {
-          "id": "omarchy.menu"
-        },
-        {
-          "id": "omarchy.workspaces"
-        }
-      ],
       "center": [
         {
-          "id": "omarchy.indicators"
+          "id": "omarchy.keyboard-layout"
         },
         {
-          "id": "matjam.omawall",
-          "primaryDisplay": "DP-2",
-          "perDisplayConfig": true,
-          "displayConfig": {
-            "DP-2": {
-              "folder": "/mnt/media/Wallpapers/anime_girls_landscape",
-              "mode": "shuffle",
-              "pinned": "",
-              "recursive": true,
-              "scaling": "zoom"
-            },
-            "HDMI-A-1": {
-              "folder": "/mnt/media/Wallpapers/anime_girls_portrait",
-              "mode": "shuffle",
-              "pinned": "",
-              "recursive": true,
-              "scaling": "zoom"
-            }
-          },
-          "shuffleOnWake": true,
-          "intervalSec": 86400,
-          "autoTheme": false
+          "id": "omarchy.indicators"
         },
         {
           "id": "omarchy.clock",
@@ -52,13 +16,32 @@
           "verticalFormat": "HH\n—\nmm"
         },
         {
-          "id": "omarchy.keyboard-layout"
-        },
-        {
           "id": "omarchy.weather"
         },
         {
           "id": "omarchy.system-update"
+        },
+        {
+          "id": "io.github.katsari.nook",
+          "items": [
+            {
+              "id": "io.github.elevate08.qs-bitwarden-cli"
+            },
+            {
+              "id": "glafeara.wireguard"
+            }
+          ]
+        },
+        {
+          "id": "apsingh.super-productivity"
+        }
+      ],
+      "left": [
+        {
+          "id": "omarchy.menu"
+        },
+        {
+          "id": "omarchy.workspaces"
         }
       ],
       "right": [
@@ -66,13 +49,13 @@
           "id": "omarchy.tray"
         },
         {
-          "id": "omarchy.agents"
+          "id": "rnoh.agents"
         },
         {
           "id": "omarchy.bluetooth"
         },
         {
-          "id": "glafeara.wireguard"
+          "id": "jankeesvw.notification-center"
         },
         {
           "id": "omarchy.network"
@@ -85,11 +68,56 @@
         },
         {
           "id": "omarchy.power"
+        },
+        {
+          "autoTheme": false,
+          "displayConfig": {
+            "DP-2": {
+              "folder": "/mnt/media/Wallpapers/anime_girls/landscape",
+              "mode": "shuffle",
+              "pinned": "/mnt/media/Wallpapers/anime_girls_x/landscape/xspice/wallhaven-2ew6j9_2560x1440.png",
+              "recursive": true,
+              "scaling": "zoom"
+            },
+            "HDMI-A-1": {
+              "folder": "/mnt/media/Wallpapers/anime_girls/portrait",
+              "mode": "shuffle",
+              "pinned": "/mnt/media/Wallpapers/anime_girls_x/portrait/xspice/wallhaven-39v9p3_1080x2560.png",
+              "recursive": true,
+              "scaling": "zoom"
+            },
+            "all": {
+              "folder": "/mnt/media/Wallpapers/anime_girls_x/landscape",
+              "mode": "shuffle",
+              "pinned": "",
+              "recursive": true,
+              "scaling": "zoom"
+            }
+          },
+          "id": "matjam.omawall",
+          "intervalSec": 0,
+          "perDisplayConfig": true,
+          "primaryDisplay": "DP-2",
+          "shuffleOnWake": true
         }
       ]
-    }
+    },
+    "position": "top",
+    "transparent": false
   },
-  "plugins": [],
+  "idle": {
+    "lock": 600,
+    "screensaver": 300
+  },
+  "plugins": [
+    {
+      "id": "io.github.elevate08.qs-bitwarden-cli"
+    },
+    {
+      "id": "glafeara.wireguard"
+    }
+  ],
+  "version": 1,
   "disabledPlugins": [
     "omarchy.background"
   ],

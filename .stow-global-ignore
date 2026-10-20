@@ -1,0 +1,22 @@
+# GNU Stow's built-in exclusions. This repository copy is passed explicitly
+# by stow_config because Stow only discovers ~/.stow-global-ignore itself.
+# --ignore matches package-relative paths directly, unlike ignore-list files.
+RCS
+.+,v
+CVS
+\.\#.+
+\.cvsignore
+\.svn
+_darcs
+\.hg
+\.git
+\.gitignore
+\.gitmodules
+.+~
+\#.*\#
+^README.*
+^LICENSE.*
+^COPYING
+
+# Package-root development material must not be installed into $HOME.
+^(?:docs?|tests?)(?:/|$)
