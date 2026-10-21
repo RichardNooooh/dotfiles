@@ -10,14 +10,21 @@
 ## Conventions
 
 - All `*PLAN*.md` and `*NOTE*.md` files located at the project root are temporary files from prior sessions.
-- Ensure all architectural and code decisions are explicitly accepted by user. Do not assume
-  what the "correct" decision is.
-- If a given prompt is vague or unclear, be sure to ask clarifying questions instead of making silent assumptions.
 - Assume user cannot see output from subagents, so present options clearly before asking questions.
 - When permissions prohibit a write required by a skill, complete the read-only analysis, identify the deferred
   artifact and intended path, and wait for a writable agent rather than attempting the denied write.
 - An agent without subagent permission must return delegation requirements to the coordinating primary; do not bypass
   permission restrictions.
+
+## Unresolved Decisions
+
+- Ask the user before choosing an unapproved scope, behavior, architecture, interface, implementation approach, or
+  meaningful trade-off. Routine implementation mechanics within an approved approach do not require separate approval.
+- As soon as you identify an unresolved decision, stop the entire task. Present the decision and relevant options,
+  then wait for the user's answer. Do not continue investigating, implementing, or delegating while awaiting that answer.
+- Never treat a recommendation, an invented default, or an unstated assumption as user approval.
+- Subagents must stop and report unresolved decisions to their primary. The primary may resolve them using existing
+  user approval; otherwise it must ask the user and wait.
 
 ## Research Delegation
 
